@@ -1,0 +1,222 @@
+<mxfile host="app.diagrams.net" pages="3">
+  <diagram name="BĐ Mức ngữ cảnh (LV0)" id="quEb8JDQvNMFH6bDdM7q">
+    <mxGraphModel dx="1226" dy="656" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="U_rTW8tGnrILgVf6_Uv_-2" parent="1" style="ellipse;whiteSpace=wrap;html=1;shapeInside=1;aspect=fixed;fillColor=#1ba1e2;fontColor=#ffffff;strokeColor=#006EAF;" value="Flight booking system" vertex="1">
+          <mxGeometry height="160" width="160" x="440" y="460" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="BĐ Mức đỉnh (LV1)" id="XX9G44ggRm7YS2zOB2uo">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="ent_user" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;fontSize=13;strokeWidth=2;" value="Người Dùng&#xa;(Admin / Nhân Viên /&#xa;Khách Thuê Vườn)" vertex="1">
+          <mxGeometry height="340" width="160" x="40" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="ent_iot" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;strokeWidth=2;" value="Thiết Bị IoT &amp; Cảm Biến&#xa;(Độ ẩm, Nhiệt độ, Van tưới)" vertex="1">
+          <mxGeometry height="110" width="190" x="1380" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="ent_ai" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=13;strokeWidth=2;" value="Dịch Vụ AI Engine&#xa;(Chẩn đoán bệnh &amp; Tư vấn)" vertex="1">
+          <mxGeometry height="100" width="190" x="1380" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="p1" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=12;strokeWidth=2;" value="1.0&#xa;Quản Lý Phân Bổ&#xa;Khu Đất &amp; Cây Trồng" vertex="1">
+          <mxGeometry height="100" width="160" x="360" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="p2" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=12;strokeWidth=2;" value="2.0&#xa;Quản Lý Mùa Vụ&#xa;&amp; Thu Hoạch" vertex="1">
+          <mxGeometry height="100" width="160" x="360" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="p3" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=12;strokeWidth=2;" value="3.0&#xa;Quản Lý Chăm Sóc&#xa;&amp; Nhật Ký Công Việc" vertex="1">
+          <mxGeometry height="100" width="160" x="360" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="p4" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=12;strokeWidth=2;" value="4.0&#xa;Giám Sát Cảm Biến&#xa;&amp; Cảnh Báo" vertex="1">
+          <mxGeometry height="100" width="160" x="1060" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="p5" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=12;strokeWidth=2;" value="5.0&#xa;Chẩn Đoán AI&#xa;&amp; Tư Vấn Canh Tác" vertex="1">
+          <mxGeometry height="100" width="160" x="1060" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="p6" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=12;strokeWidth=2;" value="6.0&#xa;Báo Cáo Thống Kê&#xa;&amp; Tài Chính" vertex="1">
+          <mxGeometry height="100" width="160" x="360" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="ds_land" parent="1" style="shape=partialRectangle;top=0;bottom=0;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;align=center;fontSize=12;" value="D1 | Khu Đất / Nhà Kính &amp; Cây Trồng" vertex="1">
+          <mxGeometry height="40" width="260" x="690" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="ds_season" parent="1" style="shape=partialRectangle;top=0;bottom=0;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;align=center;fontSize=12;" value="D2 | Mùa Vụ &amp; Đợt Thu Hoạch" vertex="1">
+          <mxGeometry height="40" width="260" x="690" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="ds_work" parent="1" style="shape=partialRectangle;top=0;bottom=0;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;align=center;fontSize=12;" value="D3 | Công Việc &amp; Nhật Ký Sinh Trưởng" vertex="1">
+          <mxGeometry height="40" width="260" x="690" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="ds_sensor" parent="1" style="shape=partialRectangle;top=0;bottom=0;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;align=center;fontSize=12;" value="D4 | Dữ Liệu Cảm Biến &amp; Cảnh Báo" vertex="1">
+          <mxGeometry height="40" width="260" x="690" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="ds_finance" parent="1" style="shape=partialRectangle;top=0;bottom=0;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;align=center;fontSize=12;" value="D5 | Chi Phí Mùa Vụ" vertex="1">
+          <mxGeometry height="40" width="260" x="690" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="ds_ai" parent="1" style="shape=partialRectangle;top=0;bottom=0;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;align=center;fontSize=12;" value="D6 | Lịch Sử Yêu Cầu AI (AIRequest)" vertex="1">
+          <mxGeometry height="40" width="260" x="690" y="800" as="geometry" />
+        </mxCell>
+        <mxCell id="f_u_p1" edge="1" parent="1" source="ent_user" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=0;entryX=0;entryY=0.5;strokeWidth=1.5;labelBackgroundColor=#ffffff;" target="p1" value="Khu đất, cây trồng mới">
+          <mxGeometry relative="1" x="0.64" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="80" y="300" />
+              <mxPoint x="80" y="120" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="f_u_p2" edge="1" parent="1" source="ent_user" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.15;entryX=0;entryY=0.5;strokeWidth=1.5;labelBackgroundColor=#ffffff;" target="p2" value="Đăng ký mùa vụ, thu hoạch">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f_u_p3" edge="1" parent="1" source="ent_user" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.45;entryX=0;entryY=0.5;strokeWidth=1.5;labelBackgroundColor=#ffffff;" target="p3" value="Giao việc, nhật ký chăm sóc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f_p6_u" edge="1" parent="1" source="p6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;entryX=1;entryY=0.85;strokeWidth=1.5;labelBackgroundColor=#ffffff;" target="ent_user" value="Báo cáo thu chi &amp; năng suất">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f_p4_u" edge="1" parent="1" source="p4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=0;entryX=0.75;entryY=0;strokeWidth=1.5;labelBackgroundColor=#ffffff;" target="ent_user" value="Thông báo cảnh báo môi trường">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1140" y="30" />
+              <mxPoint x="160" y="30" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="f_u_p5" edge="1" parent="1" source="ent_user" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.4;exitY=1;entryX=0.35;entryY=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;" target="p5" value="Gửi ảnh lá bệnh &amp; triệu chứng">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="-12" as="offset" />
+            <Array as="points">
+              <mxPoint x="104" y="910" />
+              <mxPoint x="1116" y="910" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="f_p5_u" edge="1" parent="1" source="p5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.65;exitY=1;entryX=0.7;entryY=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;" target="ent_user" value="Kết quả chẩn đoán &amp; giải pháp">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="12" as="offset" />
+            <Array as="points">
+              <mxPoint x="1164" y="950" />
+              <mxPoint x="152" y="950" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="f_iot_p4" edge="1" parent="1" source="ent_iot" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.3;entryX=1;entryY=0.3;strokeWidth=1.5;labelBackgroundColor=#ffffff;" target="p4" value="Chỉ số đo đạc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f_p4_iot" edge="1" parent="1" source="p4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.7;entryX=0;entryY=0.7;strokeWidth=1.5;labelBackgroundColor=#ffffff;" target="ent_iot" value="Lệnh van tưới &amp; ngưỡng đo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f_p5_ai" edge="1" parent="1" source="p5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.3;entryX=0;entryY=0.3;strokeWidth=1.5;labelBackgroundColor=#ffffff;" target="ent_ai" value="Gửi request phân tích">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f_ai_p5" edge="1" parent="1" source="ent_ai" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.7;entryX=1;entryY=0.7;strokeWidth=1.5;labelBackgroundColor=#ffffff;" target="p5" value="Trả kết quả tư vấn">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f_p1_d1" edge="1" parent="1" source="p1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=1.5;" target="ds_land" value="Lưu khu đất, cây">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f_p2_d2" edge="1" parent="1" source="p2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=1.5;" target="ds_season" value="Ghi mùa vụ &amp; sản lượng">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f_p3_d3" edge="1" parent="1" source="p3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=1.5;" target="ds_work" value="Lưu việc &amp; ảnh nhật ký">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f_p4_d4" edge="1" parent="1" source="p4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.7;entryX=1;entryY=0.5;strokeWidth=1.5;" target="ds_sensor" value="Ghi nhận đo &amp; cảnh báo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f_p5_d6" edge="1" parent="1" source="p5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.7;entryX=1;entryY=0.5;strokeWidth=1.5;" target="ds_ai" value="Lưu lịch sử chẩn đoán">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f_d5_p6" edge="1" parent="1" source="ds_finance" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;strokeWidth=1.5;" target="p6" value="Đọc chi phí, doanh thu">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="BĐ Mức dưới đỉnh (LV2)" id="8yHwVuEOTgU4p7_0ycSr">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="1600" pageHeight="800" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="iot_source" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=13;strokeWidth=2;" value="Cảm Biến &amp; Thiết Bị IoT&#xa;(Arduino, Độ ẩm đất/KK,&#xa;Nhiệt độ, Van tưới)" vertex="1">
+          <mxGeometry height="110" width="200" x="20" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="user_target" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;fontSize=13;strokeWidth=2;" value="Người Dùng&#xa;(Admin / Nhân Viên&#xa;Kỹ Thuật Vườn)" vertex="1">
+          <mxGeometry height="220" width="180" x="1360" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_1" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=12;strokeWidth=2;" value="4.1&#xa;Thu Thập Dữ Liệu&#xa;Đo Đạc Cảm Biến" vertex="1">
+          <mxGeometry height="100" width="160" x="420" y="115" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_2" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=12;strokeWidth=2;" value="4.2&#xa;Kiểm Tra So Sánh&#xa;Ngưỡng Cho Phép" vertex="1">
+          <mxGeometry height="100" width="160" x="840" y="115" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_3" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=12;strokeWidth=2;" value="4.3&#xa;Khởi Tạo Cảnh Báo&#xa;&amp; Phát Thông Báo" vertex="1">
+          <mxGeometry height="100" width="160" x="840" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="p4_4" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=12;strokeWidth=2;" value="4.4&#xa;Xác Nhận &amp; Cập Nhật&#xa;Trạng Thái Xử Lý" vertex="1">
+          <mxGeometry height="100" width="160" x="840" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="st_sensor_cfg" parent="1" style="shape=partialRectangle;top=0;bottom=0;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;align=center;fontSize=12;" value="D4.1 | Cấu Hình Cảm Biến (CamBien)" vertex="1">
+          <mxGeometry height="40" width="270" x="1190" y="145" as="geometry" />
+        </mxCell>
+        <mxCell id="st_sensor_data" parent="1" style="shape=partialRectangle;top=0;bottom=0;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;align=center;fontSize=12;" value="D4.2 | Dữ Liệu Đo Đạc (DuLieuCamBien)" vertex="1">
+          <mxGeometry height="40" width="270" x="365" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="st_alerts" parent="1" style="shape=partialRectangle;top=0;bottom=0;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;align=center;fontSize=12;" value="D4.3 | Quản Lý Cảnh Báo (CanhBao)" vertex="1">
+          <mxGeometry height="40" width="270" x="365" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="f1" edge="1" parent="1" source="iot_source" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=1.5;labelBackgroundColor=#ffffff;" target="p4_1" value="Gửi giá trị đo (GiaTri, CamBienID)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f2" edge="1" parent="1" source="p4_1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeWidth=1.5;labelBackgroundColor=#ffffff;" target="st_sensor_data" value="Lưu lịch sử đo môi trường">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f3" edge="1" parent="1" source="p4_1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;strokeWidth=1.5;labelBackgroundColor=#ffffff;" target="p4_2" value="Chỉ số đo vừa nhận">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f4" edge="1" parent="1" source="st_sensor_cfg" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;strokeWidth=1.5;labelBackgroundColor=#ffffff;" target="p4_2" value="Đọc NguongMin, NguongMax">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f5" edge="1" parent="1" source="p4_2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;strokeWidth=1.5;labelBackgroundColor=#ffffff;" target="p4_3" value="Vượt ngưỡng an toàn">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f6" edge="1" parent="1" source="p4_3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;entryX=1;entryY=0.3;strokeWidth=1.5;labelBackgroundColor=#ffffff;" target="st_alerts" value="Ghi bản ghi CanhBao mới">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="730" y="400" />
+              <mxPoint x="730" y="542" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="f7" edge="1" parent="1" source="p4_3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.25;strokeWidth=1.5;labelBackgroundColor=#ffffff;" target="user_target" value="Phát cảnh báo (Mức độ, Nhà kính)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f8" edge="1" parent="1" source="user_target" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.75;entryX=1;entryY=0.5;strokeWidth=1.5;labelBackgroundColor=#ffffff;" target="p4_4" value="Xác nhận đã khắc phục/xử lý">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f9" edge="1" parent="1" source="p4_4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;entryX=1;entryY=0.8;strokeWidth=1.5;labelBackgroundColor=#ffffff;" target="st_alerts" value="Cập nhật NguoiXuLyID, TrangThai">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="730" y="630" />
+              <mxPoint x="730" y="562" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="f10" edge="1" parent="1" source="p4_3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.25;exitY=0;entryX=0.5;entryY=1;strokeWidth=1.5;labelBackgroundColor=#ffffff;" target="iot_source" value="&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-size: 11px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: nowrap; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;Lệnh kích hoạt van tưới/thiết bị tự động&lt;/span&gt;">
+          <mxGeometry relative="1" x="0.4008" as="geometry">
+            <mxPoint x="1" as="offset" />
+            <Array as="points">
+              <mxPoint x="850" y="355.3" />
+              <mxPoint x="850" y="270" />
+              <mxPoint x="120" y="270" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
