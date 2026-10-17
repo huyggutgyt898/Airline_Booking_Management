@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0F766E">
+  <meta name="description" content="Tìm và đặt chuyến bay cùng TEO Airlines.">
+  <title>TEO Airlines — Đặt vé máy bay</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="min-h-screen bg-page text-ink antialiased">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#home" data-screen-link="home" aria-label="TEO Airlines — Trang chủ">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20.8 3.2c-.9-.9-2.2-.4-3.1.5l-4.3 4.3-7.8-2c-.5-.1-1 .1-1.4.4l-.9.9 5.7 3.2-3.1 3.1-2.8-.7L2 14l3.7 1.8L7.5 19l1.1-1.1-.7-2.8 3.1-3.1 3.2 5.7.9-.9c.4-.4.5-.9.4-1.4l-2-7.8 4.3-4.3c.9-.9 1.4-2.2.5-3.1z"></path>
+          </svg>
+        </span>
+        <span class="brand-wordmark"><strong>TEO</strong><small>airlines</small></span>
+      </a>
+
+      <nav class="main-nav" aria-label="Điều hướng chính">
+        <a class="nav-link is-active" href="#home" data-screen-link="home" aria-current="page">Đặt vé</a>
+        <a class="nav-link" href="#lookup" data-coming-soon>Tra cứu đặt chỗ</a>
+        <a class="nav-link" href="#benefits" data-home-anchor="benefits">Đổi điểm</a>
+        <a class="nav-link" href="#support" data-home-anchor="support">Hỗ trợ</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="button button-outline header-login" type="button" data-coming-soon>Đăng nhập</button>
+        <button class="button button-primary header-register" type="button" data-coming-soon>Đăng ký</button>
+      </div>
+
+      <button class="icon-button menu-toggle" type="button" aria-label="Mở menu" aria-expanded="false" aria-controls="mobile-menu">
+        <i data-lucide="menu" aria-hidden="true"></i>
+      </button>
+    </div>
+    <nav class="mobile-menu" id="mobile-menu" aria-label="Điều hướng trên điện thoại" hidden>
+      <a href="#home" data-screen-link="home">Đặt vé</a>
+      <a href="#lookup" data-coming-soon>Tra cứu đặt chỗ</a>
+      <a href="#benefits" data-home-anchor="benefits">Đổi điểm</a>
+      <a href="#support" data-home-anchor="support">Hỗ trợ</a>
+      <button type="button" data-coming-soon>Đăng nhập / Đăng ký</button>
+    </nav>
+  </header>
+
+  <nav class="booking-progress" id="booking-progress" aria-label="Các bước đặt vé" hidden>
+    <div class="container">
+      <ol class="progress-list">
+        <li data-progress="results"><span>1</span><b>Chuyến bay</b></li>
+        <li data-progress="passengers"><span>2</span><b>Hành khách</b></li>
+        <li data-progress="seats"><span>3</span><b>Chọn ghế</b></li>
+        <li data-progress="payment"><span>4</span><b>Thanh toán</b></li>
+        <li data-progress="confirmation"><span>5</span><b>Xác nhận</b></li>
+      </ol>
+    </div>
+  </nav>
+
+  <main id="main-content">
+    <section class="screen is-active" id="home-screen" data-screen="home" aria-labelledby="home-title">
+      <div class="container">
+        <div class="hero" data-wf-block="2">
+          <div class="hero-copy">
+            <p class="hero-eyebrow">Mỗi chuyến đi, một khởi đầu mới</p>
+            <h1 id="home-title">Khám phá hành trình tiếp theo của bạn</h1>
+            <p class="hero-description">Đặt vé nhanh chóng, an tâm tận hưởng mọi chuyến bay cùng TEO Airlines.</p>
+          </div>
+
+          <form class="search-card" id="flight-search-form" novalidate data-wf-block="3">
+            <fieldset class="trip-type">
+              <legend class="visually-hidden">Loại hành trình</legend>
+              <label class="radio-option">
+                <input type="radio" name="trip-type" value="oneway" checked>
+                <span class="radio-mark" aria-hidden="true"></span>
+                <span>Một chiều</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="trip-type" value="roundtrip">
+                <span class="radio-mark" aria-hidden="true"></span>
+                <span>Khứ hồi</span>
+              </label>
+            </fieldset>
+
+            <div class="flight-fields">
+              <div class="route-fields">
+                <div class="field">
+                  <label for="origin">Điểm đi</label>
+                  <input id="origin" name="origin" type="text" value="TP. Hồ Chí Minh (SGN)" autocomplete="off" required>
+                </div>
+                <button class="swap-button" id="swap-route" type="button" aria-label="Đổi điểm đi và điểm đến">
+                  <i data-lucide="arrow-left-right" aria-hidden="true"></i>
+                </button>
+                <div class="field">
+                  <label for="destination">Điểm đến</label>
+                  <input id="destination" name="destination" type="text" value="Hà Nội (HAN)" autocomplete="off" required>
+                </div>
+              </div>
+
+              <div class="field date-field" id="departure-field">
+                <label>Ngày đi</label>
+                <input id="departure-date" type="hidden" value="2026-11-21">
+                <button class="field-trigger date-trigger" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="departure-calendar">
+                  <span id="departure-date-label">21/11/2026</span>
+                  <i data-lucide="calendar-days" aria-hidden="true"></i>
+                </button>
+                <div class="calendar-popover" id="departure-calendar" role="dialog" aria-label="Chọn ngày đi" hidden></div>
+              </div>
+
+              <div class="field date-field is-disabled" id="return-field" hidden>
+                <label>Ngày về</label>
+                <input id="return-date" type="hidden" value="2026-11-28" disabled>
+                <button class="field-trigger date-trigger" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="return-calendar" disabled>
+                  <span id="return-date-label">28/11/2026</span>
+                  <i data-lucide="calendar-days" aria-hidden="true"></i>
+                </button>
+                <div class="calendar-popover" id="return-calendar" role="dialog" aria-label="Chọn ngày về" hidden></div>
+              </div>
+
+              <div class="field">
+                <label>Hạng ghế</label>
+                <button class="field-trigger select-trigger" id="cabin-trigger" type="button" aria-haspopup="listbox" aria-expanded="false">
+                  <span id="cabin-value">Phổ thông</span>
+                  <i data-lucide="chevron-down" aria-hidden="true"></i>
+                </button>
+                <div class="select-popover" id="cabin-options" role="listbox" aria-label="Hạng ghế" hidden>
+                  <button type="button" role="option" aria-selected="true" data-cabin="Phổ thông">Phổ thông</button>
+                  <button type="button" role="option" aria-selected="false" data-cabin="Thương gia">Thương gia</button>
+                </div>
+              </div>
+
+              <div class="field passenger-field">
+                <label>Hành khách</label>
+                <button class="field-trigger passenger-trigger" id="passenger-trigger" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="passenger-options">
+                  <span id="passenger-summary">1 người lớn</span>
+                  <i data-lucide="users" aria-hidden="true"></i>
+                </button>
+                <div class="passenger-popover" id="passenger-options" role="dialog" aria-label="Chọn số hành khách" hidden>
+                  <div class="passenger-row">
+                    <span>Người lớn<small>Từ 12 tuổi</small></span>
+                    <div class="stepper">
+                      <button type="button" data-count="adult" data-delta="-1" aria-label="Giảm số người lớn">−</button>
+                      <output id="adult-count">1</output>
+                      <button type="button" data-count="adult" data-delta="1" aria-label="Tăng số người lớn">+</button>
+                    </div>
+                  </div>
+                  <div class="passenger-row">
+                    <span>Trẻ em<small>Từ 2 đến dưới 12 tuổi</small></span>
+                    <div class="stepper">
+                      <button type="button" data-count="child" data-delta="-1" aria-label="Giảm số trẻ em">−</button>
+                      <output id="child-count">0</output>
+                      <button type="button" data-count="child" data-delta="1" aria-label="Tăng số trẻ em">+</button>
+                    </div>
+                  </div>
+                  <div class="passenger-row">
+                    <span>Em bé<small>Dưới 2 tuổi · không chiếm ghế</small></span>
+                    <div class="stepper">
+                      <button type="button" data-count="infant" data-delta="-1" aria-label="Giảm số em bé">−</button>
+                      <output id="infant-count">0</output>
+                      <button type="button" data-count="infant" data-delta="1" aria-label="Tăng số em bé">+</button>
+                    </div>
+                  </div>
+                  <button class="button button-primary passenger-done" type="button" id="passenger-done">Xong</button>
+                </div>
+              </div>
+            </div>
+
+            <p class="field-error" id="search-error" role="alert" hidden></p>
+            <div class="search-bottom">
+              <p class="search-note">Giá hiển thị bao gồm thuế và phí.</p>
+              <button class="button button-primary search-submit" id="search-submit" type="submit">
+                <i data-lucide="search" aria-hidden="true"></i>
+                <span>Tìm chuyến bay</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+      </div>
+
+      <section class="home-section offers-section" id="benefits" aria-labelledby="offers-title">
+        <div class="container">
+          <div class="section-heading-block">
+            <div>
+              <p class="section-kicker">TEO REWARDS</p>
+              <h2 id="offers-title">Đổi điểm tích lũy lấy voucher</h2>
+              <p>Dùng điểm bay để đổi mã giảm giá cho chuyến đi tiếp theo.</p>
+            </div>
+            <div class="points-balance" aria-live="polite">
+              <i data-lucide="coins" aria-hidden="true"></i>
+              <span><small>Số dư điểm của bạn</small><strong><span id="loyalty-balance">2.450</span> điểm</strong></span>
+            </div>
+          </div>
+
+          <div class="offers-grid rewards-grid">
+            <article class="offer-card reward-card">
+              <div class="reward-card-heading">
+                <span class="offer-icon"><i data-lucide="ticket-percent" aria-hidden="true"></i></span>
+                <span class="offer-label">VOUCHER VÉ BAY</span>
+              </div>
+              <strong class="reward-discount">100.000đ</strong>
+              <h3>Giảm 100.000đ cho đơn từ 1.500.000đ</h3>
+              <dl class="reward-details">
+                <div><dt>Điểm cần đổi</dt><dd>800 điểm</dd></div>
+                <div><dt>Thời hạn</dt><dd>01/10–31/12/2026</dd></div>
+                <div><dt>Đã phát hành</dt><dd>125 / 500</dd></div>
+              </dl>
+              <button class="button button-outline reward-redeem" type="button" data-redeem-voucher data-points-cost="800" data-promo-code="TEO100">Đổi voucher</button>
+            </article>
+            <article class="offer-card reward-card">
+              <div class="reward-card-heading">
+                <span class="offer-icon"><i data-lucide="ticket-percent" aria-hidden="true"></i></span>
+                <span class="offer-label">VOUCHER PHẦN TRĂM</span>
+              </div>
+              <strong class="reward-discount">Giảm 10%</strong>
+              <h3>Giảm 10% cho đơn từ 2.000.000đ</h3>
+              <dl class="reward-details">
+                <div><dt>Điểm cần đổi</dt><dd>1.500 điểm</dd></div>
+                <div><dt>Thời hạn</dt><dd>01/11–31/12/2026</dd></div>
+                <div><dt>Đã phát hành</dt><dd>64 / 300</dd></div>
+              </dl>
+              <button class="button button-primary reward-redeem" type="button" data-redeem-voucher data-points-cost="1500" data-promo-code="TEO10">Đổi voucher</button>
+            </article>
+            <article class="offer-card reward-card">
+              <div class="reward-card-heading">
+                <span class="offer-icon"><i data-lucide="ticket-percent" aria-hidden="true"></i></span>
+                <span class="offer-label">VOUCHER ĐẶC BIỆT</span>
+              </div>
+              <strong class="reward-discount">300.000đ</strong>
+              <h3>Giảm 300.000đ cho đơn từ 3.000.000đ</h3>
+              <dl class="reward-details">
+                <div><dt>Điểm cần đổi</dt><dd>3.000 điểm</dd></div>
+                <div><dt>Thời hạn</dt><dd>01/12–31/12/2026</dd></div>
+                <div><dt>Đã phát hành</dt><dd>18 / 100</dd></div>
+              </dl>
+              <button class="button button-outline reward-redeem" type="button" data-redeem-voucher data-points-cost="3000" data-promo-code="TEO300" disabled>Chưa đủ điểm</button>
+            </article>
+          </div>
+          <p class="section-demo-note">Điểm thưởng, điều kiện voucher và số lượng phát hành là dữ liệu minh họa.</p>
+        </div>
+      </section>
+
+    </section>
+
+    <section class="screen" id="results-screen" data-screen="results" aria-labelledby="results-title" hidden>
+      <div class="container page-container">
+        <div class="page-heading">
+          <div>
+            <p class="eyebrow">Chọn chuyến bay</p>
+            <h1 id="results-title">Chuyến bay đến Hà Nội</h1>
+            <p class="subheading" id="results-summary">TP. Hồ Chí Minh (SGN) → Hà Nội (HAN) · Thứ Bảy, 21/11/2026</p>
+          </div>
+          <button class="button button-outline" type="button" data-screen-link="home">
+            <i data-lucide="pencil" aria-hidden="true"></i> Sửa tìm kiếm
+          </button>
+        </div>
+
+        <div class="results-layout">
+          <aside class="filter-panel" aria-label="Bộ lọc chuyến bay">
+            <div class="filter-heading"><h2>Bộ lọc</h2><button type="button" id="clear-filters">Xóa lọc</button></div>
+            <fieldset class="filter-group">
+              <legend>Điểm dừng</legend>
+              <label><input type="checkbox" data-filter="direct"> Chuyến bay thẳng</label>
+              <label><input type="checkbox" data-filter="stop"> Có điểm dừng</label>
+            </fieldset>
+            <fieldset class="filter-group">
+              <legend>Khung giờ khởi hành</legend>
+              <label><input type="checkbox" data-filter="morning"> Buổi sáng · 05:00–12:00</label>
+              <label><input type="checkbox" data-filter="afternoon"> Buổi chiều · 12:00–18:00</label>
+            </fieldset>
+            <fieldset class="filter-group">
+              <legend>Giá vé</legend>
+              <label><input type="checkbox" data-filter="under-two"> Dưới 2.000.000 đ</label>
+            </fieldset>
+          </aside>
+
+          <div class="flight-results">
+            <div class="results-toolbar">
+              <p><strong id="result-count">2 chuyến bay</strong><span> · Giá đã gồm thuế, phí</span></p>
+              <label class="sort-control">Sắp xếp
+                <select id="flight-sort" aria-label="Sắp xếp chuyến bay">
+                  <option value="recommended">Đề xuất</option>
+                  <option value="price">Giá thấp nhất</option>
+                  <option value="departure">Giờ khởi hành</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="flight-list" id="flight-list">
+              <article class="flight-card" data-flight-card data-flight-id="teo218" data-direct="true" data-time="morning" data-price="1890000">
+                <div class="flight-main">
+                  <div class="airline-mark" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.8 3.2c-.9-.9-2.2-.4-3.1.5l-4.3 4.3-7.8-2c-.5-.1-1 .1-1.4.4l-.9.9 5.7 3.2-3.1 3.1-2.8-.7L2 14l3.7 1.8L7.5 19l1.1-1.1-.7-2.8 3.1-3.1 3.2 5.7.9-.9c.4-.4.5-.9.4-1.4l-2-7.8 4.3-4.3c.9-.9 1.4-2.2.5-3.1z"></path></svg>
+                  </div>
+                  <div class="flight-schedule">
+                    <div class="flight-time"><strong>08:15</strong><span>SGN</span></div>
+                    <div class="flight-duration"><span>2 giờ 05 phút</span><span class="route-line"><i></i></span><span>Bay thẳng</span></div>
+                    <div class="flight-time"><strong>10:20</strong><span>HAN</span></div>
+                  </div>
+                  <div class="flight-meta"><strong>TEO 218</strong><span>Phổ thông</span></div>
+                </div>
+                <div class="flight-choice">
+                  <div><strong>1.890.000 đ</strong><span>đã gồm thuế & phí</span></div>
+                  <button class="button button-outline choose-flight" type="button" data-select-flight="teo218">Chọn chuyến</button>
+                </div>
+              </article>
+
+              <article class="flight-card" data-flight-card data-flight-id="teo426" data-direct="true" data-time="afternoon" data-price="2190000">
+                <div class="flight-main">
+                  <div class="airline-mark" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.8 3.2c-.9-.9-2.2-.4-3.1.5l-4.3 4.3-7.8-2c-.5-.1-1 .1-1.4.4l-.9.9 5.7 3.2-3.1 3.1-2.8-.7L2 14l3.7 1.8L7.5 19l1.1-1.1-.7-2.8 3.1-3.1 3.2 5.7.9-.9c.4-.4.5-.9.4-1.4l-2-7.8 4.3-4.3c.9-.9 1.4-2.2.5-3.1z"></path></svg>
+                  </div>
+                  <div class="flight-schedule">
+                    <div class="flight-time"><strong>14:10</strong><span>SGN</span></div>
+                    <div class="flight-duration"><span>2 giờ 10 phút</span><span class="route-line"><i></i></span><span>Bay thẳng</span></div>
+                    <div class="flight-time"><strong>16:20</strong><span>HAN</span></div>
+                  </div>
+                  <div class="flight-meta"><strong>TEO 426</strong><span>Phổ thông</span></div>
+                </div>
+                <div class="flight-choice">
+                  <div><strong>2.190.000 đ</strong><span>đã gồm thuế & phí</span></div>
+                  <button class="button button-outline choose-flight" type="button" data-select-flight="teo426">Chọn chuyến</button>
+                </div>
+              </article>
+
+              <div class="empty-state" id="empty-results" hidden>
+                <span class="empty-icon"><i data-lucide="plane-takeoff" aria-hidden="true"></i></span>
+                <h2>Không tìm thấy chuyến bay phù hợp</h2>
+                <p>Thử bỏ bớt bộ lọc hoặc chọn một khung giờ khác.</p>
+                <button class="button button-outline" type="button" id="empty-clear-filters">Xóa bộ lọc</button>
+              </div>
+            </div>
+            <p class="mock-note">Dữ liệu chuyến bay và giá vé trong bản xem trước chỉ mang tính minh họa.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="passengers-screen" data-screen="passengers" aria-labelledby="passengers-title" hidden>
+      <div class="container page-container">
+        <div class="page-heading">
+          <div><p class="eyebrow">Thông tin đặt chỗ</p><h1 id="passengers-title">Thông tin hành khách</h1><p class="subheading">Nhập thông tin như trên giấy tờ tùy thân.</p></div>
+        </div>
+        <div class="booking-layout">
+          <form class="panel booking-form" id="passenger-form" novalidate>
+            <section class="form-section">
+              <div class="section-heading"><span class="section-number">1</span><div><h2>Thông tin liên hệ</h2><p>Nhận thông tin cập nhật về chuyến bay và đặt chỗ.</p></div></div>
+              <div class="form-grid">
+                <div class="field"><label for="contact-name">Họ và tên người liên hệ</label><input id="contact-name" name="contact-name" type="text" value="Nguyễn Minh Anh" autocomplete="name" required></div>
+                <div class="field"><label for="contact-email">Email</label><input id="contact-email" name="contact-email" type="email" value="minhanh@example.com" autocomplete="email" required></div>
+                <div class="field"><label for="contact-phone">Số điện thoại</label><input id="contact-phone" name="contact-phone" type="tel" value="090 123 4567" autocomplete="tel" required></div>
+              </div>
+            </section>
+            <div class="traveler-list" id="traveler-list"></div>
+            <div class="form-actions">
+              <button class="button button-outline" type="button" data-screen-link="results"><i data-lucide="arrow-left" aria-hidden="true"></i> Quay lại</button>
+              <button class="button button-primary" type="submit">Tiếp tục chọn ghế <i data-lucide="arrow-right" aria-hidden="true"></i></button>
+            </div>
+            <p class="mock-note">Thông tin trong form là dữ liệu mẫu; không được gửi lên máy chủ.</p>
+          </form>
+          <aside class="booking-aside" id="passenger-summary-card" aria-label="Tóm tắt chuyến bay"></aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="seats-screen" data-screen="seats" aria-labelledby="seats-title" hidden>
+      <div class="container page-container">
+        <div class="page-heading">
+          <div><p class="eyebrow">Tùy chọn chuyến đi</p><h1 id="seats-title">Chọn chỗ ngồi</h1><p class="subheading" id="seats-subheading">Chọn chỗ ngồi cho hành khách.</p></div>
+        </div>
+        <div class="booking-layout">
+          <section class="panel seat-panel">
+            <div class="seat-panel-heading"><div><h2>Sơ đồ ghế · TEO 218</h2><p>Airbus A320 · Mũi máy bay ở phía trên</p></div><span class="seat-page-badge">Phổ thông</span></div>
+            <div class="seat-legend" aria-label="Chú giải sơ đồ ghế">
+              <span><i class="seat-swatch available"></i>Còn trống</span>
+              <span><i class="seat-swatch selected"></i>Đang chọn</span>
+              <span><i class="seat-swatch occupied"></i>Đã đặt</span>
+              <span><i class="seat-swatch extra"></i>Ghế phụ phí</span>
+            </div>
+            <div class="aircraft">
+              <div class="aircraft-cabin">
+                <div class="column-labels"><span>A</span><span>B</span><span>C</span><span class="aisle-label"></span><span>D</span><span>E</span><span>F</span></div>
+                <div class="seat-grid" id="seat-grid" aria-label="Sơ đồ chỗ ngồi"></div>
+              </div>
+            </div>
+            <p class="seat-selection-note" id="seat-selection-note" aria-live="polite">Đã chọn ghế 7A · Phụ phí 250.000 đ</p>
+          </section>
+          <aside class="booking-aside" id="seat-summary-card" aria-label="Tóm tắt chuyến bay"></aside>
+        </div>
+        <div class="page-actions">
+          <button class="button button-outline" type="button" data-screen-link="passengers"><i data-lucide="arrow-left" aria-hidden="true"></i> Quay lại</button>
+          <button class="button button-primary" type="button" id="continue-to-payment">Tiếp tục thanh toán <i data-lucide="arrow-right" aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="payment-screen" data-screen="payment" aria-labelledby="payment-title" hidden>
+      <div class="container page-container">
+        <div class="page-heading">
+          <div><p class="eyebrow">Kiểm tra và xác nhận</p><h1 id="payment-title">Xác nhận & thanh toán</h1><p class="subheading">Kiểm tra hành trình và tổng chi phí trước khi tiếp tục.</p></div>
+        </div>
+        <div class="booking-layout">
+          <div class="payment-main">
+            <section class="panel payment-panel">
+              <div class="panel-heading"><div><h2>Phương thức thanh toán</h2><p>Chọn một phương thức để tiếp tục.</p></div></div>
+              <fieldset class="payment-options">
+                <legend class="visually-hidden">Chọn phương thức thanh toán</legend>
+                <label class="payment-option is-selected">
+                  <input type="radio" name="payment-method" value="momo" checked>
+                  <span class="payment-radio"></span>
+                  <span class="payment-symbol momo-symbol">M</span>
+                  <span class="payment-copy"><strong>MoMo</strong><small>Giữ chỗ trong 10 phút</small></span>
+                  <span class="payment-time">10 phút</span>
+                </label>
+                <label class="payment-option">
+                  <input type="radio" name="payment-method" value="counter">
+                  <span class="payment-radio"></span>
+                  <span class="payment-symbol counter-symbol"><i data-lucide="landmark" aria-hidden="true"></i></span>
+                  <span class="payment-copy"><strong>Tiền mặt hoặc chuyển khoản tại quầy</strong><small>Nhân viên xác nhận sau khi nhận thanh toán</small></span>
+                  <span class="payment-time">1 giờ</span>
+                </label>
+              </fieldset>
+              <div class="hold-notice" id="hold-notice" role="status">
+                <i data-lucide="clock-3" aria-hidden="true"></i>
+                <span>Thời gian giữ chỗ còn <strong id="hold-timer">10:00</strong>. Đơn chưa được xác nhận thanh toán.</span>
+              </div>
+            </section>
+
+            <section class="panel promo-panel">
+              <div class="panel-heading"><div><h2>Mã khuyến mãi</h2><p>Nhập mã ưu đãi nếu có.</p></div></div>
+              <form class="promo-form" id="promo-form">
+                <label class="visually-hidden" for="promo-code">Mã khuyến mãi</label>
+                <input id="promo-code" type="text" placeholder="Nhập mã khuyến mãi" autocomplete="off">
+                <button class="button button-outline" type="submit">Áp dụng</button>
+              </form>
+              <p class="promo-feedback" id="promo-feedback" aria-live="polite"></p>
+            </section>
+
+            <section class="panel fare-panel">
+              <div class="panel-heading"><div><h2>Chi tiết giá</h2><p>Giá cuối cùng được hiển thị trước khi xác nhận.</p></div></div>
+              <dl class="fare-breakdown" id="fare-breakdown"></dl>
+              <div class="fare-total"><span>Tổng thanh toán</span><strong id="total-price">1.975.000 đ</strong></div>
+              <p class="mock-note">Số tiền chỉ minh họa; em bé không chiếm ghế và chưa tính phí riêng. Chưa có giao dịch hoặc thanh toán thật.</p>
+            </section>
+
+            <div class="form-actions payment-actions">
+              <button class="button button-outline" type="button" data-screen-link="seats"><i data-lucide="arrow-left" aria-hidden="true"></i> Quay lại</button>
+              <button class="button button-primary" type="button" id="confirm-booking">Xác nhận đặt chỗ</button>
+            </div>
+          </div>
+          <aside class="booking-aside" id="payment-summary-card" aria-label="Tóm tắt chuyến bay"></aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="confirmation-screen" data-screen="confirmation" aria-labelledby="confirmation-title" hidden>
+      <div class="container page-container confirmation-container">
+        <section class="confirmation-card">
+          <span class="confirmation-icon"><i data-lucide="check" aria-hidden="true"></i></span>
+          <p class="eyebrow">Đặt chỗ</p>
+          <h1 id="confirmation-title">Yêu cầu đặt chỗ đã được ghi nhận</h1>
+          <p class="confirmation-copy">Mã đặt chỗ mẫu của bạn</p>
+          <p class="booking-code" id="booking-code">TEO-6D82A</p>
+          <div class="status-banner status-pending">
+            <i data-lucide="clock-3" aria-hidden="true"></i>
+            <span><strong>Chờ xác nhận thanh toán</strong><small>Chưa ghi nhận thanh toán thành công.</small></span>
+          </div>
+          <div class="confirmation-summary" id="confirmation-summary"></div>
+          <p class="mock-note">Đây là bản xem trước giao diện. Email/SMS và thanh toán chưa được tích hợp.</p>
+          <div class="confirmation-actions">
+            <button class="button button-primary" type="button" data-screen-link="home">Về trang chủ</button>
+            <button class="button button-outline" type="button" data-coming-soon>Xem chi tiết đặt chỗ</button>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <section class="footer-support" id="support" aria-labelledby="support-title">
+      <div class="container">
+        <div class="support-layout">
+          <div class="support-intro">
+            <p class="section-kicker">TEO luôn ở đây</p>
+            <h2 id="support-title">Cần hỗ trợ cho hành trình của bạn?</h2>
+            <p>Liên hệ đội ngũ TEO để được hướng dẫn về đặt chỗ và thông tin chuyến bay.</p>
+            <div class="support-hours"><i data-lucide="clock-3" aria-hidden="true"></i><span>Thời gian hỗ trợ mẫu: 07:00–22:00 mỗi ngày</span></div>
+          </div>
+
+          <div class="contact-panel">
+            <h3>Kênh liên lạc</h3>
+            <div class="contact-list">
+              <a class="contact-row" href="tel:19000000">
+                <span class="contact-icon"><i data-lucide="phone" aria-hidden="true"></i></span>
+                <span><small>Điện thoại</small><strong>1900 0000</strong></span>
+              </a>
+              <a class="contact-row" href="mailto:hotro@teoairlines.vn">
+                <span class="contact-icon"><i data-lucide="mail" aria-hidden="true"></i></span>
+                <span><small>Email</small><strong>hotro@teoairlines.vn</strong></span>
+              </a>
+              <div class="contact-row">
+                <span class="contact-icon"><i data-lucide="map-pin" aria-hidden="true"></i></span>
+                <span><small>Văn phòng</small><strong>Tòa nhà TEO, TP. Hồ Chí Minh</strong></span>
+              </div>
+            </div>
+
+            <div class="social-area">
+              <h4>Theo dõi TEO</h4>
+              <div class="social-links" aria-label="Các kênh mạng xã hội">
+                <a href="#support" data-social-channel="Facebook" aria-label="Facebook — kênh mẫu">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 21v-8h2.7l.4-3h-3.1V8.1c0-.9.3-1.5 1.6-1.5h1.7V3.9c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3V10H7.3v3h2.8v8z"></path></svg>
+                </a>
+                <a href="#support" data-social-channel="TikTok" aria-label="TikTok — kênh mẫu">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.6 8.2a7.8 7.8 0 0 1-4.7-1.6v7.1a6.1 6.1 0 1 1-5.2-6v3.5a2.7 2.7 0 1 0 1.8 2.5V2.5h3.4c.2 1.8 1.3 3.3 3.1 4v1.7c.5.1 1 .1 1.6 0z"></path></svg>
+                </a>
+                <a href="#support" data-social-channel="YouTube" aria-label="YouTube — kênh mẫu">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.2 7a3 3 0 0 0-2.1-2.1C19.2 4.4 12 4.4 12 4.4s-7.2 0-9.1.5A3 3 0 0 0 .8 7 31 31 0 0 0 .3 12a31 31 0 0 0 .5 5 3 3 0 0 0 2.1 2.1c1.9.5 9.1.5 9.1.5s7.2 0 9.1-.5a3 3 0 0 0 2.1-2.1 31 31 0 0 0 .5-5 31 31 0 0 0-.5-5zm-13.4 8.6V8.4l6.2 3.6z"></path></svg>
+                </a>
+                <a href="#support" data-social-channel="Instagram" aria-label="Instagram — kênh mẫu">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.2 2h9.6A5.2 5.2 0 0 1 22 7.2v9.6a5.2 5.2 0 0 1-5.2 5.2H7.2A5.2 5.2 0 0 1 2 16.8V7.2A5.2 5.2 0 0 1 7.2 2zm0 2.2a3 3 0 0 0-3 3v9.6a3 3 0 0 0 3 3h9.6a3 3 0 0 0 3-3V7.2a3 3 0 0 0-3-3zm4.8 3.1a4.7 4.7 0 1 1 0 9.4 4.7 4.7 0 0 1 0-9.4zm0 2.2a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zm5-4a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2z"></path></svg>
+                </a>
+              </div>
+            </div>
+            <p class="contact-demo-note">Số điện thoại, email, địa chỉ và liên kết mạng xã hội là dữ liệu mẫu, chưa kết nối kênh chính thức.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <a class="brand brand-footer" href="#home" data-screen-link="home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 3.2c-.9-.9-2.2-.4-3.1.5l-4.3 4.3-7.8-2c-.5-.1-1 .1-1.4.4l-.9.9 5.7 3.2-3.1 3.1-2.8-.7L2 14l3.7 1.8L7.5 19l1.1-1.1-.7-2.8 3.1-3.1 3.2 5.7.9-.9c.4-.4.5-.9.4-1.4l-2-7.8 4.3-4.3c.9-.9 1.4-2.2.5-3.1z"></path></svg>
+          </span>
+          <span class="brand-wordmark"><strong>TEO</strong><small>airlines</small></span>
+        </a>
+        <p>© 2026 TEO Airlines · Giao diện minh họa</p>
+      </div>
+      <nav class="footer-links" aria-label="Liên kết hỗ trợ">
+        <a href="#support" data-home-anchor="support">Hỗ trợ khách hàng</a>
+        <a href="#benefits" data-home-anchor="benefits">Đổi điểm</a>
+        <a href="#terms" data-coming-soon>Điều khoản</a>
+        <a href="#privacy" data-coming-soon>Chính sách riêng tư</a>
+      </nav>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <script src="js/app.js"></script>
+</body>
+</html>
