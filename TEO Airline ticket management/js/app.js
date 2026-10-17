@@ -657,6 +657,7 @@
 
       state.loyaltyPoints -= pointsCost;
       redeemButton.dataset.redeemed = "true";
+      redeemButton.disabled = true;
       state.redeemedPromoCodes.push(redeemButton.dataset.promoCode);
       updateRewards();
       redeemButton.textContent = `Đã đổi · ${redeemButton.dataset.promoCode}`;
