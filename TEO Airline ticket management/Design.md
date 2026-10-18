@@ -250,9 +250,10 @@ Bố cục dashboard với sidebar bên trái và vùng nội dung chính. Proto
 - **Khuyến mãi:** xem mã, thời hạn, điều kiện và lượt dùng; chỉ hỗ trợ thêm/sửa,
   không có thao tác xóa; có xuất CSV UTF-8 tương thích Excel.
 
-Cả hai trang nhân viên quầy và quản trị viên đều có nút đăng xuất kèm hộp thoại
-xác nhận; thao tác này hiện chỉ là minh họa phía trình duyệt, chưa kết nối xác
-thực hệ thống. Các form, bộ lọc và thông báo cũng là tương tác minh họa; dữ liệu
+Cả hai trang nhân viên quầy và quản trị viên đều có menu tài khoản ở cuối sidebar
+với mục đăng xuất, hộp thoại xác nhận và điều hướng tới trang đăng nhập; thao tác
+này hiện chỉ là minh họa phía trình duyệt, chưa kết nối xác thực hệ thống. Các
+form, bộ lọc và thông báo cũng là tương tác minh họa; dữ liệu
 không được lưu vào cơ sở dữ liệu. Số liệu dashboard, bảng và sơ đồ ghế đều là
 dữ liệu giả, cần thay bằng dữ liệu và quy tắc nghiệp vụ đã xác nhận trước khi
 kết nối hệ thống thật. Việc xóa tuyến/sân bay/chuyến bay có thể bị khóa khi

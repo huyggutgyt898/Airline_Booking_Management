@@ -117,12 +117,99 @@
   flex: 1;
 }
 
+.counter-account-menu {
+  position: relative;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+
 .counter-agent {
   display: flex;
+  width: 100%;
+  min-height: 40px;
   align-items: center;
   gap: 10px;
-  padding: 14px 8px 0;
-  border-top: 1px solid var(--border);
+  padding: 0 8px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  list-style: none;
+}
+
+.counter-agent:hover,
+.counter-agent:focus-visible,
+.counter-account-menu[open] > .counter-agent {
+  background: var(--background);
+}
+
+.counter-agent:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+.counter-agent::-webkit-details-marker {
+  display: none;
+}
+
+.counter-agent > svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  margin-left: auto;
+  color: var(--muted);
+  transition: transform 140ms ease;
+}
+
+.counter-account-menu[open] > .counter-agent > svg {
+  transform: rotate(180deg);
+}
+
+.counter-account-popover {
+  position: absolute;
+  z-index: 20;
+  right: 0;
+  bottom: calc(100% + 8px);
+  left: 0;
+  padding: 5px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: 0 8px 24px rgb(16 24 40 / 12%);
+}
+
+.counter-account-signout {
+  display: flex;
+  width: 100%;
+  min-height: 38px;
+  align-items: center;
+  gap: 9px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.counter-account-signout svg {
+  width: 16px;
+  height: 16px;
+  color: var(--muted);
+}
+
+.counter-account-signout:hover,
+.counter-account-signout:focus-visible {
+  background: rgb(220 38 38 / 10%);
+  color: #b42318;
+}
+
+.counter-account-signout:hover svg,
+.counter-account-signout:focus-visible svg {
+  color: #b42318;
 }
 
 .counter-avatar,
@@ -1248,16 +1335,6 @@
 }
 
 @media (max-width: 430px) {
-  .counter-logout span {
-    display: none;
-  }
-
-  .counter-logout {
-    width: 36px;
-    min-width: 36px;
-    padding-inline: 0;
-  }
-
   .counter-topbar {
     gap: 8px;
   }

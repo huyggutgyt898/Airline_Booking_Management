@@ -119,10 +119,97 @@
 
 .admin-agent {
   display: flex;
+  width: 100%;
+  min-height: 40px;
   align-items: center;
   gap: 10px;
-  padding: 14px 8px 0;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  list-style: none;
+}
+
+.admin-agent:hover,
+.admin-agent:focus-visible,
+.admin-account-menu[open] > .admin-agent {
+  background: var(--background);
+}
+
+.admin-agent:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+.admin-account-menu {
+  position: relative;
   border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+
+.admin-agent::-webkit-details-marker {
+  display: none;
+}
+
+.admin-agent > svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  margin-left: auto;
+  color: var(--muted);
+  transition: transform 140ms ease;
+}
+
+.admin-account-menu[open] > .admin-agent > svg {
+  transform: rotate(180deg);
+}
+
+.admin-account-popover {
+  position: absolute;
+  z-index: 20;
+  right: 0;
+  bottom: calc(100% + 8px);
+  left: 0;
+  padding: 5px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: 0 8px 24px rgb(16 24 40 / 12%);
+}
+
+.admin-account-signout {
+  display: flex;
+  width: 100%;
+  min-height: 38px;
+  align-items: center;
+  gap: 9px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.admin-account-signout svg {
+  width: 16px;
+  height: 16px;
+  color: var(--muted);
+}
+
+.admin-account-signout:hover,
+.admin-account-signout:focus-visible {
+  background: rgb(220 38 38 / 10%);
+  color: #b42318;
+}
+
+.admin-account-signout:hover svg,
+.admin-account-signout:focus-visible svg {
+  color: #b42318;
 }
 
 .admin-avatar {
@@ -1292,16 +1379,6 @@
 
   .admin-topbar-meta {
     gap: 8px;
-  }
-
-  .admin-logout span {
-    display: none;
-  }
-
-  .admin-logout {
-    width: 34px;
-    min-width: 34px;
-    padding-inline: 0;
   }
 
   .admin-content {

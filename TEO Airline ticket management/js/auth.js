@@ -183,6 +183,10 @@
       sessionStorage.removeItem(accountKey);
       updateAccountNavigation();
       logoutDialog.close();
+      if (logoutOpener?.dataset.signoutRedirect) {
+        window.location.assign(logoutOpener.dataset.signoutRedirect);
+        return;
+      }
       showToast("Bạn đã đăng xuất khỏi tài khoản minh hoạ.");
     });
     logoutDialog.addEventListener("cancel", (event) => {
