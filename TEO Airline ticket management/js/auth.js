@@ -181,24 +181,38 @@
     logoutDialog.querySelector("[data-signout-cancel]").addEventListener("click", () => logoutDialog.close());
     logoutDialog.querySelector("[data-signout-confirm]").addEventListener("click", () => {
       sessionStorage.removeItem(accountKey);
-      logoutDialog.close();
       updateAccountNavigation();
+      logoutDialog.close();
       showToast("Bạn đã đăng xuất khỏi tài khoản minh hoạ.");
+    });
+    logoutDialog.addEventListener("cancel", (event) => {
+      event.preventDefault();
+      logoutDialog.close();
     });
     logoutDialog.addEventListener("close", () => {
       if (logoutOpener?.isConnected && logoutOpener.getClientRects().length) {
         logoutOpener.focus();
-      } else if (window.matchMedia("(max-width: 760px)").matches) {
-        document.querySelector(".mobile-menu [data-auth-link]")?.focus();
+      } else if (logoutOpener?.closest("#account-popover") && sessionStorage.getItem(accountKey)) {
+        accountPopover.hidden = false;
+        accountTrigger.setAttribute("aria-expanded", "true");
+        logoutOpener.focus();
       } else {
-        document.querySelector(".header-login")?.focus();
+        [...document.querySelectorAll('[data-auth-link][href="login.html"]')]
+          .find((link) => link.getClientRects().length)
+          ?.focus();
       }
       logoutOpener = null;
     });
   }
 
   document.addEventListener("keydown", (event) => {
-    if (event.key !== "Escape" || !accountPopover || !accountTrigger) return;
+    if (event.key !== "Escape") return;
+    if (logoutDialog?.open) {
+      event.preventDefault();
+      logoutDialog.close();
+      return;
+    }
+    if (!accountPopover || !accountTrigger) return;
     accountPopover.hidden = true;
     accountTrigger.setAttribute("aria-expanded", "false");
   });
