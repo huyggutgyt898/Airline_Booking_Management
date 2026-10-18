@@ -234,21 +234,26 @@ tài khoản.
 
 ### 4.14. Giao diện quản trị viên
 
-Bố cục dashboard, sidebar và bảng dữ liệu.
+Bố cục dashboard với sidebar bên trái và vùng nội dung chính. Prototype
+`admin.html` có bảy màn hình:
 
-Màn hình tổng quan: - Tổng doanh thu. - Số vé đã bán. - Tỉ lệ lấp đầy
-ghế. - Số vé hủy và đổi. - Hiệu quả mã khuyến mãi. - Biểu đồ theo khoảng
-thời gian và bộ lọc.
+- **Tổng quan:** doanh thu, số vé đặt, tỉ lệ lấp đầy, vé bán/hủy/đổi, xu
+  hướng theo ngày/tuần/tháng/quý/năm/toàn bộ lịch sử và mã khuyến mãi nổi bật.
+  Có thể xuất báo cáo ở định dạng CSV UTF-8 tương thích Excel.
+- **Sân bay, tuyến bay và chuyến bay:** danh sách có tìm kiếm/lọc, phân trang
+  minh họa, thêm/sửa và xác nhận trước thao tác xóa.
+- **Máy bay và sơ đồ ghế:** xem đội bay và bản đồ ghế theo hạng; không có thao
+  tác sửa/xóa máy bay trong prototype.
+- **Bảng giá:** xem giá cơ bản, thuế và phí theo chuyến, hạng ghế, loại khách;
+  hỗ trợ thêm và sửa.
+- **Khuyến mãi:** xem mã, thời hạn, điều kiện và lượt dùng; chỉ hỗ trợ thêm/sửa,
+  không có thao tác xóa; có xuất CSV UTF-8 tương thích Excel.
 
-Màn hình quản lý: - Sân bay. - Tuyến bay. - Máy bay. - Sơ đồ ghế. -
-Chuyến bay và lịch bay. - Bảng giá theo hạng ghế và loại hành khách. -
-Thuế và phí. - Mã khuyến mãi. - Báo cáo doanh thu, tỉ lệ lấp đầy, số vé
-bán/hủy/đổi và thống kê khuyến mãi.
-
-Các màn hình quản lý nên có: - Bảng dữ liệu, tìm kiếm, lọc và phân
-trang. - Thêm, xem, sửa và vô hiệu hóa bản ghi theo quy tắc nghiệp vụ. -
-Xác nhận trước thao tác quan trọng. - Thông báo thành công/lỗi. - Không
-xóa dữ liệu lịch sử vé theo cách làm mất khả năng kiểm toán.
+Các form, bộ lọc và thông báo là tương tác minh họa phía trình duyệt; dữ liệu
+không được lưu vào cơ sở dữ liệu. Số liệu dashboard, bảng và sơ đồ ghế đều là
+dữ liệu giả, cần thay bằng dữ liệu và quy tắc nghiệp vụ đã xác nhận trước khi
+kết nối hệ thống thật. Việc xóa tuyến/sân bay/chuyến bay có thể bị khóa khi
+có bản ghi liên quan; không xóa lịch sử đặt vé.
 
 ## 5. Nguyên tắc UX và trạng thái giao diện
 
