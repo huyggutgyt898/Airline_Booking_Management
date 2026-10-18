@@ -46,7 +46,7 @@
       <header class="counter-topbar">
         <button class="counter-menu-toggle" type="button" data-menu-toggle aria-label="Mở menu" aria-controls="counter-sidebar" aria-expanded="false"><i data-lucide="menu" aria-hidden="true"></i></button>
         <p class="counter-breadcrumb">TEO Airlines <span aria-hidden="true">/</span> <strong data-page-title>Đặt vé</strong></p>
-        <span class="counter-shift">Quầy 02 <span class="counter-shift-detail">· Ca sáng</span></span>
+        <button class="counter-button counter-logout" type="button" data-signout-open aria-label="Đăng xuất"><i data-lucide="log-out" aria-hidden="true"></i><span>Đăng xuất</span></button>
       </header>
 
       <section class="counter-view" data-screen="booking">
@@ -293,7 +293,25 @@
     <div class="counter-field counter-dialog-reason" data-dialog-reason hidden><label for="action-reason">Lý do xử lý</label><input id="action-reason" required placeholder="Nhập lý do xử lý"></div>
     <div class="counter-dialog-actions"><button class="counter-button" type="button" data-dialog-close>Quay lại</button><button class="counter-button counter-button-primary" type="button" data-dialog-confirm>Xác nhận</button></div>
   </dialog>
+  <dialog class="logout-dialog" id="logout-dialog" aria-labelledby="logout-title" aria-describedby="logout-description">
+    <div class="logout-heading">
+      <span class="logout-icon"><i data-lucide="log-out" aria-hidden="true"></i></span>
+      <div>
+        <h2 id="logout-title">Đăng xuất khỏi tài khoản?</h2>
+        <p id="logout-description">Bạn sẽ cần đăng nhập lại để tiếp tục dùng tài khoản mẫu.</p>
+      </div>
+    </div>
+    <div class="logout-account">
+      <i data-lucide="user-round" aria-hidden="true"></i><span>Tài khoản nhân viên quầy</span>
+    </div>
+    <div class="logout-actions">
+      <button class="button button-secondary" type="button" data-signout-cancel>Huỷ</button>
+      <button class="button button-danger" type="button" data-signout-confirm>Đăng xuất</button>
+    </div>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
   <div class="counter-toast" role="status" aria-live="polite" hidden></div>
   <script src="js/counter.js"></script>
+  <script src="js/auth.js"></script>
 </body>
 </html>

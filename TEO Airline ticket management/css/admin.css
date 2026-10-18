@@ -1294,6 +1294,16 @@
     gap: 8px;
   }
 
+  .admin-logout span {
+    display: none;
+  }
+
+  .admin-logout {
+    width: 34px;
+    min-width: 34px;
+    padding-inline: 0;
+  }
+
   .admin-content {
     padding: 20px 14px 30px;
   }

@@ -186,11 +186,6 @@
   font-weight: 600;
 }
 
-.counter-shift {
-  color: var(--muted);
-  font-size: 12px;
-}
-
 .counter-menu-toggle {
   display: none;
 }
@@ -1129,11 +1124,6 @@
     flex: 1;
   }
 
-  .counter-shift {
-    font-size: 12px;
-    white-space: nowrap;
-  }
-
   .counter-view {
     padding: 18px 14px 32px;
   }
@@ -1258,18 +1248,18 @@
 }
 
 @media (max-width: 430px) {
+  .counter-logout span {
+    display: none;
+  }
+
+  .counter-logout {
+    width: 36px;
+    min-width: 36px;
+    padding-inline: 0;
+  }
+
   .counter-topbar {
     gap: 8px;
-  }
-
-  .counter-shift {
-    max-width: 92px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .counter-shift-detail {
-    display: none;
   }
 
   .counter-panel-head,

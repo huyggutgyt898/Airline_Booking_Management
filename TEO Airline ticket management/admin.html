@@ -48,7 +48,7 @@
       <header class="admin-topbar">
         <button class="admin-menu-toggle" type="button" data-menu-toggle aria-label="Mở menu" aria-controls="admin-sidebar" aria-expanded="false"><i data-lucide="menu" aria-hidden="true"></i></button>
         <p class="admin-breadcrumb">TEO Airlines <span aria-hidden="true">/</span> <strong data-page-title>Tổng quan</strong></p>
-        <div class="admin-topbar-meta"><span>Trung tâm vận hành</span><span class="admin-demo-indicator">Dữ liệu minh họa</span><span class="admin-avatar admin-avatar-small" aria-label="Quản trị viên">AD</span></div>
+        <div class="admin-topbar-meta"><span>Trung tâm vận hành</span><span class="admin-demo-indicator">Dữ liệu minh họa</span><span class="admin-avatar admin-avatar-small" aria-label="Quản trị viên">AD</span><button class="admin-button admin-button-ghost admin-logout" type="button" data-signout-open aria-label="Đăng xuất"><i data-lucide="log-out" aria-hidden="true"></i><span>Đăng xuất</span></button></div>
       </header>
 
       <div class="admin-content">
@@ -256,7 +256,25 @@
     </form>
   </dialog>
 
+  <dialog class="logout-dialog" id="logout-dialog" aria-labelledby="logout-title" aria-describedby="logout-description">
+    <div class="logout-heading">
+      <span class="logout-icon"><i data-lucide="log-out" aria-hidden="true"></i></span>
+      <div>
+        <h2 id="logout-title">Đăng xuất khỏi tài khoản?</h2>
+        <p id="logout-description">Bạn sẽ cần đăng nhập lại để tiếp tục dùng tài khoản mẫu.</p>
+      </div>
+    </div>
+    <div class="logout-account">
+      <i data-lucide="user-round" aria-hidden="true"></i><span>Tài khoản quản trị viên</span>
+    </div>
+    <div class="logout-actions">
+      <button class="button button-secondary" type="button" data-signout-cancel>Huỷ</button>
+      <button class="button button-danger" type="button" data-signout-confirm>Đăng xuất</button>
+    </div>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
   <div class="admin-toast" role="status" aria-live="polite" hidden></div>
   <script src="js/admin.js"></script>
+  <script src="js/auth.js"></script>
 </body>
 </html>
