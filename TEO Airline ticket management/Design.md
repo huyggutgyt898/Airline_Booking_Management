@@ -207,6 +207,10 @@ hệ thống.
 
 Bố cục sidebar + vùng nội dung chính.
 
+Giao diện hiện tại có các mục **Đặt vé**, **Đổi / hủy vé**, **Tài khoản khách** và **Hồ sơ nhân viên**. Nhân viên không tự đăng ký; hồ sơ và đổi mật khẩu áp dụng cho nhân viên đang đăng nhập, còn mục tài khoản khách dùng để tra cứu và khóa tài khoản hành khách. Bản HTML hiện tại là giao diện minh họa, chưa kết nối xác thực, đặt chỗ, thanh toán hoặc dữ liệu khách hàng.
+
+Chi tiết đổi/hủy cần thể hiện trạng thái yêu cầu, điều kiện áp dụng, phụ phí đổi, tiền hoàn dự kiến và lịch sử nhân viên xử lý, thời gian, lý do. Mọi khoản ước tính trên giao diện minh họa phải được hệ thống tính và xác nhận lại trước khi thực hiện.
+
 Màn hình bán vé: - Tìm chuyến theo điểm đi, điểm đến, ngày bay và hạng
 ghế. - Chọn chuyến và ghế. - Nhập thông tin hành khách. - Tính giá và áp
 dụng khuyến mãi nếu được phép. - Ghi nhận tiền mặt hoặc xác nhận chuyển

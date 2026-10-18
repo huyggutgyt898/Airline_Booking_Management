@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0F766E">
+  <meta name="description" content="Giao diện nghiệp vụ nhân viên quầy vé TEO Airlines.">
+  <title>Đặt vé tại quầy — TEO Airlines</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/counter.css">
+</head>
+<body class="counter-page">
+  <button class="counter-scrim" type="button" data-menu-close aria-label="Đóng menu" hidden></button>
+  <div class="counter-shell">
+    <aside class="counter-sidebar" id="counter-sidebar" aria-label="Điều hướng nhân viên">
+      <a class="counter-brand" href="counter.html?screen=booking" aria-label="TEO Airlines — Đặt vé tại quầy">
+        <span class="counter-brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 3.2c-.9-.9-2.2-.4-3.1.5l-4.3 4.3-7.8-2c-.5-.1-1 .1-1.4.4l-.9.9 5.7 3.2-3.1 3.1-2.8-.7L2 14l3.7 1.8L7.5 19l1.1-1.1-.7-2.8 3.1-3.1 3.2 5.7.9-.9c.4-.4.5-.9.4-1.4l-2-7.8 4.3-4.3c.9-.9 1.4-2.2.5-3.1z"></path></svg>
+        </span>
+        <span class="counter-brand-copy"><strong>TEO</strong><span>Airlines · Quầy vé</span></span>
+      </a>
+
+      <p class="counter-nav-label">Nghiệp vụ</p>
+      <nav class="counter-nav" aria-label="Nghiệp vụ quầy vé">
+        <a class="counter-nav-link" href="counter.html?screen=booking" data-screen-link="booking"><i data-lucide="ticket" aria-hidden="true"></i>Đặt vé</a>
+        <a class="counter-nav-link" href="counter.html?screen=exchange" data-screen-link="exchange"><i data-lucide="refresh-ccw" aria-hidden="true"></i>Đổi / hủy vé</a>
+        <a class="counter-nav-link" href="counter.html?screen=customers" data-screen-link="customers"><i data-lucide="users-round" aria-hidden="true"></i>Tài khoản khách</a>
+      </nav>
+      <p class="counter-nav-label counter-nav-label-personal">Cá nhân</p>
+      <nav class="counter-nav" aria-label="Thông tin cá nhân">
+        <a class="counter-nav-link" href="counter.html?screen=profile" data-screen-link="profile"><i data-lucide="user-round" aria-hidden="true"></i>Hồ sơ nhân viên</a>
+      </nav>
+
+      <div class="counter-sidebar-spacer"></div>
+      <div class="counter-agent">
+        <span class="counter-avatar" aria-hidden="true">ML</span>
+        <span class="counter-agent-copy"><strong>Mai Linh Nguyễn</strong><span>Nhân viên quầy</span></span>
+      </div>
+    </aside>
+
+    <main class="counter-main">
+      <header class="counter-topbar">
+        <button class="counter-menu-toggle" type="button" data-menu-toggle aria-label="Mở menu" aria-controls="counter-sidebar" aria-expanded="false"><i data-lucide="menu" aria-hidden="true"></i></button>
+        <p class="counter-breadcrumb">TEO Airlines <span aria-hidden="true">/</span> <strong data-page-title>Đặt vé</strong></p>
+        <span class="counter-shift">Quầy 02 <span class="counter-shift-detail">· Ca sáng</span></span>
+      </header>
+
+      <section class="counter-view" data-screen="booking">
+        <div class="counter-page-heading"><div><h1>Đặt vé tại quầy</h1><p>Tìm chuyến, chọn ghế và ghi nhận thanh toán.</p></div></div>
+        <div class="counter-stepper" aria-label="Các bước đặt vé">
+          <div class="counter-step is-current"><span>1</span>Chuyến bay</div>
+          <div class="counter-step"><span>2</span>Hành khách</div>
+          <div class="counter-step"><span>3</span>Chọn ghế</div>
+          <div class="counter-step"><span>4</span>Thanh toán</div>
+        </div>
+
+        <div class="counter-booking-grid">
+          <div class="counter-booking-main">
+            <section class="counter-panel">
+              <div class="counter-panel-head"><h2>Tìm chuyến bay</h2><span class="counter-small counter-muted">Một chiều · Nội địa</span></div>
+              <div class="counter-panel-body">
+                <div class="counter-field-grid counter-field-grid-two">
+                  <div class="counter-field"><label for="origin">Điểm đi</label><input id="origin" value="Hồ Chí Minh (SGN)"></div>
+                  <div class="counter-field"><label for="destination">Điểm đến</label><input id="destination" value="Hà Nội (HAN)"></div>
+                  <div class="counter-field"><label for="departure">Ngày bay</label><input id="departure" value="21/11/2026"></div>
+                  <div class="counter-field">
+                    <label id="cabin-label">Hạng ghế</label>
+                    <div class="counter-select">
+                      <button class="counter-select-trigger" id="cabin-trigger" type="button" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="cabin-listbox" aria-labelledby="cabin-label cabin-value" data-select-trigger>
+                        <span id="cabin-value">Phổ thông</span><i data-lucide="chevron-down" aria-hidden="true"></i>
+                      </button>
+                      <div class="counter-select-menu" id="cabin-listbox" role="listbox" aria-labelledby="cabin-label" aria-hidden="true" inert>
+                        <button class="counter-select-option" type="button" role="option" aria-selected="true">Phổ thông<i data-lucide="check" aria-hidden="true"></i></button>
+                        <button class="counter-select-option" type="button" role="option" aria-selected="false">Thương gia</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="counter-actions"><button class="counter-button" type="button" data-demo-action>Đặt lại</button><button class="counter-button counter-button-primary" type="button" data-demo-action><i data-lucide="search" aria-hidden="true"></i>Tìm chuyến</button></div>
+              </div>
+            </section>
+
+            <section class="counter-panel">
+              <div class="counter-panel-head"><h2>Chuyến phù hợp</h2><span class="counter-small counter-muted">3 chuyến · Sắp xếp theo giờ bay</span></div>
+              <div class="counter-table-wrap">
+                <table class="counter-table">
+                  <thead><tr><th>Chuyến bay</th><th>Khởi hành</th><th>Đến nơi</th><th>Ghế còn</th><th>Giá / khách</th><th></th></tr></thead>
+                  <tbody>
+                    <tr class="is-selected"><td><strong>TEO 218</strong><span class="counter-record-meta">Bay thẳng · 2h 10m</span></td><td>07:30<span class="counter-record-meta">SGN</span></td><td>09:40<span class="counter-record-meta">HAN</span></td><td><span class="counter-badge counter-badge-success">12 ghế</span></td><td class="counter-price">1.850.000 ₫</td><td><button class="counter-button counter-button-primary counter-button-sm" type="button" data-demo-action>Chọn</button></td></tr>
+                    <tr><td><strong>TEO 302</strong><span class="counter-record-meta">Bay thẳng · 2h 15m</span></td><td>10:15<span class="counter-record-meta">SGN</span></td><td>12:30<span class="counter-record-meta">HAN</span></td><td><span class="counter-badge counter-badge-success">8 ghế</span></td><td class="counter-price">2.120.000 ₫</td><td><button class="counter-button counter-button-sm" type="button" data-demo-action>Chọn</button></td></tr>
+                    <tr><td><strong>TEO 416</strong><span class="counter-record-meta">Bay thẳng · 2h 05m</span></td><td>14:00<span class="counter-record-meta">SGN</span></td><td>16:05<span class="counter-record-meta">HAN</span></td><td><span class="counter-badge counter-badge-warning">2 ghế</span></td><td class="counter-price">2.460.000 ₫</td><td><button class="counter-button counter-button-sm" type="button" data-demo-action>Chọn</button></td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="counter-flight-list" aria-label="Danh sách chuyến bay">
+                <article class="counter-flight-option is-selected">
+                  <div class="counter-flight-title"><strong>TEO 218</strong><span class="counter-price">1.850.000 ₫</span></div>
+                  <p class="counter-flight-route">07:30 SGN → 09:40 HAN · 2h 10m</p>
+                  <div class="counter-flight-bottom"><span><span class="counter-badge counter-badge-success">12 ghế</span> · Bay thẳng</span><button class="counter-button counter-button-primary counter-button-sm" type="button" data-demo-action>Chọn</button></div>
+                </article>
+                <article class="counter-flight-option">
+                  <div class="counter-flight-title"><strong>TEO 302</strong><span class="counter-price">2.120.000 ₫</span></div>
+                  <p class="counter-flight-route">10:15 SGN → 12:30 HAN · 2h 15m</p>
+                  <div class="counter-flight-bottom"><span><span class="counter-badge counter-badge-success">8 ghế</span> · Bay thẳng</span><button class="counter-button counter-button-sm" type="button" data-demo-action>Chọn</button></div>
+                </article>
+                <article class="counter-flight-option">
+                  <div class="counter-flight-title"><strong>TEO 416</strong><span class="counter-price">2.460.000 ₫</span></div>
+                  <p class="counter-flight-route">14:00 SGN → 16:05 HAN · 2h 05m</p>
+                  <div class="counter-flight-bottom"><span><span class="counter-badge counter-badge-warning">2 ghế</span> · Bay thẳng</span><button class="counter-button counter-button-sm" type="button" data-demo-action>Chọn</button></div>
+                </article>
+              </div>
+            </section>
+
+            <section class="counter-panel">
+              <div class="counter-panel-head"><h2>Hành khách và ghế</h2><span class="counter-small counter-muted">1 người lớn</span></div>
+              <div class="counter-panel-body">
+                <div class="counter-field-grid">
+                  <div class="counter-field"><label for="passenger-name">Họ tên hành khách</label><input id="passenger-name" value="Nguyễn Minh Anh"></div>
+                  <div class="counter-field"><label for="passenger-id">CCCD / hộ chiếu</label><input id="passenger-id" value="07920400••••"></div>
+                  <div class="counter-field"><label for="passenger-phone">Số điện thoại</label><input id="passenger-phone" value="0903 456 789"></div>
+                  <div class="counter-field"><label for="passenger-email">Email (không bắt buộc)</label><input id="passenger-email" value="minhanh@example.vn"></div>
+                </div>
+                <p class="counter-small counter-muted counter-seat-label">Chọn ghế · Hạng phổ thông</p>
+                <div class="counter-seat-map" aria-label="Sơ đồ ghế">
+                  <button class="counter-seat is-selected" type="button" aria-pressed="true">12A</button><button class="counter-seat" type="button" aria-pressed="false">12B</button><button class="counter-seat" type="button" disabled>12C</button><button class="counter-seat" type="button" disabled>12D</button><button class="counter-seat" type="button" aria-pressed="false">12E</button><button class="counter-seat" type="button" aria-pressed="false">12F</button>
+                  <button class="counter-seat" type="button" aria-pressed="false">13A</button><button class="counter-seat" type="button" disabled>13B</button><button class="counter-seat" type="button" aria-pressed="false">13C</button><button class="counter-seat" type="button" aria-pressed="false">13D</button><button class="counter-seat" type="button" disabled>13E</button><button class="counter-seat" type="button" aria-pressed="false">13F</button>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <aside class="counter-panel counter-summary">
+            <div class="counter-panel-head"><h2>Tóm tắt đặt chỗ</h2><span class="counter-badge counter-badge-brand">Nháp</span></div>
+            <div class="counter-panel-body">
+              <div class="counter-route"><div><strong>SGN</strong><span>07:30 · 21/11</span></div><span class="counter-route-line"></span><div><strong>HAN</strong><span>09:40 · 21/11</span></div></div>
+              <div class="counter-summary-line"><span>TEO 218 · Phổ thông</span><strong>12A</strong></div>
+              <div class="counter-summary-line"><span>Người lớn × 1</span><span>1.850.000 ₫</span></div>
+              <div class="counter-summary-line"><span>Thuế, phí</span><span>250.000 ₫</span></div>
+              <div class="counter-summary-total"><span>Tổng cộng</span><strong>2.100.000 ₫</strong></div>
+              <fieldset class="counter-payment-options">
+                <legend class="counter-small counter-muted">Phương thức thu tiền</legend>
+                <label class="counter-payment-option is-selected"><input type="radio" name="payment" checked><span>Tiền mặt</span></label>
+                <label class="counter-payment-option"><input type="radio" name="payment"><span>Chuyển khoản</span></label>
+              </fieldset>
+              <button class="counter-button counter-button-primary counter-payment-submit" type="button" data-demo-action>Xác nhận thanh toán</button>
+              <p class="counter-small counter-muted counter-demo-note">Dữ liệu mẫu · Chưa kết nối thanh toán</p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="counter-view" data-screen="exchange" hidden>
+        <div class="counter-page-heading"><div><h1>Đổi / hủy vé</h1><p>Tra cứu đặt chỗ, kiểm tra thông tin rồi xác nhận thao tác.</p></div></div>
+        <section class="counter-panel">
+          <div class="counter-panel-head"><h2>Tra cứu đặt chỗ</h2><span class="counter-small counter-muted">Có tài khoản hoặc khách vãng lai</span></div>
+          <div class="counter-panel-body">
+            <div class="counter-field-grid">
+              <div class="counter-field"><label for="booking-code">Mã đặt chỗ</label><input id="booking-code" value="TEO-240918"></div>
+              <div class="counter-field"><label for="lookup-name">Tên hành khách</label><input id="lookup-name" value="Trần Quốc Bảo"></div>
+              <div class="counter-field"><label for="lookup-contact">Số điện thoại / email</label><input id="lookup-contact" value="0912 345 678"></div>
+              <div class="counter-field"><label for="lookup-date">Ngày bay</label><input id="lookup-date" value="24/10/2026"></div>
+            </div>
+            <div class="counter-actions"><button class="counter-button" type="button" data-demo-action>Xóa điều kiện</button><button class="counter-button counter-button-primary" type="button" data-demo-action><i data-lucide="search" aria-hidden="true"></i>Tra cứu</button></div>
+          </div>
+        </section>
+        <div class="counter-lookup-grid">
+          <section class="counter-panel">
+            <div class="counter-panel-head"><h2>Kết quả đặt chỗ</h2><span class="counter-small counter-muted">2 kết quả</span></div>
+            <div class="counter-table-wrap">
+              <table class="counter-table">
+                <thead><tr><th>Mã đặt chỗ</th><th>Hành khách</th><th>Hành trình</th><th>Trạng thái</th><th>Đặt bởi</th></tr></thead>
+                <tbody>
+                  <tr class="is-selected"><td><a class="counter-link" href="#booking-detail">TEO-240918</a></td><td><strong>Trần Quốc Bảo</strong><span class="counter-record-meta">0912 345 678</span></td><td>SGN → HAN<span class="counter-record-meta">24/10/2026 · TEO 218</span></td><td><span class="counter-badge counter-badge-success">Đã xác nhận</span></td><td><span class="counter-badge counter-badge-warning">Khách vãng lai</span></td></tr>
+                  <tr><td><a class="counter-link" href="#booking-detail">TEO-240862</a></td><td><strong>Lê Ngọc Hà</strong><span class="counter-record-meta">ha.le@example.vn</span></td><td>HAN → DAD<span class="counter-record-meta">02/11/2026 · TEO 511</span></td><td><span class="counter-badge counter-badge-success">Đã xác nhận</span></td><td><span class="counter-badge counter-badge-brand">Có tài khoản</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="counter-booking-cards">
+              <article class="counter-booking-card is-selected"><div><a class="counter-link" href="#booking-detail">TEO-240918</a><span class="counter-badge counter-badge-warning">Khách vãng lai</span></div><strong>Trần Quốc Bảo</strong><span>0912 345 678</span><span>SGN → HAN · 24/10/2026 · TEO 218</span><span class="counter-badge counter-badge-success">Đã xác nhận</span></article>
+              <article class="counter-booking-card"><div><a class="counter-link" href="#booking-detail">TEO-240862</a><span class="counter-badge counter-badge-brand">Có tài khoản</span></div><strong>Lê Ngọc Hà</strong><span>ha.le@example.vn</span><span>HAN → DAD · 02/11/2026 · TEO 511</span><span class="counter-badge counter-badge-success">Đã xác nhận</span></article>
+            </div>
+          </section>
+
+          <aside class="counter-panel" id="booking-detail">
+            <div class="counter-panel-head"><h2>Chi tiết đặt chỗ</h2><span class="counter-badge counter-badge-success">Đã xác nhận</span></div>
+            <div class="counter-panel-body">
+              <strong class="counter-link">TEO-240918</strong><p class="counter-record-meta">Đặt ngày 18/09/2026 · Khách vãng lai</p>
+              <div class="counter-route counter-route-detail"><div><strong>SGN</strong><span>08:10</span></div><span class="counter-route-line"></span><div><strong>HAN</strong><span>10:20</span></div></div>
+              <dl class="counter-detail-list"><dt>Hành khách</dt><dd>Trần Quốc Bảo</dd><dt>Ghế</dt><dd>18C</dd><dt>Thanh toán</dt><dd>Tiền mặt · Đã thu</dd><dt>Tổng tiền</dt><dd>2.450.000 ₫</dd><dt>Yêu cầu xử lý</dt><dd><span class="counter-badge">Chưa gửi</span></dd></dl>
+              <div class="counter-adjustment-summary" aria-label="Ước tính đổi và hủy vé">
+                <div><span>Phụ phí đổi chuyến</span><strong>Theo điều kiện vé</strong></div>
+                <div><span>Tiền hoàn dự kiến</span><strong>2.450.000 ₫</strong></div>
+              </div>
+              <p class="counter-estimate-note">Minh họa hoàn toàn bộ nếu hủy trước hơn 3 ngày khởi hành. Khoản thực tế cần được hệ thống tính lại.</p>
+              <section class="counter-policy" aria-labelledby="counter-policy-title">
+                <h3 id="counter-policy-title">Điều kiện áp dụng</h3>
+                <ul>
+                  <li>Đổi vé trước giờ khởi hành ít nhất 5 ngày; phụ phí tùy điều kiện vé.</li>
+                  <li>Hủy vé trước giờ khởi hành ít nhất 12 tiếng.</li>
+                  <li>Hủy trước hơn 3 ngày: hoàn toàn bộ; trường hợp khác, hoàn một phần theo quy định.</li>
+                </ul>
+              </section>
+              <section class="counter-history" aria-labelledby="counter-history-title">
+                <h3 id="counter-history-title">Lịch sử xử lý</h3>
+                <p>Chưa có bản ghi. Khi xử lý sẽ lưu nhân viên, thời gian và lý do.</p>
+              </section>
+              <div class="counter-notice"><i data-lucide="info" aria-hidden="true"></i><span>Khoản phí và tiền hoàn chỉ là minh họa; hệ thống cần xác nhận lại.</span></div>
+              <div class="counter-actions counter-detail-actions"><button class="counter-button counter-button-danger" type="button" data-open-confirm="cancel">Hủy vé</button><button class="counter-button counter-button-primary" type="button" data-open-confirm="exchange">Đổi chuyến</button></div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="counter-view" data-screen="customers" hidden>
+        <div class="counter-page-heading"><div><h1>Tài khoản khách hàng</h1><p>Tra cứu và quản lý tài khoản hành khách / khách hàng.</p></div></div>
+        <div class="counter-account-grid">
+          <section class="counter-panel">
+            <div class="counter-panel-head"><h2>Danh sách tài khoản</h2><span class="counter-small counter-muted">1.284 tài khoản</span></div>
+            <div class="counter-panel-body">
+              <div class="counter-filters">
+                <div class="counter-field"><label for="customer-search">Tìm khách hàng</label><input id="customer-search" value="Ngọc Hà, email hoặc số điện thoại"></div>
+                <div class="counter-field counter-status-field"><label id="customer-status-label">Trạng thái</label><div class="counter-select">
+                  <button class="counter-select-trigger" id="customer-status-trigger" type="button" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="customer-status-listbox" aria-labelledby="customer-status-label customer-status-value" data-select-trigger><span id="customer-status-value">Tất cả</span><i data-lucide="chevron-down" aria-hidden="true"></i></button>
+                  <div class="counter-select-menu" id="customer-status-listbox" role="listbox" aria-labelledby="customer-status-label" aria-hidden="true" inert><button class="counter-select-option" type="button" role="option" aria-selected="true">Tất cả<i data-lucide="check" aria-hidden="true"></i></button><button class="counter-select-option" type="button" role="option" aria-selected="false">Đang hoạt động</button><button class="counter-select-option" type="button" role="option" aria-selected="false">Đã khóa</button></div>
+                </div></div>
+                <button class="counter-button counter-button-primary" type="button" data-demo-action>Tìm kiếm</button>
+              </div>
+            </div>
+            <div class="counter-table-wrap">
+              <table class="counter-table">
+                <thead><tr><th>Khách hàng</th><th>Liên hệ</th><th>Vai trò</th><th>Trạng thái</th><th></th></tr></thead>
+                <tbody>
+                  <tr class="is-selected"><td><div class="counter-account-cell"><span class="counter-customer-avatar">LH</span><span><strong>Lê Ngọc Hà</strong><span class="counter-record-meta">Tạo 12/06/2025</span></span></div></td><td>ha.le@example.vn<span class="counter-record-meta">0987 654 321</span></td><td>Hành khách</td><td><span class="counter-badge counter-badge-success">Hoạt động</span></td><td><button class="counter-button counter-button-sm" type="button" data-demo-action>Chi tiết</button></td></tr>
+                  <tr><td><div class="counter-account-cell"><span class="counter-customer-avatar">PN</span><span><strong>Phạm Gia Nhi</strong><span class="counter-record-meta">Tạo 03/02/2026</span></span></div></td><td>nhi.pham@example.vn<span class="counter-record-meta">0908 112 233</span></td><td>Hành khách</td><td><span class="counter-badge counter-badge-danger">Đã khóa</span></td><td><button class="counter-button counter-button-sm" type="button" data-demo-action>Chi tiết</button></td></tr>
+                  <tr><td><div class="counter-account-cell"><span class="counter-customer-avatar">TD</span><span><strong>Tên hành khách hiển thị dài để kiểm tra xuống dòng</strong><span class="counter-record-meta">Tài khoản tạo 18/10/2026</span></span></div></td><td>—<span class="counter-record-meta">000 000 000</span></td><td>Hành khách</td><td><span class="counter-badge counter-badge-success">Hoạt động</span></td><td><button class="counter-button counter-button-sm" type="button" data-demo-action>Chi tiết</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="counter-customer-cards">
+              <article class="counter-customer-card is-selected"><div class="counter-customer-card-head"><div class="counter-account-cell"><span class="counter-customer-avatar">LH</span><strong>Lê Ngọc Hà</strong></div><span class="counter-badge counter-badge-success">Hoạt động</span></div><span>ha.le@example.vn · 0987 654 321</span><button class="counter-button counter-button-sm" type="button" data-demo-action>Chi tiết</button></article>
+              <article class="counter-customer-card"><div class="counter-customer-card-head"><div class="counter-account-cell"><span class="counter-customer-avatar">PN</span><strong>Phạm Gia Nhi</strong></div><span class="counter-badge counter-badge-danger">Đã khóa</span></div><span>nhi.pham@example.vn · 0908 112 233</span><button class="counter-button counter-button-sm" type="button" data-demo-action>Chi tiết</button></article>
+              <article class="counter-customer-card"><div class="counter-customer-card-head"><div class="counter-account-cell"><span class="counter-customer-avatar">TD</span><strong>Tên hành khách hiển thị dài để kiểm tra xuống dòng</strong></div><span class="counter-badge counter-badge-success">Hoạt động</span></div><span>— · 000 000 000</span><button class="counter-button counter-button-sm" type="button" data-demo-action>Chi tiết</button></article>
+            </div>
+          </section>
+
+          <aside class="counter-panel">
+            <div class="counter-panel-head"><h2>Thông tin tài khoản</h2><span class="counter-badge counter-badge-success">Hoạt động</span></div>
+            <div class="counter-panel-body">
+              <div class="counter-account-cell counter-account-detail"><span class="counter-customer-avatar">LH</span><span><strong>Lê Ngọc Hà</strong><span class="counter-record-meta">Vai trò hành khách</span></span></div>
+              <dl class="counter-detail-list"><dt>Email</dt><dd>ha.le@example.vn</dd><dt>Điện thoại</dt><dd>0987 654 321</dd><dt>Ngày tạo</dt><dd>12/06/2025</dd><dt>Đặt chỗ</dt><dd>6 đặt chỗ</dd></dl>
+              <div class="counter-notice"><i data-lucide="triangle-alert" aria-hidden="true"></i><span>Khóa tài khoản sẽ ngăn khách đăng nhập. Không ảnh hưởng dữ liệu đặt chỗ.</span></div>
+              <button class="counter-button counter-button-danger counter-lock-button" type="button" data-open-confirm="lock"><i data-lucide="lock-keyhole" aria-hidden="true"></i>Khóa tài khoản</button>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="counter-view" data-screen="profile" hidden>
+        <div class="counter-page-heading"><div><h1>Hồ sơ nhân viên</h1><p>Cập nhật thông tin cá nhân và mật khẩu đăng nhập.</p></div></div>
+        <div class="counter-profile-grid">
+          <section class="counter-panel">
+            <div class="counter-panel-head"><h2>Thông tin cá nhân</h2></div>
+            <div class="counter-panel-body"><form class="counter-form-grid" data-demo-form>
+              <div class="counter-field"><label for="staff-name">Họ và tên</label><input id="staff-name" value="Mai Linh Nguyễn"></div>
+              <div class="counter-field"><label for="staff-id">Mã nhân viên</label><input id="staff-id" value="NV-0208" disabled></div>
+              <div class="counter-field"><label for="staff-email">Email công việc</label><input id="staff-email" value="linh.nguyen@teoairlines.vn"></div>
+              <div class="counter-field"><label for="staff-phone">Số điện thoại</label><input id="staff-phone" value="0901 223 344"></div>
+              <div class="counter-field counter-field-full"><label for="staff-role">Vai trò</label><input id="staff-role" value="Nhân viên quầy" disabled></div>
+              <div class="counter-form-actions"><button class="counter-button" type="reset">Hủy</button><button class="counter-button counter-button-primary" type="submit">Lưu thông tin</button></div>
+            </form></div>
+          </section>
+          <section class="counter-panel">
+            <div class="counter-panel-head"><h2>Đổi mật khẩu</h2></div>
+            <div class="counter-panel-body"><form class="counter-form-stack" data-demo-form>
+              <div class="counter-field"><label for="current-password">Mật khẩu hiện tại</label><input id="current-password" type="password" autocomplete="current-password"></div>
+              <div class="counter-field"><label for="new-password">Mật khẩu mới</label><input id="new-password" type="password" autocomplete="new-password"></div>
+              <div class="counter-field"><label for="confirm-password">Xác nhận mật khẩu mới</label><input id="confirm-password" type="password" autocomplete="new-password"></div>
+              <div class="counter-form-actions"><button class="counter-button counter-button-primary" type="submit">Cập nhật mật khẩu</button></div>
+            </form></div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog class="counter-dialog" role="alertdialog" aria-labelledby="counter-dialog-title" aria-describedby="counter-dialog-description">
+    <h2 id="counter-dialog-title">Xác nhận thao tác</h2>
+    <p id="counter-dialog-description" data-dialog-copy>Vui lòng kiểm tra thông tin trước khi tiếp tục.</p>
+    <div class="counter-field counter-dialog-reason" data-dialog-reason hidden><label for="action-reason">Lý do xử lý</label><input id="action-reason" required placeholder="Nhập lý do xử lý"></div>
+    <div class="counter-dialog-actions"><button class="counter-button" type="button" data-dialog-close>Quay lại</button><button class="counter-button counter-button-primary" type="button" data-dialog-confirm>Xác nhận</button></div>
+  </dialog>
+  <div class="counter-toast" role="status" aria-live="polite" hidden></div>
+  <script src="js/counter.js"></script>
+</body>
+</html>
