@@ -18,6 +18,7 @@
       sold: "118",
       cancelled: "5",
       changed: "5",
+      visits: "12.840",
       promo: [8, 6, 3, 1],
       labels: ["08h", "10h", "12h", "14h", "16h", "18h"],
       revenueBars: [4, 6, 9, 5, 8, 10.8],
@@ -32,6 +33,7 @@
       sold: "764",
       cancelled: "22",
       changed: "26",
+      visits: "86.420",
       promo: [18, 12, 5, 3],
       labels: ["T2", "T3", "T4", "T5", "T6", "T7"],
       revenueBars: [35, 44, 51, 42, 55, 59],
@@ -46,6 +48,7 @@
       sold: "3.610",
       cancelled: "106",
       changed: "126",
+      visits: "326.480",
       promo: [58, 42, 17, 9],
       labels: ["01–05", "06–10", "11–15", "16–20", "21–25", "26–31"],
       revenueBars: [160, 190, 215, 185, 250, 280],
@@ -60,6 +63,7 @@
       sold: "10.310",
       cancelled: "301",
       changed: "334",
+      visits: "984.620",
       promo: [168, 120, 62, 40],
       labels: ["Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"],
       revenueBars: [540, 580, 630, 570, 650, 670],
@@ -74,6 +78,7 @@
       sold: "40.521",
       cancelled: "1.021",
       changed: "1.278",
+      visits: "3.842.160",
       promo: [760, 610, 280, 170],
       labels: ["T1–T2", "T3–T4", "T5–T6", "T7–T8", "T9–T10", "T11–T12"],
       revenueBars: [1800, 1950, 2100, 2200, 2400, 3750],
@@ -88,6 +93,7 @@
       sold: "91.620",
       cancelled: "2.380",
       changed: "2.940",
+      visits: "8.426.510",
       promo: [1800, 1400, 620, 390],
       labels: ["2021", "2022", "2023", "2024", "2025", "2026"],
       revenueBars: [3500, 4200, 4800, 5100, 5600, 8600],
@@ -142,8 +148,8 @@
         { name: "discountAmount", label: "Giảm theo số tiền (₫)", type: "number", min: 0, value: "0", read: (row) => row.cells[1]?.textContent.includes("%") ? "0" : parseMoney(row.cells[1]?.textContent) },
         { name: "minimum", label: "Giá trị đơn tối thiểu (₫)", type: "number", min: 0, value: "0", read: (row) => parseMoney(row.cells[2]?.textContent) },
         { name: "points", label: "Điểm cần để đổi", type: "number", min: 0, value: "0", read: (row) => row.querySelector(".admin-code")?.textContent === "VIPREDEEM100" ? "100" : "0" },
-        { name: "startDate", label: "Ngày bắt đầu", type: "date", required: true, value: "2026-10-01", read: (row) => dateValue(row.cells[3]?.textContent.split("–")[0]) },
-        { name: "endDate", label: "Ngày kết thúc", type: "date", required: true, value: "2026-12-31", read: (row) => dateValue(row.cells[3]?.textContent.split("–")[1]) },
+        { name: "startDate", label: "Ngày bắt đầu", type: "date", required: true, value: "2026-10-01", read: (row) => dateRangeValue(row.cells[3]?.textContent, "start") },
+        { name: "endDate", label: "Ngày kết thúc", type: "date", required: true, value: "2026-12-31", read: (row) => dateRangeValue(row.cells[3]?.textContent, "end") },
         { name: "usageLimit", label: "Giới hạn lượt dùng", type: "number", min: 1, required: true, value: "200", read: (row) => row.cells[4]?.textContent.split("/")[1].trim() }
       ]
     }
@@ -277,11 +283,8 @@
     $("[data-metric='sold']").textContent = data.sold;
     $("[data-metric='cancelled']").textContent = data.cancelled;
     $("[data-metric='changed']").textContent = data.changed;
-    $("[data-booking-total]").textContent = `${data.bookings} lượt`;
+    $("[data-metric='visits']").textContent = data.visits;
     $("[data-ticket-caption]").textContent = `Trong kỳ đã chọn`;
-    $("[data-breakdown='sold']").textContent = data.sold;
-    $("[data-breakdown='cancelled']").textContent = data.cancelled;
-    $("[data-breakdown='changed']").textContent = data.changed;
     renderChart();
     renderPromotions();
   }
@@ -354,6 +357,13 @@
   function dateValue(value = "") {
     const match = value.trim().match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
     return match ? `${match[3]}-${match[2]}-${match[1]}` : "";
+  }
+
+  function dateRangeValue(value = "", part) {
+    const [start = "", end = ""] = value.split("–");
+    if (part === "end") return dateValue(end.trim());
+    const year = end.trim().match(/(\d{4})$/)?.[1];
+    return year ? dateValue(`${start.trim()}/${year}`) : "";
   }
 
   function dateTimeValue(cell) {
@@ -441,6 +451,7 @@
       ["Vé bán", data.sold, data.caption],
       ["Vé hủy", data.cancelled, data.caption],
       ["Vé đổi", data.changed, data.caption],
+      ["Lượt truy cập website", data.visits, data.caption],
       ["Lượt dùng khuyến mãi", formatMetric(data.promo.reduce((sum, count) => sum + count, 0)), data.caption]
     ];
     downloadCsv("teo-airlines-bao-cao.csv", rows);

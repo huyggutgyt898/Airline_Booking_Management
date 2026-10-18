@@ -237,8 +237,9 @@ tài khoản.
 Bố cục dashboard với sidebar bên trái và vùng nội dung chính. Prototype
 `admin.html` có bảy màn hình:
 
-- **Tổng quan:** doanh thu, số vé đặt, tỉ lệ lấp đầy, vé bán/hủy/đổi, xu
-  hướng theo ngày/tuần/tháng/quý/năm/toàn bộ lịch sử và mã khuyến mãi nổi bật.
+- **Tổng quan:** doanh thu, số vé đặt, tỉ lệ lấp đầy, vé bán/hủy/đổi, lượt truy
+  cập website, xu hướng theo ngày/tuần/tháng/quý/năm/toàn bộ lịch sử và mã
+  khuyến mãi nổi bật.
   Có thể xuất báo cáo ở định dạng CSV UTF-8 tương thích Excel.
 - **Sân bay, tuyến bay và chuyến bay:** danh sách có tìm kiếm/lọc, phân trang
   minh họa, thêm/sửa và xác nhận trước thao tác xóa.

@@ -364,7 +364,7 @@
 
 .admin-metrics {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 12px;
   margin-bottom: 14px;
 }
@@ -615,31 +615,6 @@
 .admin-text-link:hover {
   text-decoration: underline;
   text-underline-offset: 3px;
-}
-
-.admin-ticket-breakdown {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-  padding: 14px 16px 16px;
-}
-
-.admin-ticket-breakdown div {
-  display: grid;
-  gap: 2px;
-  padding: 10px;
-  border-radius: 9px;
-  background: #f8f9fa;
-}
-
-.admin-ticket-breakdown span {
-  color: var(--muted);
-  font-size: 10px;
-}
-
-.admin-ticket-breakdown strong {
-  font-size: 16px;
-  font-variant-numeric: tabular-nums;
 }
 
 .admin-muted-pill {
@@ -1358,12 +1333,8 @@
     grid-row: 1;
   }
 
-  .admin-ticket-panel {
-    grid-row: 2;
-  }
-
   .admin-promos-panel {
-    grid-row: 3;
+    grid-row: 2;
   }
 
   .admin-list-tools {
@@ -1517,10 +1488,6 @@
   .admin-metric-icon svg {
     width: 16px;
     height: 16px;
-  }
-
-  .admin-ticket-counts {
-    gap: 4px;
   }
 
   .admin-ticket-counts strong {
