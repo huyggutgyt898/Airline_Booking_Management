@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0F766E">
+  <meta name="description" content="Đăng nhập tài khoản TEO Airlines.">
+  <title>Đăng nhập — TEO Airlines</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="auth-page">
+  <main class="auth-shell">
+    <a class="brand auth-brand" href="index.html" aria-label="TEO Airlines — Về trang đặt vé">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M20.8 3.2c-.9-.9-2.2-.4-3.1.5l-4.3 4.3-7.8-2c-.5-.1-1 .1-1.4.4l-.9.9 5.7 3.2-3.1 3.1-2.8-.7L2 14l3.7 1.8L7.5 19l1.1-1.1-.7-2.8 3.1-3.1 3.2 5.7.9-.9c.4-.4.5-.9.4-1.4l-2-7.8 4.3-4.3c.9-.9 1.4-2.2.5-3.1z"></path>
+        </svg>
+      </span>
+      <span class="brand-wordmark"><strong>TEO</strong><small>airlines</small></span>
+    </a>
+
+    <section class="auth-panel" aria-labelledby="auth-title">
+      <div class="auth-heading">
+        <h1 id="auth-title">Chào mừng trở lại</h1>
+        <p>Đăng nhập để tiếp tục hành trình cùng TEO Airlines.</p>
+      </div>
+
+      <form class="auth-form" id="login-form" data-auth-form="login">
+        <div class="auth-field">
+          <label for="login-identity">Email hoặc số điện thoại</label>
+          <input id="login-identity" name="identity" type="text" autocomplete="username" placeholder="Nhập email hoặc số điện thoại" required autofocus>
+        </div>
+
+        <div class="auth-field">
+          <div class="auth-label-row">
+            <label for="login-password">Mật khẩu</label>
+            <a class="auth-inline-link" href="index.html#support" data-forgot-password>Quên mật khẩu?</a>
+          </div>
+          <div class="auth-password-wrap">
+            <input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Nhập mật khẩu" minlength="8" required>
+            <button class="password-toggle" type="button" aria-label="Hiện mật khẩu" aria-pressed="false" aria-controls="login-password" data-password-toggle>
+              <i data-lucide="eye" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+
+        <p class="auth-form-message" id="auth-form-message" role="status" aria-live="polite"></p>
+        <button class="button button-primary auth-submit" type="submit" data-auth-submit>
+          <span>Đăng nhập</span>
+        </button>
+      </form>
+
+      <div class="auth-social">
+        <div class="auth-divider" aria-hidden="true"><span>hoặc</span></div>
+        <button class="button button-outline auth-google" type="button" data-google-auth>
+          <span class="google-mark" aria-hidden="true">G</span>
+          Đăng nhập bằng Google
+        </button>
+      </div>
+
+      <p class="auth-switch">Chưa có tài khoản? <a href="register.html">Tạo tài khoản</a></p>
+      <p class="auth-demo-note">Đây là giao diện minh hoạ; dịch vụ xác thực chưa được kết nối.</p>
+    </section>
+  </main>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <script src="js/auth.js"></script>
+</body>
+</html>

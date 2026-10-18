@@ -890,9 +890,18 @@
 
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
+      if ($("#logout-dialog")?.open) return;
       closeFloatingPanels();
-      $("#mobile-menu").hidden = true;
-      $(".menu-toggle").setAttribute("aria-expanded", "false");
+      const menu = $("#mobile-menu");
+      const menuToggle = $(".menu-toggle");
+      const wasOpen = !menu.hidden;
+      menu.hidden = true;
+      menuToggle.setAttribute("aria-expanded", "false");
+      menuToggle.setAttribute("aria-label", "Mở menu");
+      if (wasOpen) {
+        menuToggle.innerHTML = '<i data-lucide="menu" aria-hidden="true"></i>';
+        renderIcons();
+      }
     }
   });
 

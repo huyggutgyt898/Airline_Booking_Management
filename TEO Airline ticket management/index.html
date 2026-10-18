@@ -33,8 +33,19 @@
       </nav>
 
       <div class="header-actions">
-        <button class="button button-outline header-login" type="button" data-coming-soon>Đăng nhập</button>
-        <button class="button button-primary header-register" type="button" data-coming-soon>Đăng ký</button>
+        <a class="button button-outline header-login" href="login.html" data-auth-link>Đăng nhập</a>
+        <a class="button button-primary header-register" href="register.html" data-auth-link>Đăng ký</a>
+        <div class="account-menu">
+          <button class="button button-outline account-trigger" type="button" data-account-trigger aria-haspopup="true" aria-expanded="false" aria-controls="account-popover" hidden>
+            <i data-lucide="user-round" aria-hidden="true"></i><span>Tài khoản</span><i data-lucide="chevron-down" aria-hidden="true"></i>
+          </button>
+          <div class="account-popover" id="account-popover" hidden>
+            <p class="account-popover-label">Tài khoản mẫu</p>
+            <button class="account-signout" type="button" data-signout-open>
+              <i data-lucide="log-out" aria-hidden="true"></i><span>Đăng xuất</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       <button class="icon-button menu-toggle" type="button" aria-label="Mở menu" aria-expanded="false" aria-controls="mobile-menu">
@@ -46,7 +57,14 @@
       <a href="#lookup" data-coming-soon>Tra cứu đặt chỗ</a>
       <a href="#benefits" data-home-anchor="benefits">Đổi điểm</a>
       <a href="#support" data-home-anchor="support">Hỗ trợ</a>
-      <button type="button" data-coming-soon>Đăng nhập / Đăng ký</button>
+      <a href="login.html" data-auth-link>Đăng nhập</a>
+      <a href="register.html" data-auth-link>Đăng ký</a>
+      <div class="mobile-account" data-auth-account hidden>
+        <span class="mobile-account-label">Tài khoản mẫu</span>
+        <button class="account-signout" type="button" data-signout-open>
+          <i data-lucide="log-out" aria-hidden="true"></i><span>Đăng xuất</span>
+        </button>
+      </div>
     </nav>
   </header>
 
@@ -532,7 +550,25 @@
     </div>
   </footer>
 
+  <dialog class="logout-dialog" id="logout-dialog" aria-labelledby="logout-title" aria-describedby="logout-description">
+    <div class="logout-heading">
+      <span class="logout-icon"><i data-lucide="log-out" aria-hidden="true"></i></span>
+      <div>
+        <h2 id="logout-title">Đăng xuất khỏi tài khoản?</h2>
+        <p id="logout-description">Bạn sẽ cần đăng nhập lại để tiếp tục dùng tài khoản mẫu.</p>
+      </div>
+    </div>
+    <div class="logout-account">
+      <i data-lucide="user-round" aria-hidden="true"></i><span>Tài khoản demo</span>
+    </div>
+    <div class="logout-actions">
+      <button class="button button-secondary" type="button" data-signout-cancel>Huỷ</button>
+      <button class="button button-danger" type="button" data-signout-confirm>Đăng xuất</button>
+    </div>
+  </dialog>
+
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
   <script src="js/app.js"></script>
+  <script src="js/auth.js"></script>
 </body>
 </html>
