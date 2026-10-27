@@ -1,0 +1,47 @@
+@{
+    ViewData["Title"] = "Đổi điểm — TEO Airlines";
+    var isAuthenticated = !string.IsNullOrWhiteSpace(Context.Session.GetString("UserId"));
+}
+
+<main id="main-content">
+  <section class="subpage" aria-labelledby="rewards-title">
+    <div class="container page-container">
+      <div class="page-heading">
+        <div>
+          <p class="eyebrow">TEO Rewards</p>
+          <h1 id="rewards-title">Đổi điểm tích lũy lấy voucher</h1>
+          <p class="subheading">Dùng điểm bay để đổi mã giảm giá cho chuyến đi tiếp theo.</p>
+        </div>
+        @if (isAuthenticated)
+        {
+          <div class="points-balance" aria-live="polite">
+            <i data-lucide="coins" aria-hidden="true"></i>
+            <span><small>Số dư điểm của bạn</small><strong><span id="loyalty-balance">0</span> điểm</strong></span>
+          </div>
+        }
+      </div>
+
+      @if (!isAuthenticated)
+      {
+        <section class="panel rewards-signin">
+          <div class="rewards-signin-copy">
+            <h2>Đăng nhập để đổi voucher bằng điểm</h2>
+            <p>Điểm tích lũy được cộng sau mỗi đơn đặt vé. Đăng nhập để xem số dư và đổi điểm lấy mã giảm giá.</p>
+          </div>
+          <div class="rewards-signin-actions">
+            <a class="button button-primary" asp-controller="Auth" asp-action="Login">Đăng nhập</a>
+            <a class="button button-outline" href="register.html">Đăng ký</a>
+          </div>
+        </section>
+      }
+
+      <p class="mock-note" id="rewards-loading">Đang tải danh sách voucher…</p>
+      <div class="offers-grid rewards-grid" id="rewards-grid" aria-live="polite"></div>
+      <p class="section-demo-note" id="rewards-note">Voucher áp dụng cho đơn đặt vé trực tuyến, số lượng có hạn.</p>
+    </div>
+  </section>
+</main>
+
+@section Scripts {
+  <script src="~/js/rewards.js"></script>
+}

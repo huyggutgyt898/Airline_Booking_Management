@@ -1,0 +1,294 @@
+﻿@{
+    Layout = null;
+    var fullName = Context.Session.GetString("FullName") ?? "Quản trị viên";
+    var initials = string.Concat(
+        fullName.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            .TakeLast(2)
+            .Select(part => char.ToUpperInvariant(part[0])));
+}
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0F766E">
+  <meta name="description" content="Giao diện quản trị hệ thống TEO Airlines.">
+  <title>Tổng quan — TEO Airlines</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="~/css/style.css">
+  <link rel="stylesheet" href="~/css/admin.css">
+</head>
+<body class="admin-page">
+  <button class="admin-scrim" type="button" data-menu-close aria-label="Đóng menu" hidden></button>
+  <div class="admin-shell">
+    <aside class="admin-sidebar" id="admin-sidebar" aria-label="Điều hướng quản trị">
+      <a class="admin-brand" asp-controller="Home" asp-action="Admin" asp-fragment="overview" aria-label="TEO Airlines — Quản trị hệ thống">
+        <span class="admin-brand-mark" aria-hidden="true"><i data-lucide="plane"></i></span>
+        <span class="admin-brand-copy"><strong>TEO Airlines</strong><span>Quản trị hệ thống</span></span>
+      </a>
+
+      <nav class="admin-nav" aria-label="Chức năng quản trị">
+        <p class="admin-nav-label">Phân tích</p>
+        <a class="admin-nav-link" href="#overview" data-admin-screen="overview" aria-current="page"><i data-lucide="chart-no-axes-combined" aria-hidden="true"></i><span>Tổng quan</span></a>
+
+        <p class="admin-nav-label admin-nav-label-spaced">Vận hành</p>
+        <a class="admin-nav-link" href="#airports" data-admin-screen="airports"><i data-lucide="map-pin" aria-hidden="true"></i><span>Sân bay</span></a>
+        <a class="admin-nav-link" href="#routes" data-admin-screen="routes"><i data-lucide="route" aria-hidden="true"></i><span>Tuyến bay</span></a>
+        <a class="admin-nav-link" href="#flights" data-admin-screen="flights"><i data-lucide="plane-takeoff" aria-hidden="true"></i><span>Chuyến bay</span></a>
+        <a class="admin-nav-link" href="#aircraft" data-admin-screen="aircraft"><i data-lucide="plane" aria-hidden="true"></i><span>Máy bay &amp; sơ đồ ghế</span></a>
+
+        <p class="admin-nav-label admin-nav-label-spaced">Thương mại</p>
+        <a class="admin-nav-link" href="#pricing" data-admin-screen="pricing"><i data-lucide="badge-dollar-sign" aria-hidden="true"></i><span>Bảng giá</span></a>
+        <a class="admin-nav-link" href="#promotions" data-admin-screen="promotions"><i data-lucide="ticket-percent" aria-hidden="true"></i><span>Khuyến mãi</span></a>
+      </nav>
+
+      <div class="admin-sidebar-spacer"></div>
+      <details class="admin-account-menu">
+        <summary class="admin-agent">
+          <span class="admin-avatar" aria-hidden="true">@initials</span>
+          <span class="admin-agent-copy"><strong>@fullName</strong><span>Quản lý hệ thống</span></span>
+          <i data-lucide="chevron-up" aria-hidden="true"></i>
+        </summary>
+        <div class="admin-account-popover">
+          <button class="admin-account-signout" type="button" data-signout-open><i data-lucide="log-out" aria-hidden="true"></i><span>Đăng xuất</span></button>
+        </div>
+      </details>
+    </aside>
+
+    <main class="admin-main">
+      <header class="admin-topbar">
+        <button class="admin-menu-toggle" type="button" data-menu-toggle aria-label="Mở menu" aria-controls="admin-sidebar" aria-expanded="false"><i data-lucide="menu" aria-hidden="true"></i></button>
+        <p class="admin-breadcrumb">TEO Airlines <span aria-hidden="true">/</span> <strong data-page-title>Tổng quan</strong></p>
+        <div class="admin-topbar-meta"><span>Trung tâm vận hành</span><span class="admin-demo-indicator">Dữ liệu minh họa</span><span class="admin-avatar admin-avatar-small" aria-label="@fullName">@initials</span></div>
+      </header>
+
+      <div class="admin-content">
+        <section class="admin-screen" data-screen-panel="overview">
+          <div class="admin-page-heading admin-overview-heading">
+            <div><h1>Tổng quan</h1><p>Theo dõi hoạt động bán vé và hiệu quả khai thác.</p></div>
+            <button class="admin-button admin-button-outline" type="button" data-export="report"><i data-lucide="download" aria-hidden="true"></i>Xuất Excel</button>
+          </div>
+
+          <div class="admin-dashboard-toolbar">
+            <div class="admin-period-tabs" role="group" aria-label="Khoảng thời gian báo cáo">
+              <button type="button" data-period="day">Ngày</button>
+              <button type="button" data-period="week">Tuần</button>
+              <button type="button" data-period="month" aria-pressed="true">Tháng</button>
+              <button type="button" data-period="quarter">Quý</button>
+              <button type="button" data-period="year">Năm</button>
+              <button type="button" data-period="all">Toàn bộ lịch sử</button>
+            </div>
+            <span class="admin-period-date" data-period-caption>01–31 tháng 10, 2026</span>
+          </div>
+
+          <div class="admin-metrics" aria-label="Chỉ số trong kỳ">
+            <article class="admin-metric">
+              <div class="admin-metric-top"><span>Doanh thu</span><span class="admin-metric-icon"><i data-lucide="badge-dollar-sign" aria-hidden="true"></i></span></div>
+              <strong data-metric="revenue">1,28 tỷ ₫</strong><small class="admin-positive"><i data-lucide="trending-up" aria-hidden="true"></i><span data-metric-change>12,8%</span> so với kỳ trước</small>
+            </article>
+            <article class="admin-metric">
+              <div class="admin-metric-top"><span>Vé đã đặt</span><span class="admin-metric-icon"><i data-lucide="ticket" aria-hidden="true"></i></span></div>
+              <strong data-metric="bookings">3.842</strong><small class="admin-positive"><i data-lucide="trending-up" aria-hidden="true"></i>8,4% so với kỳ trước</small>
+            </article>
+            <article class="admin-metric">
+              <div class="admin-metric-top"><span>Tỉ lệ lấp đầy ghế</span><span class="admin-metric-icon"><i data-lucide="armchair" aria-hidden="true"></i></span></div>
+              <strong data-metric="occupancy">82,6%</strong><small>Trên <span data-metric="seat-count">4.650</span> ghế khai thác</small>
+            </article>
+            <article class="admin-metric admin-ticket-metric">
+              <div class="admin-metric-top"><span>Vé bán / hủy / đổi</span><span class="admin-metric-icon"><i data-lucide="chart-no-axes-column" aria-hidden="true"></i></span></div>
+              <div class="admin-ticket-counts">
+                <div><strong data-metric="sold">3.610</strong><span>Bán</span></div>
+                <div><strong data-metric="cancelled">106</strong><span>Hủy</span></div>
+                <div><strong data-metric="changed">126</strong><span>Đổi</span></div>
+              </div>
+              <small data-ticket-caption>Trong kỳ đã chọn</small>
+            </article>
+            <article class="admin-metric">
+              <div class="admin-metric-top"><span>Lượt truy cập website</span><span class="admin-metric-icon"><i data-lucide="mouse-pointer-click" aria-hidden="true"></i></span></div>
+              <strong data-metric="visits">326.480</strong>
+              <small>Trong kỳ đã chọn</small>
+            </article>
+          </div>
+
+          <div class="admin-dashboard-grid">
+            <section class="admin-panel admin-revenue-panel">
+              <header class="admin-panel-heading">
+                <div><h2>Xu hướng doanh thu</h2><p data-chart-caption>Doanh thu thuần theo ngày trong tháng</p></div>
+                <div class="admin-segmented" role="group" aria-label="Chỉ số biểu đồ">
+                  <button type="button" data-chart-mode="revenue" aria-pressed="true">Doanh thu</button>
+                  <button type="button" data-chart-mode="tickets">Số vé</button>
+                </div>
+              </header>
+              <div class="admin-chart" data-chart aria-label="Biểu đồ cột doanh thu"></div>
+            </section>
+
+            <section class="admin-panel admin-promos-panel">
+              <header class="admin-panel-heading">
+                <div><h2>Khuyến mãi nổi bật</h2><p>Lượt dùng trong kỳ</p></div>
+                <a class="admin-text-link" href="#promotions" data-admin-screen="promotions">Danh sách</a>
+              </header>
+              <div class="admin-promo-list" data-promo-summary>
+                <div class="admin-promo-row"><div><strong>TEOAUTUMN26</strong><span>Giảm 10%</span></div><b>58 lượt</b></div>
+                <div class="admin-promo-row"><div><strong>FREESHIP50K</strong><span>Giảm 50.000 ₫</span></div><b>42 lượt</b></div>
+                <div class="admin-promo-row"><div><strong>VIPREDEEM100</strong><span>Đổi 100 điểm · 15%</span></div><b>17 lượt</b></div>
+                <div class="admin-promo-row"><div><strong>WELCOME25</strong><span>Giảm 25%</span></div><b>9 lượt</b></div>
+              </div>
+              <p class="admin-promo-summary">Tổng lượt dùng: <strong data-promo-total>126</strong> · 4 mã đang theo dõi</p>
+            </section>
+
+          </div>
+        </section>
+
+        <section class="admin-screen" data-screen-panel="airports" hidden>
+          <div class="admin-page-heading">
+            <div><h1>Sân bay</h1><p>Quản lý mã sân bay và thông tin địa điểm.</p></div>
+            <button class="admin-button admin-button-primary" type="button" data-record-open="airport"><i data-lucide="plus" aria-hidden="true"></i>Thêm sân bay</button>
+          </div>
+          <div class="admin-list-tools"><label class="admin-search"><i data-lucide="search" aria-hidden="true"></i><span class="admin-sr-only">Tìm sân bay</span><input type="search" placeholder="Tìm mã, tên hoặc thành phố" data-table-filter="airports-table"></label><span class="admin-result-count">8 sân bay</span></div>
+          <div class="admin-table-panel"><table class="admin-table" id="airports-table">
+            <thead><tr><th>Mã</th><th>Tên sân bay</th><th>Thành phố</th><th>Quốc gia</th><th class="admin-actions-heading">Thao tác</th></tr></thead>
+            <tbody>
+              <tr><td data-label="Mã"><strong>SGN</strong></td><td data-label="Tên sân bay">Tân Sơn Nhất</td><td data-label="Thành phố">Hồ Chí Minh</td><td data-label="Quốc gia">Việt Nam</td><td data-label="Thao tác"><div class="admin-row-actions"><button class="admin-button admin-button-small" type="button" data-record-edit="airport">Sửa</button><button class="admin-button admin-button-small admin-button-ghost" type="button" data-record-delete="Sân bay SGN">Xóa</button></div></td></tr>
+              <tr><td data-label="Mã"><strong>HAN</strong></td><td data-label="Tên sân bay">Nội Bài</td><td data-label="Thành phố">Hà Nội</td><td data-label="Quốc gia">Việt Nam</td><td data-label="Thao tác"><div class="admin-row-actions"><button class="admin-button admin-button-small" type="button" data-record-edit="airport">Sửa</button><button class="admin-button admin-button-small admin-button-ghost" type="button" data-record-delete="Sân bay HAN">Xóa</button></div></td></tr>
+              <tr><td data-label="Mã"><strong>DAD</strong></td><td data-label="Tên sân bay">Đà Nẵng</td><td data-label="Thành phố">Đà Nẵng</td><td data-label="Quốc gia">Việt Nam</td><td data-label="Thao tác"><div class="admin-row-actions"><button class="admin-button admin-button-small" type="button" data-record-edit="airport">Sửa</button><button class="admin-button admin-button-small admin-button-ghost" type="button" data-record-delete="Sân bay DAD">Xóa</button></div></td></tr>
+              <tr><td data-label="Mã"><strong>CXR</strong></td><td data-label="Tên sân bay">Cam Ranh</td><td data-label="Thành phố">Nha Trang</td><td data-label="Quốc gia">Việt Nam</td><td data-label="Thao tác"><div class="admin-row-actions"><button class="admin-button admin-button-small" type="button" data-record-edit="airport">Sửa</button><button class="admin-button admin-button-small admin-button-ghost" type="button" data-record-delete="Sân bay CXR">Xóa</button></div></td></tr>
+              <tr><td data-label="Mã"><strong>PQC</strong></td><td data-label="Tên sân bay">Phú Quốc</td><td data-label="Thành phố">Phú Quốc</td><td data-label="Quốc gia">Việt Nam</td><td data-label="Thao tác"><div class="admin-row-actions"><button class="admin-button admin-button-small" type="button" data-record-edit="airport">Sửa</button><button class="admin-button admin-button-small admin-button-ghost" type="button" data-record-delete="Sân bay PQC">Xóa</button></div></td></tr>
+            </tbody>
+          </table><div class="admin-table-footer"><span>Hiển thị 1–5 trên 8 sân bay</span><div class="admin-pagination"><button type="button" aria-label="Trang trước" disabled>‹</button><button type="button" aria-current="page">1</button><button type="button">2</button><button type="button" aria-label="Trang sau">›</button></div></div></div>
+        </section>
+
+        <section class="admin-screen" data-screen-panel="routes" hidden>
+          <div class="admin-page-heading">
+            <div><h1>Tuyến bay</h1><p>Quản lý cặp sân bay khởi hành và điểm đến.</p></div>
+            <button class="admin-button admin-button-primary" type="button" data-record-open="route"><i data-lucide="plus" aria-hidden="true"></i>Thêm tuyến bay</button>
+          </div>
+          <div class="admin-list-tools"><label class="admin-search"><i data-lucide="search" aria-hidden="true"></i><span class="admin-sr-only">Tìm tuyến bay</span><input type="search" placeholder="Tìm mã sân bay hoặc thành phố" data-table-filter="routes-table"></label><label class="admin-select-label"><span class="admin-sr-only">Lọc loại tuyến</span><select data-table-select="routes-table"><option value="">Tất cả loại tuyến</option><option>Nội địa</option><option>Quốc tế</option></select></label><span class="admin-result-count">24 tuyến bay</span></div>
+          <div class="admin-table-panel"><table class="admin-table" id="routes-table">
+            <thead><tr><th>Mã tuyến</th><th>Điểm đi</th><th>Điểm đến</th><th>Loại tuyến</th><th>Chuyến bay</th><th class="admin-actions-heading">Thao tác</th></tr></thead>
+            <tbody>
+              <tr><td data-label="Mã tuyến"><strong>R-001</strong></td><td data-label="Điểm đi">SGN · Hồ Chí Minh</td><td data-label="Điểm đến">HAN · Hà Nội</td><td data-label="Loại tuyến"><span class="admin-badge admin-badge-neutral">Nội địa</span></td><td data-label="Chuyến bay">12 chuyến</td><td data-label="Thao tác"><div class="admin-row-actions"><button class="admin-button admin-button-small" type="button" data-record-edit="route">Sửa</button><button class="admin-button admin-button-small admin-button-ghost" type="button" data-record-delete="Tuyến SGN – HAN">Xóa</button></div></td></tr>
+              <tr><td data-label="Mã tuyến"><strong>R-002</strong></td><td data-label="Điểm đi">HAN · Hà Nội</td><td data-label="Điểm đến">DAD · Đà Nẵng</td><td data-label="Loại tuyến"><span class="admin-badge admin-badge-neutral">Nội địa</span></td><td data-label="Chuyến bay">8 chuyến</td><td data-label="Thao tác"><div class="admin-row-actions"><button class="admin-button admin-button-small" type="button" data-record-edit="route">Sửa</button><button class="admin-button admin-button-small admin-button-ghost" type="button" data-record-delete="Tuyến HAN – DAD">Xóa</button></div></td></tr>
+              <tr><td data-label="Mã tuyến"><strong>R-003</strong></td><td data-label="Điểm đi">SGN · Hồ Chí Minh</td><td data-label="Điểm đến">SIN · Singapore</td><td data-label="Loại tuyến"><span class="admin-badge admin-badge-info">Quốc tế</span></td><td data-label="Chuyến bay">4 chuyến</td><td data-label="Thao tác"><div class="admin-row-actions"><button class="admin-button admin-button-small" type="button" data-record-edit="route">Sửa</button><button class="admin-button admin-button-small admin-button-ghost" type="button" data-record-delete="Tuyến SGN – SIN">Xóa</button></div></td></tr>
+            </tbody>
+          </table><div class="admin-table-footer"><span>Hiển thị 1–3 trên 24 tuyến bay</span><div class="admin-pagination"><button type="button" aria-label="Trang trước" disabled>‹</button><button type="button" aria-current="page">1</button><button type="button">2</button><button type="button" aria-label="Trang sau">›</button></div></div></div>
+        </section>
+
+        <section class="admin-screen" data-screen-panel="flights" hidden>
+          <div class="admin-page-heading">
+            <div><h1>Chuyến bay</h1><p>Lịch khai thác, tàu bay và trạng thái chuyến.</p></div>
+            <button class="admin-button admin-button-primary" type="button" data-record-open="flight"><i data-lucide="plus" aria-hidden="true"></i>Thêm chuyến bay</button>
+          </div>
+          <div class="admin-list-tools"><label class="admin-search"><i data-lucide="search" aria-hidden="true"></i><span class="admin-sr-only">Tìm chuyến bay</span><input type="search" placeholder="Tìm số hiệu hoặc chặng bay" data-table-filter="flights-table"></label><label class="admin-select-label"><span class="admin-sr-only">Lọc trạng thái chuyến</span><select data-table-select="flights-table"><option value="">Tất cả trạng thái</option><option>Theo lịch</option><option>Trễ chuyến</option><option>Đã hủy</option><option>Đã hoàn tất</option></select></label><span class="admin-result-count">18 chuyến bay</span></div>
+          <div class="admin-table-panel"><table class="admin-table" id="flights-table">
+            <thead><tr><th>Số hiệu</th><th>Hành trình</th><th>Khởi hành</th><th>Đến nơi</th><th>Máy bay</th><th>Trạng thái</th><th class="admin-actions-heading">Thao tác</th></tr></thead>
+            <tbody>
+              <tr><td data-label="Số hiệu"><strong>TEO 218</strong></td><td data-label="Hành trình">SGN <span class="admin-route-arrow">→</span> HAN</td><td data-label="Khởi hành">21/10/2026 <span class="admin-cell-meta">07:30</span></td><td data-label="Đến nơi">21/10/2026 <span class="admin-cell-meta">09:40</span></td><td data-label="Máy bay">Airbus A321</td><td data-label="Trạng thái"><span class="admin-badge admin-badge-success">Theo lịch</span></td><td data-label="Thao tác"><div class="admin-row-actions"><button class="admin-button admin-button-small" type="button" data-record-edit="flight">Sửa</button><button class="admin-button admin-button-small admin-button-ghost" type="button" data-record-delete="Chuyến TEO 218">Xóa</button></div></td></tr>
+              <tr><td data-label="Số hiệu"><strong>TEO 302</strong></td><td data-label="Hành trình">SGN <span class="admin-route-arrow">→</span> HAN</td><td data-label="Khởi hành">21/10/2026 <span class="admin-cell-meta">10:15</span></td><td data-label="Đến nơi">21/10/2026 <span class="admin-cell-meta">12:30</span></td><td data-label="Máy bay">Airbus A320</td><td data-label="Trạng thái"><span class="admin-badge admin-badge-warning">Trễ chuyến</span></td><td data-label="Thao tác"><div class="admin-row-actions"><button class="admin-button admin-button-small" type="button" data-record-edit="flight">Sửa</button><button class="admin-button admin-button-small admin-button-ghost" type="button" data-record-delete="Chuyến TEO 302">Xóa</button></div></td></tr>
+              <tr><td data-label="Số hiệu"><strong>TEO 416</strong></td><td data-label="Hành trình">HAN <span class="admin-route-arrow">→</span> DAD</td><td data-label="Khởi hành">21/10/2026 <span class="admin-cell-meta">14:00</span></td><td data-label="Đến nơi">21/10/2026 <span class="admin-cell-meta">15:20</span></td><td data-label="Máy bay">Airbus A321</td><td data-label="Trạng thái"><span class="admin-badge admin-badge-success">Theo lịch</span></td><td data-label="Thao tác"><div class="admin-row-actions"><button class="admin-button admin-button-small" type="button" data-record-edit="flight">Sửa</button><button class="admin-button admin-button-small admin-button-ghost" type="button" data-record-delete="Chuyến TEO 416">Xóa</button></div></td></tr>
+              <tr><td data-label="Số hiệu"><strong>TEO 118</strong></td><td data-label="Hành trình">DAD <span class="admin-route-arrow">→</span> SGN</td><td data-label="Khởi hành">20/10/2026 <span class="admin-cell-meta">18:20</span></td><td data-label="Đến nơi">20/10/2026 <span class="admin-cell-meta">20:05</span></td><td data-label="Máy bay">Boeing 787-9</td><td data-label="Trạng thái"><span class="admin-badge admin-badge-neutral">Đã hoàn tất</span></td><td data-label="Thao tác"><div class="admin-row-actions"><button class="admin-button admin-button-small" type="button" data-record-edit="flight">Sửa</button><button class="admin-button admin-button-small admin-button-ghost" type="button" data-record-delete="Chuyến TEO 118">Xóa</button></div></td></tr>
+              <tr><td data-label="Số hiệu"><strong>TEO 223</strong></td><td data-label="Hành trình">SGN <span class="admin-route-arrow">→</span> CXR</td><td data-label="Khởi hành">22/10/2026 <span class="admin-cell-meta">08:00</span></td><td data-label="Đến nơi">22/10/2026 <span class="admin-cell-meta">09:10</span></td><td data-label="Máy bay">Airbus A320</td><td data-label="Trạng thái"><span class="admin-badge admin-badge-neutral">Đã hủy</span></td><td data-label="Thao tác"><div class="admin-row-actions"><button class="admin-button admin-button-small" type="button" data-record-edit="flight">Sửa</button><button class="admin-button admin-button-small admin-button-ghost" type="button" data-record-delete="Chuyến TEO 223">Xóa</button></div></td></tr>
+            </tbody>
+          </table><div class="admin-table-footer"><span>Hiển thị 1–4 trên 18 chuyến bay</span><div class="admin-pagination"><button type="button" aria-label="Trang trước" disabled>‹</button><button type="button" aria-current="page">1</button><button type="button">2</button><button type="button" aria-label="Trang sau">›</button></div></div></div>
+        </section>
+
+        <section class="admin-screen" data-screen-panel="aircraft" hidden>
+          <div class="admin-page-heading"><div><h1>Máy bay &amp; sơ đồ ghế</h1><p>Xem cấu hình tàu bay và phân bố hạng ghế.</p></div></div>
+          <div class="admin-aircraft-layout">
+            <section class="admin-panel admin-aircraft-list">
+              <header class="admin-panel-heading"><div><h2>Danh sách máy bay</h2><p>3 tàu bay trong đội</p></div></header>
+              <div class="admin-aircraft-options" role="group" aria-label="Chọn máy bay">
+                <button type="button" class="admin-aircraft-option" data-aircraft="Airbus A321" aria-pressed="true"><span class="admin-aircraft-icon"><i data-lucide="plane" aria-hidden="true"></i></span><span><strong>Airbus A321</strong><small>180 ghế · 12 chuyến</small></span><i data-lucide="chevron-right" aria-hidden="true"></i></button>
+                <button type="button" class="admin-aircraft-option" data-aircraft="Airbus A320" aria-pressed="false"><span class="admin-aircraft-icon"><i data-lucide="plane" aria-hidden="true"></i></span><span><strong>Airbus A320</strong><small>150 ghế · 8 chuyến</small></span><i data-lucide="chevron-right" aria-hidden="true"></i></button>
+                <button type="button" class="admin-aircraft-option" data-aircraft="Boeing 787-9" aria-pressed="false"><span class="admin-aircraft-icon"><i data-lucide="plane" aria-hidden="true"></i></span><span><strong>Boeing 787-9</strong><small>294 ghế · 4 chuyến</small></span><i data-lucide="chevron-right" aria-hidden="true"></i></button>
+              </div>
+            </section>
+            <section class="admin-panel admin-seat-panel">
+              <header class="admin-panel-heading admin-seat-heading"><div><h2 data-aircraft-title>Airbus A321</h2><p><span data-aircraft-seats>180</span> ghế · sơ đồ tiêu chuẩn</p></div><span class="admin-muted-pill">Chỉ xem</span></header>
+              <div class="admin-seat-legend"><span><i class="admin-seat-dot admin-seat-dot-business"></i>Thương gia</span><span><i class="admin-seat-dot"></i>Phổ thông</span><span><i class="admin-seat-dot admin-seat-dot-unavailable"></i>Không khai thác</span></div>
+              <div class="admin-seat-map-wrap"><div class="admin-seat-map" data-seat-map aria-label="Sơ đồ ghế máy bay"></div></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="admin-screen" data-screen-panel="pricing" hidden>
+          <div class="admin-page-heading">
+            <div><h1>Bảng giá</h1><p>Giá cơ bản, thuế và phí theo chuyến, hạng ghế và loại khách.</p></div>
+            <button class="admin-button admin-button-primary" type="button" data-record-open="pricing"><i data-lucide="plus" aria-hidden="true"></i>Thêm mức giá</button>
+          </div>
+          <section class="admin-panel admin-pricing-context">
+            <div class="admin-pricing-flight"><span class="admin-metric-icon"><i data-lucide="plane" aria-hidden="true"></i></span><div><strong>TEO 218 · SGN → HAN</strong><span>21/10/2026 · Airbus A321</span></div></div>
+            <label class="admin-select-label"><span>Chuyến bay</span><select aria-label="Chọn chuyến bay"><option>TEO 218 · SGN – HAN</option><option>TEO 302 · SGN – HAN</option><option>TEO 416 · HAN – DAD</option></select></label>
+          </section>
+          <div class="admin-table-panel admin-pricing-table"><table class="admin-table" id="pricing-table">
+            <thead><tr><th>Hạng ghế</th><th>Loại khách</th><th>Giá cơ bản</th><th>Thuế</th><th>Phí dịch vụ</th><th>Tổng giá</th><th class="admin-actions-heading">Thao tác</th></tr></thead>
+            <tbody>
+              <tr><td data-label="Hạng ghế"><strong>Phổ thông</strong></td><td data-label="Loại khách">Người lớn</td><td data-label="Giá cơ bản">1.250.000 ₫</td><td data-label="Thuế">125.000 ₫</td><td data-label="Phí dịch vụ">75.000 ₫</td><td data-label="Tổng giá"><strong>1.450.000 ₫</strong></td><td data-label="Thao tác"><button class="admin-button admin-button-small" type="button" data-record-edit="pricing">Sửa</button></td></tr>
+              <tr><td data-label="Hạng ghế"><strong>Phổ thông</strong></td><td data-label="Loại khách">Trẻ em</td><td data-label="Giá cơ bản">937.500 ₫</td><td data-label="Thuế">93.750 ₫</td><td data-label="Phí dịch vụ">75.000 ₫</td><td data-label="Tổng giá"><strong>1.106.250 ₫</strong></td><td data-label="Thao tác"><button class="admin-button admin-button-small" type="button" data-record-edit="pricing">Sửa</button></td></tr>
+              <tr><td data-label="Hạng ghế"><strong>Phổ thông</strong></td><td data-label="Loại khách">Em bé</td><td data-label="Giá cơ bản">125.000 ₫</td><td data-label="Thuế">12.500 ₫</td><td data-label="Phí dịch vụ">25.000 ₫</td><td data-label="Tổng giá"><strong>162.500 ₫</strong></td><td data-label="Thao tác"><button class="admin-button admin-button-small" type="button" data-record-edit="pricing">Sửa</button></td></tr>
+              <tr><td data-label="Hạng ghế"><strong>Thương gia</strong></td><td data-label="Loại khách">Người lớn</td><td data-label="Giá cơ bản">4.500.000 ₫</td><td data-label="Thuế">450.000 ₫</td><td data-label="Phí dịch vụ">150.000 ₫</td><td data-label="Tổng giá"><strong>5.100.000 ₫</strong></td><td data-label="Thao tác"><button class="admin-button admin-button-small" type="button" data-record-edit="pricing">Sửa</button></td></tr>
+            </tbody>
+          </table></div>
+          <p class="admin-footnote">Giá trên là dữ liệu minh họa, cần được xác nhận theo chính sách giá thực tế.</p>
+        </section>
+
+        <section class="admin-screen" data-screen-panel="promotions" hidden>
+          <div class="admin-page-heading">
+            <div><h1>Khuyến mãi</h1><p>Quản lý mã giảm giá, điều kiện áp dụng và lượt sử dụng.</p></div>
+            <div class="admin-heading-actions"><button class="admin-button admin-button-outline" type="button" data-export="promotions"><i data-lucide="download" aria-hidden="true"></i>Xuất Excel</button><button class="admin-button admin-button-primary" type="button" data-record-open="promotion"><i data-lucide="plus" aria-hidden="true"></i>Thêm mã</button></div>
+          </div>
+          <div class="admin-list-tools"><label class="admin-search"><i data-lucide="search" aria-hidden="true"></i><span class="admin-sr-only">Tìm mã khuyến mãi</span><input type="search" placeholder="Tìm mã khuyến mãi" data-table-filter="promotions-table"></label><label class="admin-select-label"><span class="admin-sr-only">Lọc trạng thái khuyến mãi</span><select data-table-select="promotions-table"><option value="">Tất cả trạng thái</option><option>Đang áp dụng</option><option>Sắp diễn ra</option><option>Đã kết thúc</option></select></label><span class="admin-result-count">4 mã khuyến mãi</span></div>
+          <div class="admin-table-panel"><table class="admin-table admin-promo-table" id="promotions-table">
+            <thead><tr><th>Mã</th><th>Hình thức</th><th>Đơn tối thiểu</th><th>Thời hạn</th><th>Lượt dùng</th><th>Trạng thái</th><th class="admin-actions-heading">Thao tác</th></tr></thead>
+            <tbody>
+              <tr><td data-label="Mã"><strong class="admin-code">TEOAUTUMN26</strong><span class="admin-cell-meta">Giảm cho mùa thu</span></td><td data-label="Hình thức">10%</td><td data-label="Đơn tối thiểu">500.000 ₫</td><td data-label="Thời hạn">01/09–31/10/2026</td><td data-label="Lượt dùng">58 / 200</td><td data-label="Trạng thái"><span class="admin-badge admin-badge-success">Đang áp dụng</span></td><td data-label="Thao tác"><button class="admin-button admin-button-small" type="button" data-record-edit="promotion">Sửa</button></td></tr>
+              <tr><td data-label="Mã"><strong class="admin-code">FREESHIP50K</strong><span class="admin-cell-meta">Giảm trực tiếp</span></td><td data-label="Hình thức">50.000 ₫</td><td data-label="Đơn tối thiểu">200.000 ₫</td><td data-label="Thời hạn">01/10–30/11/2026</td><td data-label="Lượt dùng">42 / 500</td><td data-label="Trạng thái"><span class="admin-badge admin-badge-success">Đang áp dụng</span></td><td data-label="Thao tác"><button class="admin-button admin-button-small" type="button" data-record-edit="promotion">Sửa</button></td></tr>
+              <tr><td data-label="Mã"><strong class="admin-code">VIPREDEEM100</strong><span class="admin-cell-meta">Đổi bằng điểm</span></td><td data-label="Hình thức">15% · 100 điểm</td><td data-label="Đơn tối thiểu">Không yêu cầu</td><td data-label="Thời hạn">01/10–31/12/2026</td><td data-label="Lượt dùng">17 / 100</td><td data-label="Trạng thái"><span class="admin-badge admin-badge-success">Đang áp dụng</span></td><td data-label="Thao tác"><button class="admin-button admin-button-small" type="button" data-record-edit="promotion">Sửa</button></td></tr>
+              <tr><td data-label="Mã"><strong class="admin-code">WELCOME25</strong><span class="admin-cell-meta">Ưu đãi khách mới</span></td><td data-label="Hình thức">25%</td><td data-label="Đơn tối thiểu">800.000 ₫</td><td data-label="Thời hạn">01/11–31/12/2026</td><td data-label="Lượt dùng">9 / 300</td><td data-label="Trạng thái"><span class="admin-badge admin-badge-info">Sắp diễn ra</span></td><td data-label="Thao tác"><button class="admin-button admin-button-small" type="button" data-record-edit="promotion">Sửa</button></td></tr>
+            </tbody>
+          </table><div class="admin-table-footer"><span>Hiển thị 1–4 trên 4 mã</span><div class="admin-pagination"><button type="button" aria-label="Trang trước" disabled>‹</button><button type="button" aria-current="page">1</button><button type="button" aria-label="Trang sau" disabled>›</button></div></div></div>
+          <p class="admin-footnote">Mã khuyến mãi chỉ có thao tác thêm và sửa; không có chức năng xóa.</p>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <dialog class="admin-dialog" id="record-dialog" aria-labelledby="record-dialog-title">
+    <form class="admin-dialog-form" data-record-form>
+      <header class="admin-dialog-heading"><div><h2 id="record-dialog-title">Thêm bản ghi</h2><p data-dialog-description>Nhập thông tin để tiếp tục.</p></div><button class="admin-icon-button" type="button" data-dialog-close aria-label="Đóng cửa sổ"><i data-lucide="x" aria-hidden="true"></i></button></header>
+      <div class="admin-dialog-fields" data-dialog-fields></div>
+      <footer class="admin-dialog-actions"><button class="admin-button admin-button-outline" type="button" data-dialog-close>Hủy</button><button class="admin-button admin-button-primary" type="submit">Lưu thay đổi</button></footer>
+    </form>
+  </dialog>
+
+  <dialog class="admin-dialog admin-confirm-dialog" id="confirm-dialog" aria-labelledby="confirm-dialog-title">
+    <form method="dialog">
+      <div class="admin-dialog-heading"><div><h2 id="confirm-dialog-title">Xác nhận xóa</h2><p data-confirm-copy></p></div></div>
+      <footer class="admin-dialog-actions"><button class="admin-button admin-button-outline" value="cancel">Hủy</button><button class="admin-button admin-button-danger" value="confirm">Xác nhận xóa</button></footer>
+    </form>
+  </dialog>
+
+  <dialog class="logout-dialog" id="logout-dialog" aria-labelledby="logout-title" aria-describedby="logout-description">
+    <div class="logout-heading">
+      <span class="logout-icon"><i data-lucide="log-out" aria-hidden="true"></i></span>
+      <div>
+        <h2 id="logout-title">Đăng xuất khỏi tài khoản?</h2>
+        <p id="logout-description">Bạn sẽ cần đăng nhập lại để tiếp tục.</p>
+      </div>
+    </div>
+    <div class="logout-account">
+      <i data-lucide="user-round" aria-hidden="true"></i><span>@fullName</span>
+    </div>
+    <form class="logout-actions" asp-controller="Auth" asp-action="Logout" method="post">
+      <button class="button button-secondary" type="button" data-signout-cancel>Huỷ</button>
+      <button class="button button-danger" type="submit" data-signout-confirm>Đăng xuất</button>
+    </form>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <div class="admin-toast" role="status" aria-live="polite" hidden></div>
+  <script src="~/js/admin.js"></script>
+  <script src="~/js/auth.js"></script>
+</body>
+</html>

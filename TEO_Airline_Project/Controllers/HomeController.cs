@@ -8,7 +8,92 @@ namespace TEO_Airline_Project.Controllers
     {
         public IActionResult Index()
         {
+            if (RedirectForRole() is { } redirect)
+            {
+                return redirect;
+            }
+
             return View();
+        }
+
+        public IActionResult Lookup()
+        {
+            if (RedirectForRole() is { } redirect)
+            {
+                return redirect;
+            }
+
+            return View();
+        }
+
+        public IActionResult Rewards()
+        {
+            if (RedirectForRole() is { } redirect)
+            {
+                return redirect;
+            }
+
+            return View();
+        }
+
+        private IActionResult? RedirectForRole()
+        {
+            var role = HttpContext.Session.GetString("Role")?.Trim().ToUpperInvariant();
+            if (role == "ADMIN")
+            {
+                return RedirectToAction(nameof(Admin));
+            }
+
+            if (role == "STAFF")
+            {
+                return RedirectToAction(nameof(Counter));
+            }
+
+            if (!string.IsNullOrWhiteSpace(HttpContext.Session.GetString("UserId")) &&
+                role != "CUSTOMER")
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
+            return null;
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Admin()
+        {
+            if (string.IsNullOrWhiteSpace(HttpContext.Session.GetString("UserId")))
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
+            if (!string.Equals(
+                    HttpContext.Session.GetString("Role")?.Trim(),
+                    "Admin",
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                return RedirectToRoleHome();
+            }
+
+            return View("admin");
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Counter()
+        {
+            if (string.IsNullOrWhiteSpace(HttpContext.Session.GetString("UserId")))
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
+            if (!string.Equals(
+                    HttpContext.Session.GetString("Role")?.Trim(),
+                    "Staff",
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                return RedirectToRoleHome();
+            }
+
+            return View("counter");
         }
 
         public IActionResult Privacy()
@@ -20,6 +105,17 @@ namespace TEO_Airline_Project.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        private IActionResult RedirectToRoleHome()
+        {
+            return HttpContext.Session.GetString("Role")?.Trim().ToUpperInvariant() switch
+            {
+                "CUSTOMER" => RedirectToAction(nameof(Index)),
+                "ADMIN" => RedirectToAction(nameof(Admin)),
+                "STAFF" => RedirectToAction(nameof(Counter)),
+                _ => RedirectToAction("Login", "Auth")
+            };
         }
     }
 }

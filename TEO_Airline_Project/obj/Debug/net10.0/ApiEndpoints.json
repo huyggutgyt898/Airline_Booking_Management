@@ -1,1 +1,137 @@
-[]
+[
+  {
+    "ContainingType": "TEO_Airline_Project.Controllers.BookingController",
+    "Method": "Airports",
+    "RelativePath": "api/booking/airports",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TEO_Airline_Project.Controllers.BookingController",
+    "Method": "Confirm",
+    "RelativePath": "api/booking/confirm",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TEO_Airline_Project.Controllers.BookingController",
+    "Method": "Context",
+    "RelativePath": "api/booking/context",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TEO_Airline_Project.Controllers.BookingController",
+    "Method": "Promotions",
+    "RelativePath": "api/booking/promotions",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TEO_Airline_Project.Controllers.BookingController",
+    "Method": "Quote",
+    "RelativePath": "api/booking/quote",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "TEO_Airline_Project.Models.BookingModels.QuoteRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TEO_Airline_Project.Controllers.BookingController",
+    "Method": "Redeem",
+    "RelativePath": "api/booking/redeem",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "TEO_Airline_Project.Controllers.BookingController\u002BRedeemRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TEO_Airline_Project.Controllers.BookingController",
+    "Method": "Search",
+    "RelativePath": "api/booking/search",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "TEO_Airline_Project.Models.BookingModels.SearchRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TEO_Airline_Project.Controllers.BookingController",
+    "Method": "SeatMap",
+    "RelativePath": "api/booking/seatmap",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "flightId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "seatClass",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TEO_Airline_Project.Controllers.LookupController",
+    "Method": "Find",
+    "RelativePath": "api/lookup",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "TEO_Airline_Project.Models.BookingModels.LookupRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TEO_Airline_Project.Controllers.LookupController",
+    "Method": "Mine",
+    "RelativePath": "api/lookup/mine",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  }
+]

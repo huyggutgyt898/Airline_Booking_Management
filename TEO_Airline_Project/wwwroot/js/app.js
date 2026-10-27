@@ -1,60 +1,10 @@
 (() => {
-  const state = {
-    screen: "home",
-    tripType: "oneway",
-    origin: "TP. Hồ Chí Minh (SGN)",
-    destination: "Hà Nội (HAN)",
-    departureDate: "2026-11-21",
-    returnDate: "2026-11-28",
-    cabin: "Phổ thông",
-    passengers: { adult: 1, child: 0, infant: 0 },
-    selectedFlightId: "teo218",
-    selectedSeats: ["7A"],
-    promoApplied: false,
-    promoCode: "",
-    redeemedPromoCodes: [],
-    loyaltyPoints: 2450,
-    paymentMethod: "momo",
-    timerStarted: false,
-    remainingSeconds: 600,
-    timerId: null,
-    travelerName: "Nguyễn Minh Anh",
-    travelerNames: ["Nguyễn Minh Anh"],
-    travelerFormsGenerated: false,
-    contactEmail: "minhanh@example.com",
-    contactPhone: "090 123 4567"
-  };
+  "use strict";
 
-  const flights = {
-    teo218: {
-      id: "teo218",
-      code: "TEO 218",
-      departure: "08:15",
-      arrival: "10:20",
-      duration: "2 giờ 05 phút",
-      baseFare: 1650000,
-      tax: 180000,
-      fee: 60000,
-      businessPremium: 1200000
-    },
-    teo426: {
-      id: "teo426",
-      code: "TEO 426",
-      departure: "14:10",
-      arrival: "16:20",
-      duration: "2 giờ 10 phút",
-      baseFare: 1900000,
-      tax: 210000,
-      fee: 80000,
-      businessPremium: 1400000
-    }
-  };
-
-  const promotions = {
-    TEO10: { discountPercent: 10, minOrderValue: 2000000 },
-    TEO100: { discountAmount: 100000, minOrderValue: 1500000 },
-    TEO300: { discountAmount: 300000, minOrderValue: 3000000 }
-  };
+  const API_BASE = "/api/booking";
+  const SEAT_CLASS_LABEL = { Economy: "Phổ thông", Business: "Thương gia" };
+  const TYPE_LABEL = { Adult: "Người lớn", Child: "Trẻ em", Infant: "Em bé" };
+  const PLANE_SVG = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.8 3.2c-.9-.9-2.2-.4-3.1.5l-4.3 4.3-7.8-2c-.5-.1-1 .1-1.4.4l-.9.9 5.7 3.2-3.1 3.1-2.8-.7L2 14l3.7 1.8L7.5 19l1.1-1.1-.7-2.8 3.1-3.1 3.2 5.7.9-.9c.4-.4.5-.9.4-1.4l-2-7.8 4.3-4.3c.9-.9 1.4-2.2.5-3.1z"></path></svg>';
 
   const screenTitles = {
     home: "TEO Airlines — Đặt vé máy bay",
@@ -65,21 +15,87 @@
     confirmation: "Đặt chỗ — TEO Airlines"
   };
 
+  const state = {
+    screen: "home",
+    airports: [],
+    context: { isAuthenticated: false, fullName: "", email: "", phone: "", loyaltyPoints: 0, redeemedPromoCodes: [] },
+    search: {
+      tripType: "OneWay",
+      seatClass: "Economy",
+      origin: "",
+      destination: "",
+      departureDate: "",
+      returnDate: ""
+    },
+    passengers: { adult: 1, child: 0, infant: 0 },
+    results: { outbound: [], inbound: [] },
+    selection: { outbound: null, return: null },
+    travelers: [],
+    contact: { fullName: "", email: "", phone: "" },
+    seats: { outbound: [], return: [] },
+    seatMaps: { outbound: null, return: null },
+    quote: null,
+    promoCode: "",
+    paymentMethod: "MoMo",
+    hold: { timerId: null, deadline: 0 },
+    lastBooking: null
+  };
+
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
-  const money = (amount) => `${new Intl.NumberFormat("vi-VN").format(amount)} đ`;
-  const formatPoints = (points) => new Intl.NumberFormat("vi-VN").format(points);
-  const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => ({
+  const money = (amount) => `${new Intl.NumberFormat("vi-VN").format(Math.round(Number(amount) || 0))} đ`;
+  const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (character) => ({
     "&": "&amp;",
     "<": "&lt;",
     ">": "&gt;",
     '"': "&quot;",
     "'": "&#39;"
   })[character]);
+
   const formatDate = (isoDate) => {
     if (!isoDate) return "Chưa chọn";
     const [year, month, day] = isoDate.split("-");
     return `${day}/${month}/${year}`;
+  };
+
+  const dateLabel = (isoDate) => {
+    if (!isoDate) return "Chưa chọn";
+    const date = new Date(`${isoDate}T12:00:00`);
+    return new Intl.DateTimeFormat("vi-VN", {
+      weekday: "long", day: "numeric", month: "long", year: "numeric"
+    }).format(date);
+  };
+
+  const todayIso = () => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+  };
+
+  const addDaysIso = (isoDate, days) => {
+    const date = new Date(`${isoDate}T12:00:00`);
+    date.setDate(date.getDate() + days);
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+  };
+
+  const normalizeText = (value) => String(value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/Đ/g, "D")
+    .toLowerCase()
+    .trim();
+
+  const formatDuration = (minutes) => {
+    const hours = Math.floor(minutes / 60);
+    const rest = minutes % 60;
+    return `${hours} giờ ${String(rest).padStart(2, "0")} phút`;
+  };
+
+  const timeBucket = (time) => {
+    const hour = Number(String(time).slice(0, 2));
+    if (hour < 12) return "morning";
+    if (hour < 18) return "afternoon";
+    return "evening";
   };
 
   function renderIcons() {
@@ -90,25 +106,39 @@
 
   function showToast(message) {
     const toast = $("#toast");
+    if (!toast) return;
     toast.textContent = message;
     toast.hidden = false;
     window.clearTimeout(showToast.timeoutId);
     showToast.timeoutId = window.setTimeout(() => {
       toast.hidden = true;
-    }, 3200);
+    }, 3600);
   }
 
-  function updateRewards() {
-    const balance = $("#loyalty-balance");
-    if (!balance) return;
-    balance.textContent = formatPoints(state.loyaltyPoints);
-
-    $$("[data-redeem-voucher]").forEach((button) => {
-      if (button.dataset.redeemed === "true") return;
-      button.disabled = Number(button.dataset.pointsCost) > state.loyaltyPoints;
-      button.textContent = button.disabled ? "Chưa đủ điểm" : "Đổi voucher";
+  async function apiFetch(path, options = {}) {
+    const response = await fetch(`${API_BASE}${path}`, {
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      ...options
     });
+
+    let data = null;
+    try {
+      data = await response.json();
+    } catch {
+      data = null;
+    }
+
+    if (!response.ok) {
+      const error = new Error(data?.message || "Không thể xử lý yêu cầu. Vui lòng thử lại.");
+      error.data = data;
+      throw error;
+    }
+
+    return data;
   }
+
+  /* ---------- Điều hướng màn hình ---------- */
 
   function setScreen(nextScreen, { scrollToTop = true } = {}) {
     if (!screenTitles[nextScreen]) return;
@@ -120,74 +150,984 @@
       screen.hidden = !isActive;
     });
 
-    const isBooking = !["home"].includes(nextScreen);
-    $("#booking-progress").hidden = !isBooking;
     document.title = screenTitles[nextScreen];
-    updateProgress(nextScreen);
-    updateNavigation(nextScreen);
 
-    if (nextScreen === "passengers") {
-      if (!state.travelerFormsGenerated) {
-        renderTravelerForms();
-        state.travelerFormsGenerated = true;
-      }
-      renderSummary($("#passenger-summary-card"));
-    }
-    if (nextScreen === "seats") {
-      renderSummary($("#seat-summary-card"));
-      renderSeats();
-      const seatCount = getRequiredSeatCount();
-      $("#seats-subheading").textContent = `Chọn ${seatCount} chỗ ngồi cho hành khách có ghế.`;
-    }
-    if (nextScreen === "payment") {
-      renderSummary($("#payment-summary-card"));
-      renderFare();
-      startHoldTimer();
-    }
+    if (nextScreen === "passengers") preparePassengerScreen();
+    if (nextScreen === "seats") loadSeatMaps();
+    if (nextScreen === "payment") openPaymentScreen();
     if (nextScreen === "confirmation") renderConfirmation();
 
     if (scrollToTop) window.scrollTo({ top: 0, behavior: "smooth" });
     renderIcons();
   }
 
-  function updateProgress(nextScreen) {
-    const order = ["results", "passengers", "seats", "payment", "confirmation"];
-    const activeIndex = order.indexOf(nextScreen);
+  /* ---------- Tìm kiếm ---------- */
 
-    $$("#booking-progress [data-progress]").forEach((item) => {
-      const itemIndex = order.indexOf(item.dataset.progress);
-      item.classList.toggle("is-complete", itemIndex < activeIndex);
-      item.classList.toggle("is-current", itemIndex === activeIndex);
-      if (itemIndex === activeIndex) {
-        item.setAttribute("aria-current", "step");
-      } else {
-        item.removeAttribute("aria-current");
-      }
+  function updatePassengerSummary() {
+    const total = state.passengers.adult + state.passengers.child + state.passengers.infant;
+    const parts = [];
+    if (state.passengers.adult) parts.push(`${state.passengers.adult} người lớn`);
+    if (state.passengers.child) parts.push(`${state.passengers.child} trẻ em`);
+    if (state.passengers.infant) parts.push(`${state.passengers.infant} em bé`);
+    $("#passenger-summary").textContent = parts.join(", ");
+    $("#adult-count").textContent = state.passengers.adult;
+    $("#child-count").textContent = state.passengers.child;
+    $("#infant-count").textContent = state.passengers.infant;
+
+    $$("[data-count]").forEach((button) => {
+      const kind = button.dataset.count;
+      const atMinimum = kind === "adult" ? state.passengers[kind] <= 1 : state.passengers[kind] <= 0;
+      button.disabled = button.dataset.delta === "1" ? total >= 9 : atMinimum;
     });
   }
 
-  function updateNavigation(nextScreen) {
-    $$(".main-nav [data-screen-link]").forEach((link) => {
-      const isCurrent = link.dataset.screenLink === nextScreen || (nextScreen !== "home" && link.dataset.screenLink === "home");
-      link.classList.toggle("is-active", isCurrent);
-      if (isCurrent) {
-        link.setAttribute("aria-current", "page");
-      } else {
-        link.removeAttribute("aria-current");
+  function resolveAirport(raw) {
+    const value = String(raw || "").trim();
+    if (!value) return null;
+
+    const matched = value.match(/\(\s*([A-Za-z]{3})\s*\)/);
+    const code = matched ? matched[1].toUpperCase() : (/^[A-Za-z]{3}$/.test(value) ? value.toUpperCase() : "");
+    if (code) {
+      const byCode = state.airports.find((airport) => airport.code.toUpperCase() === code);
+      if (byCode) return byCode;
+    }
+
+    const normalized = normalizeText(value);
+    return state.airports.find((airport) =>
+      normalizeText(airport.label) === normalized ||
+      normalizeText(airport.city) === normalized ||
+      normalizeText(airport.name) === normalized) || null;
+  }
+
+  function hideSearchError() {
+    const error = $("#search-error");
+    error.hidden = true;
+    error.textContent = "";
+    $("#origin").removeAttribute("aria-invalid");
+    $("#destination").removeAttribute("aria-invalid");
+  }
+
+  function showSearchError(message, field) {
+    const error = $("#search-error");
+    error.textContent = message;
+    error.hidden = false;
+    if (field) {
+      field.setAttribute("aria-invalid", "true");
+      field.focus();
+    }
+  }
+
+  function validateSearchForm() {
+    hideSearchError();
+
+    const originInput = $("#origin");
+    const destinationInput = $("#destination");
+    const origin = resolveAirport(originInput.value);
+    const destination = resolveAirport(destinationInput.value);
+
+    if (!origin || !destination) {
+      showSearchError(
+        "Vui lòng chọn điểm đi và điểm đến trong danh sách sân bay (ví dụ: TP. Hồ Chí Minh (SGN)).",
+        !origin ? originInput : destinationInput);
+      return null;
+    }
+
+    if (origin.code === destination.code) {
+      showSearchError("Điểm đi và điểm đến cần khác nhau.", destinationInput);
+      return null;
+    }
+
+    const departureDate = $("#departure-date").value;
+    if (!departureDate || departureDate < todayIso()) {
+      showSearchError("Ngày đi phải từ hôm nay trở đi.");
+      return null;
+    }
+
+    const isRoundTrip = state.search.tripType === "RoundTrip";
+    const returnDate = $("#return-date").value;
+    if (isRoundTrip) {
+      if (!returnDate) {
+        showSearchError("Vui lòng chọn ngày về cho hành trình khứ hồi.");
+        return null;
       }
+      if (returnDate < departureDate) {
+        showSearchError("Ngày về không thể trước ngày đi.");
+        return null;
+      }
+    }
+
+    return {
+      origin: origin.code,
+      destination: destination.code,
+      departureDate,
+      returnDate: isRoundTrip ? returnDate : "",
+      tripType: state.search.tripType,
+      seatClass: state.search.seatClass,
+      adults: state.passengers.adult,
+      children: state.passengers.child,
+      infants: state.passengers.infant
+    };
+  }
+
+  async function handleSearchSubmit(event) {
+    event.preventDefault();
+    const query = validateSearchForm();
+    if (!query) return;
+
+    const submit = $("#search-submit");
+    const label = $("span", submit);
+    const originalLabel = label.textContent;
+    submit.disabled = true;
+    submit.setAttribute("aria-busy", "true");
+    label.textContent = "Đang tìm chuyến…";
+
+    try {
+      const response = await apiFetch("/search", { method: "POST", body: JSON.stringify(query) });
+
+      if (!response.ok) {
+        showSearchError(response.message || "Không tìm thấy chuyến bay phù hợp.");
+        return;
+      }
+
+      state.search = {
+        tripType: query.tripType,
+        seatClass: query.seatClass,
+        origin: query.origin,
+        destination: query.destination,
+        departureDate: query.departureDate,
+        returnDate: query.returnDate
+      };
+      state.results = { outbound: response.outbound || [], inbound: response.inbound || [] };
+      state.selection = { outbound: null, return: null };
+      state.seats = { outbound: [], return: [] };
+      state.seatMaps = { outbound: null, return: null };
+      state.quote = null;
+      state.promoCode = "";
+      state.travelers = [];
+      state.lastBooking = null;
+      clearHoldTimer();
+      $("#promo-code").value = "";
+      $("#confirm-booking").disabled = false;
+      $("#hold-notice").classList.remove("is-expired");
+
+      renderResults(response);
+      setScreen("results");
+    } catch (error) {
+      showSearchError(error.message);
+    } finally {
+      submit.disabled = false;
+      submit.removeAttribute("aria-busy");
+      label.textContent = originalLabel;
+    }
+  }
+
+  /* ---------- Danh sách chuyến bay ---------- */
+
+  function flightCardHtml(flight, direction) {
+    const selected = state.selection[direction]?.flightId === flight.flightId;
+    return `
+      <article class="flight-card ${selected ? "is-selected" : ""}" data-flight-card data-flight-id="${flight.flightId}" data-direction="${direction}" data-direct="true" data-time="${timeBucket(flight.departureTime)}" data-price="${flight.pricePerAdult}">
+        <div class="flight-main">
+          <div class="airline-mark" aria-hidden="true">${PLANE_SVG}</div>
+          <div class="flight-schedule">
+            <div class="flight-time"><strong>${flight.departureTime}</strong><span>${flight.departureCode}</span></div>
+            <div class="flight-duration"><span>${formatDuration(flight.durationMinutes)}</span><span class="route-line"><i></i></span><span>Bay thẳng · còn ${flight.seatsLeft} ghế</span></div>
+            <div class="flight-time"><strong>${flight.arrivalTime}</strong><span>${flight.arrivalCode}</span></div>
+          </div>
+          <div class="flight-meta"><strong>${escapeHtml(flight.flightNumber)}</strong><span>${escapeHtml(flight.aircraftModel)}</span></div>
+        </div>
+        <div class="flight-choice">
+          <div><strong>${money(flight.pricePerAdult)}</strong><span>từ · đã gồm thuế &amp; phí</span></div>
+          <button class="button ${selected ? "button-primary" : "button-outline"} choose-flight" type="button" data-select-flight="${flight.flightId}" data-direction="${direction}">${selected ? "Đã chọn" : "Chọn chuyến"}</button>
+        </div>
+      </article>`;
+  }
+
+  function renderResults(response) {
+    const isRoundTrip = state.search.tripType === "RoundTrip";
+    const originCode = state.search.origin;
+    const destinationCode = state.search.destination;
+
+    $("#outbound-group-title").textContent =
+      `Chuyến đi · ${originCode} → ${destinationCode} · ${formatDate(state.search.departureDate)}`;
+    $("#outbound-list").innerHTML = (state.results.outbound || [])
+      .map((flight) => flightCardHtml(flight, "outbound"))
+      .join("");
+
+    const returnGroup = $("#return-group");
+    returnGroup.hidden = !isRoundTrip;
+
+    if (isRoundTrip) {
+      $("#return-group-title").textContent =
+        `Chuyến về · ${destinationCode} → ${originCode} · ${formatDate(state.search.returnDate)}`;
+      $("#return-list").innerHTML = (state.results.inbound || [])
+        .map((flight) => flightCardHtml(flight, "return"))
+        .join("");
+    } else {
+      $("#return-list").innerHTML = "";
+    }
+
+    $$("[data-filter]").forEach((filter) => { filter.checked = false; });
+    $("#flight-sort").value = "recommended";
+
+    if (response.message) {
+      showToast(response.message);
+    }
+
+    updateSelectionUi();
+    applyFilters();
+    sortFlights();
+  }
+
+  function updateSelectionUi() {
+    $$("[data-flight-card]").forEach((card) => {
+      const direction = card.dataset.direction;
+      const isSelected = state.selection[direction]?.flightId === Number(card.dataset.flightId);
+      card.classList.toggle("is-selected", isSelected);
+      const button = $("[data-select-flight]", card);
+      if (button) {
+        button.classList.toggle("button-primary", isSelected);
+        button.classList.toggle("button-outline", !isSelected);
+        button.textContent = isSelected ? "Đã chọn" : "Chọn chuyến";
+      }
+    });
+
+    const outboundSelected = Boolean(state.selection.outbound);
+    const returnSelected = !(state.search.tripType === "RoundTrip") || Boolean(state.selection.return);
+    const ready = outboundSelected && returnSelected;
+
+    $("#continue-to-passengers").disabled = !ready;
+
+    if (!outboundSelected) {
+      $("#selection-note").textContent = "Chọn chuyến bay để tiếp tục.";
+    } else if (!returnSelected) {
+      $("#selection-note").textContent = `Đã chọn ${state.selection.outbound.flightNumber} · Chọn thêm chuyến về.`;
+    } else {
+      const parts = [state.selection.outbound, state.selection.return]
+        .filter(Boolean)
+        .map((flight) => `${flight.flightNumber} (${flight.departureTime})`);
+      $("#selection-note").textContent = `Đã chọn ${parts.join(" · ")}.`;
+    }
+  }
+
+  function selectFlight(direction, flightId) {
+    const list = direction === "return" ? state.results.inbound : state.results.outbound;
+    const flight = list.find((item) => String(item.flightId) === String(flightId));
+    if (!flight) return;
+
+    state.selection[direction] = flight;
+    state.seats[direction] = [];
+    state.seatMaps[direction] = null;
+    state.quote = null;
+
+    updateSelectionUi();
+  }
+
+  function applyFilters() {
+    const filters = $$("[data-filter]:checked").map((input) => input.dataset.filter);
+    let visibleOutbound = 0;
+    let visibleReturn = 0;
+
+    $$("[data-flight-card]").forEach((card) => {
+      const price = Number(card.dataset.price);
+      const show = filters.every((filter) => {
+        if (filter === "direct") return card.dataset.direct === "true";
+        if (filter === "stop") return card.dataset.direct === "false";
+        if (filter === "morning" || filter === "afternoon") return card.dataset.time === filter;
+        if (filter === "under-two") return price < 2000000;
+        return true;
+      });
+
+      card.hidden = !show;
+      if (show) {
+        if (card.dataset.direction === "return") visibleReturn += 1;
+        else visibleOutbound += 1;
+      }
+    });
+
+    const total = visibleOutbound + visibleReturn;
+    $("#result-count").textContent = `${total} chuyến bay`;
+
+    const isRoundTrip = state.search.tripType === "RoundTrip";
+    const hasFlights = (state.results.outbound || []).length > 0 &&
+      (!isRoundTrip || (state.results.inbound || []).length > 0);
+    const nothingVisible = hasFlights && (visibleOutbound === 0 || (isRoundTrip && visibleReturn === 0));
+
+    $("#empty-results").hidden = !nothingVisible;
+  }
+
+  function sortFlights() {
+    const sortBy = $("#flight-sort").value;
+
+    ["#outbound-list", "#return-list"].forEach((selector) => {
+      const list = $(selector);
+      if (!list) return;
+      const cards = $$("[data-flight-card]", list);
+
+      cards.sort((first, second) => {
+        if (sortBy === "price") return Number(first.dataset.price) - Number(second.dataset.price);
+        if (sortBy === "departure") {
+          const firstTime = $(".flight-time strong", first).textContent;
+          const secondTime = $(".flight-time strong", second).textContent;
+          return firstTime.localeCompare(secondTime);
+        }
+        return Number(first.dataset.price) - Number(second.dataset.price);
+      });
+
+      cards.forEach((card) => list.appendChild(card));
     });
   }
 
-  function dateLabel(isoDate) {
-    if (!isoDate) return "Chọn ngày";
-    const date = new Date(`${isoDate}T12:00:00`);
-    return new Intl.DateTimeFormat("vi-VN", {
-      weekday: "long",
-      day: "numeric",
-      month: "long",
-      year: "numeric"
-    }).format(date);
+  function clearFilters() {
+    $$("[data-filter]").forEach((filter) => { filter.checked = false; });
+    applyFilters();
   }
+
+  /* ---------- Thông tin hành khách ---------- */
+
+  function travelerPlan() {
+    const plan = [];
+    for (let index = 0; index < state.passengers.adult; index += 1) plan.push({ type: "Adult" });
+    for (let index = 0; index < state.passengers.child; index += 1) plan.push({ type: "Child" });
+    for (let index = 0; index < state.passengers.infant; index += 1) plan.push({ type: "Infant" });
+    return plan;
+  }
+
+  function preparePassengerScreen() {
+    renderTravelers();
+    $("#passenger-error").hidden = true;
+    $("#passenger-error").textContent = "";
+
+    const contact = state.context;
+    if (!$("#contact-name").value && contact.fullName) $("#contact-name").value = contact.fullName;
+    if (!$("#contact-email").value && contact.email) $("#contact-email").value = contact.email;
+    if (!$("#contact-phone").value && contact.phone) $("#contact-phone").value = contact.phone;
+
+    renderSummary($("#passenger-summary-card"));
+  }
+
+  function adultOptionsHtml(selectedIndex) {
+    const plan = travelerPlan();
+    return plan
+      .map((item, index) => ({ item, index }))
+      .filter(({ item }) => item.type === "Adult")
+      .map(({ index }) => {
+        const saved = state.travelers[index]?.fullName;
+        const label = saved ? `Hành khách ${index + 1} · ${escapeHtml(saved)}` : `Người lớn ${index + 1}`;
+        const isSelected = selectedIndex === index ? " selected" : "";
+        return `<option value="${index}"${isSelected}>${label}</option>`;
+      })
+      .join("");
+  }
+
+  function renderTravelers() {
+    const plan = travelerPlan();
+    const container = $("#traveler-list");
+
+    container.innerHTML = plan.map((traveler, index) => {
+      const saved = state.travelers[index] || {};
+      const gender = saved.gender || "Male";
+      const genderRadio = (value, label) =>
+        `<label><input type="radio" name="traveler-gender-${index}" value="${value}"${gender === value ? " checked" : ""}> ${label}</label>`;
+
+      const documentLabel = traveler.type === "Infant"
+        ? "Số giấy khai sinh / hộ chiếu"
+        : "Số CCCD / hộ chiếu";
+
+      const accompanyField = traveler.type === "Infant"
+        ? `<div class="field"><label for="traveler-adult-${index}">Người lớn đi cùng</label>
+             <select id="traveler-adult-${index}" data-field="accompanyingIndex">${adultOptionsHtml(saved.accompanyingIndex ?? 0)}</select>
+           </div>`
+        : "";
+
+      return `
+        <section class="form-section traveler-section" data-traveler-index="${index}" data-type="${traveler.type}">
+          <div class="section-heading">
+            <span class="section-number">${index + 2}</span>
+            <div>
+              <h2>Hành khách ${index + 1} · ${TYPE_LABEL[traveler.type]}</h2>
+              <p>${traveler.type === "Infant" ? "Em bé dưới 2 tuổi, không chiếm ghế riêng." : "Nhập thông tin trùng khớp với giấy tờ sử dụng khi làm thủ tục."}</p>
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="field"><label for="traveler-name-${index}">Họ và tên</label>
+              <input id="traveler-name-${index}" data-field="fullName" type="text" value="${escapeHtml(saved.fullName || "")}" placeholder="Nhập họ và tên" autocomplete="off" required></div>
+            <div class="field"><label for="traveler-dob-${index}">Ngày sinh</label>
+              <input id="traveler-dob-${index}" data-field="dob" type="date" value="${escapeHtml(saved.dob || "")}" max="${todayIso()}" required></div>
+            <div class="field"><label for="traveler-doc-${index}">${documentLabel}</label>
+              <input id="traveler-doc-${index}" data-field="documentNumber" type="text" value="${escapeHtml(saved.documentNumber || "")}" placeholder="Nhập số giấy tờ" inputmode="numeric" required></div>
+            <fieldset class="field gender-field"><legend>Giới tính</legend>
+              <div class="inline-options">${genderRadio("Male", "Nam")}${genderRadio("Female", "Nữ")}${genderRadio("Other", "Khác")}</div>
+            </fieldset>
+            ${accompanyField}
+          </div>
+          <p class="field-error" data-traveler-error="${index}" hidden></p>
+        </section>`;
+    }).join("");
+
+    renderIcons();
+  }
+
+  function ageAt(isoDob, isoDate) {
+    if (!isoDob || !isoDate) return null;
+    const dob = new Date(`${isoDob}T12:00:00`);
+    const reference = new Date(`${isoDate}T12:00:00`);
+    if (Number.isNaN(dob.getTime()) || Number.isNaN(reference.getTime())) return null;
+
+    let age = reference.getFullYear() - dob.getFullYear();
+    const hasHadBirthday = reference.getMonth() > dob.getMonth() ||
+      (reference.getMonth() === dob.getMonth() && reference.getDate() >= dob.getDate());
+    if (!hasHadBirthday) age -= 1;
+    return age;
+  }
+
+  function setTravelerError(index, message) {
+    const section = $(`[data-traveler-index="${index}"]`);
+    if (!section) return;
+    const error = $(`[data-traveler-error="${index}"]`, section);
+    if (error) {
+      error.textContent = message || "";
+      error.hidden = !message;
+    }
+  }
+
+  function validateTravelers() {
+    const departureDate = state.search.departureDate;
+    let firstInvalid = null;
+
+    const sections = $$("[data-traveler-index]");
+    sections.forEach((section) => {
+      const index = Number(section.dataset.travelerIndex);
+      const type = section.dataset.type;
+      setTravelerError(index, "");
+
+      const name = $('[data-field="fullName"]', section).value.trim();
+      const dob = $('[data-field="dob"]', section).value;
+      const documentNumber = $('[data-field="documentNumber"]', section).value.trim();
+
+      let message = "";
+      let focusTarget = null;
+
+      if (name.length < 2) {
+        message = "Vui lòng nhập họ tên đầy đủ.";
+        focusTarget = $('[data-field="fullName"]', section);
+      } else if (!dob) {
+        message = "Vui lòng chọn ngày sinh.";
+        focusTarget = $('[data-field="dob"]', section);
+      } else if (documentNumber.length < 5) {
+        message = "Số giấy tờ cần ít nhất 5 ký tự.";
+        focusTarget = $('[data-field="documentNumber"]', section);
+      } else {
+        const age = ageAt(dob, departureDate);
+        if (type === "Adult" && age < 12) {
+          message = `Người lớn phải từ 12 tuổi trở lên (hiện ${age} tuổi).`;
+        } else if (type === "Child" && (age < 2 || age >= 12)) {
+          message = `Trẻ em phải từ 2 đến dưới 12 tuổi (hiện ${age} tuổi).`;
+        } else if (type === "Infant" && age >= 2) {
+          message = `Em bé phải dưới 2 tuổi (hiện ${age} tuổi).`;
+        }
+        if (message) focusTarget = $('[data-field="dob"]', section);
+      }
+
+      if (message) {
+        setTravelerError(index, message);
+        if (!firstInvalid) firstInvalid = focusTarget;
+      }
+    });
+
+    return firstInvalid;
+  }
+
+  function validateContact() {
+    const name = $("#contact-name").value.trim();
+    const email = $("#contact-email").value.trim();
+    const phone = $("#contact-phone").value.trim();
+    const phoneNormalized = phone.replace(/[\s.\-()]/g, "");
+    const error = $("#passenger-error");
+
+    if (name.length < 2) {
+      error.textContent = "Vui lòng nhập họ tên người liên hệ.";
+      error.hidden = false;
+      $("#contact-name").focus();
+      return false;
+    }
+
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(email)) {
+      error.textContent = "Email người liên hệ không hợp lệ.";
+      error.hidden = false;
+      $("#contact-email").focus();
+      return false;
+    }
+
+    if (!/^(0\d{9}|\+84\d{9})$/.test(phoneNormalized)) {
+      error.textContent = "Số điện thoại không đúng định dạng. Ví dụ: 0912345678.";
+      error.hidden = false;
+      $("#contact-phone").focus();
+      return false;
+    }
+
+    error.hidden = true;
+    error.textContent = "";
+    return true;
+  }
+
+  function collectTravelers() {
+    state.travelers = $$("[data-traveler-index]").map((section) => {
+      const type = section.dataset.type;
+      const genderInput = $('input[type="radio"]:checked', section);
+      const accompanyingSelect = $('[data-field="accompanyingIndex"]', section);
+
+      return {
+        type,
+        fullName: $('[data-field="fullName"]', section).value.trim(),
+        dob: $('[data-field="dob"]', section).value,
+        documentNumber: $('[data-field="documentNumber"]', section).value.trim(),
+        gender: genderInput ? genderInput.value : "Male",
+        accompanyingIndex: type === "Infant" && accompanyingSelect ? Number(accompanyingSelect.value) : null
+      };
+    });
+
+    state.contact = {
+      fullName: $("#contact-name").value.trim(),
+      email: $("#contact-email").value.trim(),
+      phone: $("#contact-phone").value.trim()
+    };
+  }
+
+  function handlePassengerSubmit(event) {
+    event.preventDefault();
+    if (!validateContact()) return;
+    const invalid = validateTravelers();
+    if (invalid) {
+      invalid.focus();
+      return;
+    }
+
+    collectTravelers();
+    setScreen("seats");
+  }
+
+  /* ---------- Chọn ghế ---------- */
+
+  function requiredSeats() {
+    return state.passengers.adult + state.passengers.child;
+  }
+
+  function seatPanelHtml(direction, map, flight) {
+    const isReturn = direction === "return";
+    const selected = state.seats[direction];
+
+    const rows = map.rows.map((row) => {
+      const cells = row.cells.map((cell, columnIndex) => {
+        if (columnIndex === 3) {
+          return `<span class="aisle-space" aria-hidden="true"></span>${cellHtml(cell, direction, selected)}`;
+        }
+        return cellHtml(cell, direction, selected);
+      }).join("");
+
+      return `<div class="seat-row"><span class="seat-row-label">${row.row}</span>${cells}</div>`;
+    }).join("");
+
+    const selectedSeats = map.rows
+      .flatMap((row) => row.cells.filter(Boolean))
+      .filter((cell) => selected.includes(cell.seatId));
+
+    const extraTotal = selectedSeats.reduce((sum, cell) => sum + (cell.extraFee || 0), 0);
+    const note = selectedSeats.length
+      ? `Đã chọn ${selectedSeats.length}/${requiredSeats()} ghế: ${selectedSeats.map((cell) => cell.number).join(", ")}${extraTotal ? ` · Phụ phí ${money(extraTotal)}` : ""}`
+      : `Chưa chọn ghế. Hãy chọn ${requiredSeats()} ghế còn trống.`;
+
+    return `
+      <section class="panel seat-panel" data-seat-panel="${direction}">
+        <div class="seat-panel-heading">
+          <div>
+            <h2>Sơ đồ ghế · ${escapeHtml(flight.flightNumber)}</h2>
+            <p>${escapeHtml(map.aircraftModel)} · ${isReturn ? "Chiều về" : "Chiều đi"} ${formatDate(flight.date)} · ${flight.departureCode} → ${flight.arrivalCode}</p>
+          </div>
+          <span class="seat-page-badge">${SEAT_CLASS_LABEL[state.search.seatClass]}</span>
+        </div>
+        <div class="seat-legend" aria-label="Chú giải sơ đồ ghế">
+          <span><i class="seat-swatch available"></i>Còn trống</span>
+          <span><i class="seat-swatch selected"></i>Đang chọn</span>
+          <span><i class="seat-swatch occupied"></i>Đã đặt</span>
+          <span><i class="seat-swatch extra"></i>Ghế phụ phí</span>
+        </div>
+        <div class="aircraft">
+          <div class="aircraft-cabin">
+            <div class="column-labels">
+              <span class="row-label-spacer" aria-hidden="true"></span>
+              <span>A</span><span>B</span><span>C</span><span class="aisle-label" aria-hidden="true"></span><span>D</span><span>E</span><span>F</span>
+            </div>
+            <div class="seat-grid">${rows}</div>
+          </div>
+        </div>
+        <p class="seat-selection-note" data-seat-note="${direction}">${note}</p>
+      </section>`;
+  }
+
+  function cellHtml(cell, direction, selected) {
+    if (!cell) {
+      return '<span class="seat-placeholder" aria-hidden="true"></span>';
+    }
+
+    const isSelected = selected.includes(cell.seatId);
+    const classes = ["seat"];
+    if (cell.occupied) classes.push("is-occupied");
+    if (cell.extra) classes.push("is-extra");
+    if (isSelected) classes.push("is-selected");
+
+    const stateLabel = cell.occupied ? "đã được đặt" : cell.extra ? "có phụ phí" : "còn trống";
+
+    return `<button type="button" class="${classes.join(" ")}" data-seat="${cell.seatId}" data-seat-direction="${direction}" ${cell.occupied ? "disabled" : ""} aria-pressed="${isSelected}" aria-label="Ghế ${cell.number}, ${stateLabel}">${cell.column}</button>`;
+  }
+
+  async function loadSeatMaps() {
+    const container = $("#seat-maps");
+    const directions = ["outbound"];
+    if (state.search.tripType === "RoundTrip") directions.push("return");
+
+    container.innerHTML = '<p class="mock-note">Đang tải sơ đồ ghế…</p>';
+    $("#seats-subheading").textContent = `Chọn ${requiredSeats()} chỗ ngồi cho hành khách có ghế${
+      state.search.tripType === "RoundTrip" ? " ở cả hai chặng" : ""}.`;
+
+    try {
+      const maps = await Promise.all(directions.map(async (direction) => {
+        const flight = state.selection[direction];
+        const map = await apiFetch(`/seatmap?flightId=${flight.flightId}&seatClass=${state.search.seatClass}`);
+        state.seatMaps[direction] = map;
+        return { direction, map };
+      }));
+
+      container.innerHTML = maps
+        .map(({ direction, map }) => seatPanelHtml(direction, map, state.selection[direction]))
+        .join("");
+
+      renderSummary($("#seat-summary-card"));
+      renderIcons();
+    } catch (error) {
+      container.innerHTML = `<p class="mock-note">${escapeHtml(error.message)}</p>`;
+    }
+  }
+
+  function toggleSeat(direction, seatId) {
+    const selected = state.seats[direction];
+    const index = selected.indexOf(seatId);
+
+    if (index >= 0) {
+      selected.splice(index, 1);
+    } else if (selected.length >= requiredSeats()) {
+      showToast(`Bạn chỉ cần chọn ${requiredSeats()} ghế cho ${direction === "return" ? "chiều về" : "chiều đi"}.`);
+      return;
+    } else {
+      selected.push(seatId);
+    }
+
+    const map = state.seatMaps[direction];
+    if (!map) return;
+
+    const panel = $(`[data-seat-panel="${direction}"]`);
+    if (panel) panel.outerHTML = seatPanelHtml(direction, map, state.selection[direction]);
+
+    const selectedSeats = map.rows
+      .flatMap((row) => row.cells.filter(Boolean))
+      .filter((cell) => selected.includes(cell.seatId));
+    const extraTotal = selectedSeats.reduce((sum, cell) => sum + (cell.extraFee || 0), 0);
+    const note = $(`[data-seat-note="${direction}"]`);
+    if (note) {
+      note.textContent = selectedSeats.length
+        ? `Đã chọn ${selectedSeats.length}/${requiredSeats()} ghế: ${selectedSeats.map((cell) => cell.number).join(", ")}${extraTotal ? ` · Phụ phí ${money(extraTotal)}` : ""}`
+        : `Chưa chọn ghế. Hãy chọn ${requiredSeats()} ghế còn trống.`;
+    }
+
+    renderSummary($("#seat-summary-card"));
+    renderIcons();
+  }
+
+  function seatsReady() {
+    if (state.seats.outbound.length !== requiredSeats()) return false;
+    if (state.search.tripType === "RoundTrip" && state.seats.return.length !== requiredSeats()) return false;
+    return true;
+  }
+
+  function handleContinueToPayment() {
+    if (!seatsReady()) {
+      showToast(`Hãy chọn đủ ${requiredSeats()} ghế${state.search.tripType === "RoundTrip" ? " cho mỗi chặng" : ""} trước khi tiếp tục.`);
+      return;
+    }
+
+    setScreen("payment");
+  }
+
+  /* ---------- Thanh toán ---------- */
+
+  function estimateTotal() {
+    const p = state.passengers;
+    let total = 0;
+
+    [state.selection.outbound, state.selection.return].filter(Boolean).forEach((flight) => {
+      total += p.adult * Number(flight.pricePerAdult || 0);
+      total += p.child * Number(flight.pricePerChild || 0);
+      total += p.infant * Number(flight.pricePerInfant || 0);
+    });
+
+    Object.values(state.seatMaps).forEach((map) => {
+      if (!map) return;
+    });
+
+    ["outbound", "return"].forEach((direction) => {
+      const map = state.seatMaps[direction];
+      if (!map) return;
+      const selected = state.seats[direction];
+      map.rows.forEach((row) => {
+        row.cells.filter(Boolean).forEach((cell) => {
+          if (selected.includes(cell.seatId)) total += Number(cell.extraFee || 0);
+        });
+      });
+    });
+
+    return total;
+  }
+
+  function buildQuoteRequest() {
+    return {
+      tripType: state.search.tripType,
+      seatClass: state.search.seatClass,
+      outboundFlightId: state.selection.outbound.flightId,
+      returnFlightId: state.selection.return ? state.selection.return.flightId : null,
+      passengers: state.travelers,
+      seats: { outbound: state.seats.outbound, return: state.seats.return },
+      promoCode: state.promoCode,
+      paymentMethod: state.paymentMethod,
+      contactFullName: state.contact.fullName,
+      contactEmail: state.contact.email,
+      contactPhone: state.contact.phone
+    };
+  }
+
+  async function refreshQuote() {
+    $("#confirm-booking").disabled = true;
+    try {
+      const quote = await apiFetch("/quote", { method: "POST", body: JSON.stringify(buildQuoteRequest()) });
+      state.quote = quote;
+      renderFare(quote);
+      renderSummary($("#payment-summary-card"));
+      startHoldTimer(quote);
+      $("#confirm-booking").disabled = false;
+      return quote;
+    } catch (error) {
+      showToast(error.message);
+      return null;
+    }
+  }
+
+  function openPaymentScreen() {
+    $("#promo-code").value = state.promoCode || "";
+    $("#confirm-booking").disabled = false;
+    $("#hold-notice").classList.remove("is-expired");
+    renderSummary($("#payment-summary-card"));
+    refreshQuote();
+  }
+
+  function renderFare(quote) {
+    const rows = quote.lines.map((line) => ({ label: line.label, amount: line.amount }));
+    if (quote.discount > 0) {
+      rows.push({ label: quote.promoCode ? `Voucher ${quote.promoCode}` : "Giảm giá", amount: -quote.discount, discount: true });
+    }
+
+    $("#fare-breakdown").innerHTML = rows.map((row) => `
+      <div class="fare-row ${row.discount ? "discount" : ""}">
+        <dt>${escapeHtml(row.label)}</dt>
+        <dd>${row.amount < 0 ? "−" : ""}${money(Math.abs(row.amount))}</dd>
+      </div>`).join("");
+
+    $("#total-price").textContent = money(quote.total);
+
+    const feedback = $("#promo-feedback");
+    if (!state.promoCode) {
+      feedback.textContent = "";
+      feedback.classList.remove("is-error");
+    } else {
+      feedback.textContent = quote.promoMessage || "";
+      feedback.classList.toggle("is-error", !quote.promoApplied);
+    }
+  }
+
+  function clearHoldTimer() {
+    if (state.hold.timerId) window.clearInterval(state.hold.timerId);
+    state.hold.timerId = null;
+    state.hold.deadline = 0;
+  }
+
+  function startHoldTimer(quote) {
+    clearHoldTimer();
+    state.hold.deadline = new Date(quote.expiresAt).getTime();
+
+    const tick = () => {
+      const remaining = Math.max(0, Math.floor((state.hold.deadline - Date.now()) / 1000));
+      const timer = $("#hold-timer");
+      if (timer) {
+        timer.textContent = `${String(Math.floor(remaining / 60)).padStart(2, "0")}:${String(remaining % 60).padStart(2, "0")}`;
+      }
+
+      if (remaining === 0) {
+        clearHoldTimer();
+        const notice = $("#hold-notice");
+        notice.classList.add("is-expired");
+        notice.innerHTML = '<i data-lucide="clock-alert" aria-hidden="true"></i><span>Thời gian giữ chỗ đã hết. Vui lòng xác nhận lại để giữ chỗ mới.</span>';
+        $("#confirm-booking").disabled = true;
+        renderIcons();
+      }
+    };
+
+    tick();
+    state.hold.timerId = window.setInterval(tick, 1000);
+  }
+
+  function handlePaymentMethodChange() {
+    const selected = $('input[name="payment-method"]:checked');
+    if (!selected) return;
+
+    state.paymentMethod = selected.value === "counter" ? "Cash" : "MoMo";
+    $$(".payment-option").forEach((option) => {
+      option.classList.toggle("is-selected", $("input", option).checked);
+    });
+
+    refreshQuote();
+  }
+
+  async function handlePromoSubmit(event) {
+    event.preventDefault();
+    const code = $("#promo-code").value.trim().toUpperCase();
+    state.promoCode = code;
+    await refreshQuote();
+  }
+
+  async function handleConfirmBooking() {
+    if (!state.quote) {
+      showToast("Chưa có thông tin giá. Vui lòng thử lại.");
+      return;
+    }
+
+    if (state.hold.deadline && Date.now() >= state.hold.deadline) {
+      showToast("Thời gian giữ chỗ đã hết. Vui lòng xác nhận lại.");
+      return;
+    }
+
+    const button = $("#confirm-booking");
+    button.disabled = true;
+    button.setAttribute("aria-busy", "true");
+    button.textContent = "Đang xác nhận…";
+
+    try {
+      const result = await apiFetch("/confirm", { method: "POST", body: "{}" });
+      state.lastBooking = result;
+      clearHoldTimer();
+      setScreen("confirmation");
+    } catch (error) {
+      showToast(error.message);
+      button.disabled = false;
+    } finally {
+      button.removeAttribute("aria-busy");
+      button.textContent = "Xác nhận đặt chỗ";
+    }
+  }
+
+  /* ---------- Tóm tắt & xác nhận ---------- */
+
+  function renderSummary(container) {
+    if (!container) return;
+    const outbound = state.selection.outbound;
+    if (!outbound) {
+      container.innerHTML = "";
+      return;
+    }
+
+    const flights = [outbound, state.selection.return].filter(Boolean);
+    const total = state.quote ? state.quote.total : estimateTotal();
+    const seatLabels = ["outbound", "return"]
+      .flatMap((direction) => {
+        const map = state.seatMaps[direction];
+        if (!map) return [];
+        const selected = state.seats[direction];
+        return map.rows
+          .flatMap((row) => row.cells.filter(Boolean))
+          .filter((cell) => selected.includes(cell.seatId))
+          .map((cell) => cell.number);
+      });
+
+    const flightRows = flights.map((flight) => `
+      <div class="summary-route">
+        <div class="summary-airport"><strong>${flight.departureCode}</strong><span>${flight.departureTime} · ${formatDate(flight.date)}</span></div>
+        <i data-lucide="plane" aria-hidden="true"></i>
+        <div class="summary-airport"><strong>${flight.arrivalCode}</strong><span>${flight.arrivalTime} · ${escapeHtml(flight.flightNumber)}</span></div>
+      </div>`).join("");
+
+    const passengerParts = [];
+    if (state.passengers.adult) passengerParts.push(`${state.passengers.adult} người lớn`);
+    if (state.passengers.child) passengerParts.push(`${state.passengers.child} trẻ em`);
+    if (state.passengers.infant) passengerParts.push(`${state.passengers.infant} em bé`);
+
+    const firstName = state.travelers[0]?.fullName || state.context.fullName || "Khách";
+    const passengerSummary = state.travelers.length > 1
+      ? `${escapeHtml(firstName)} + ${state.travelers.length - 1} người`
+      : escapeHtml(firstName);
+
+    container.innerHTML = `
+      <section class="summary-card">
+        <div class="summary-heading"><h2>Tóm tắt hành trình</h2></div>
+        <div class="summary-body">
+          ${flightRows}
+          <div class="summary-details">
+            <p><span>Hành khách</span><strong>${passengerParts.join(", ")}</strong></p>
+            <p><span>Người đặt</span><strong>${passengerSummary}</strong></p>
+            <p><span>Hạng ghế</span><strong>${SEAT_CLASS_LABEL[state.search.seatClass]}</strong></p>
+            <p><span>Hành trình</span><strong>${state.search.tripType === "RoundTrip" ? "Khứ hồi" : "Một chiều"}</strong></p>
+            ${seatLabels.length ? `<p><span>Ghế</span><strong>${seatLabels.join(", ")}</strong></p>` : ""}
+          </div>
+        </div>
+        <div class="summary-cost">
+          <span>${state.quote ? "Tổng thanh toán" : "Tạm tính"}</span>
+          <strong>${money(total)}</strong>
+        </div>
+      </section>`;
+    renderIcons();
+  }
+
+  function renderConfirmation() {
+    const booking = state.lastBooking;
+    if (!booking) return;
+
+    $("#booking-code").textContent = booking.bookingPnr;
+    $("#confirmation-status").textContent =
+      booking.status === "PendingPayment" ? "Chờ xác nhận thanh toán" : booking.status;
+
+    const methodLabel = state.paymentMethod === "MoMo" ? "MoMo" : "Tiền mặt / chuyển khoản tại quầy";
+    const expiry = new Date(booking.expiresAt);
+    const expiryLabel = `${String(expiry.getHours()).padStart(2, "0")}:${String(expiry.getMinutes()).padStart(2, "0")} ${formatDate(`${expiry.getFullYear()}-${String(expiry.getMonth() + 1).padStart(2, "0")}-${String(expiry.getDate()).padStart(2, "0")}`)}`;
+
+    $("#confirmation-status-note").textContent = `Vui lòng thanh toán trước ${expiryLabel}.`;
+
+    const flightLines = booking.flights.map((flight) => `
+      <div class="summary-line"><span>${flight.direction === "Return" ? "Chuyến về" : "Chuyến đi"}</span>
+        <strong>${escapeHtml(flight.flightNumber)} · ${flight.departureCode} ${flight.departureTime} → ${flight.arrivalCode} ${flight.arrivalTime}</strong></div>`).join("");
+
+    $("#confirmation-summary").innerHTML = `
+      ${flightLines}
+      <div class="summary-line"><span>Hành khách</span><strong>${escapeHtml(booking.passengerSummaries.join(" · "))}</strong></div>
+      ${booking.seatSummaries.length ? `<div class="summary-line"><span>Ghế đã chọn</span><strong>${escapeHtml(booking.seatSummaries.join(" · "))}</strong></div>` : ""}
+      <div class="summary-line"><span>Phương thức thanh toán</span><strong>${methodLabel}</strong></div>
+      <div class="summary-line"><span>Trạng thái</span><strong>Chờ thanh toán</strong></div>
+      <div class="summary-line"><span>Tổng tiền</span><strong>${money(booking.totalAmount)}</strong></div>
+      ${booking.pointsEarned ? `<div class="summary-line"><span>Điểm tích lũy</span><strong>+${booking.pointsEarned} điểm</strong></div>` : ""}`;
+
+    $("#confirmation-note").textContent = booking.status === "PendingPayment"
+      ? `Đơn giữ chỗ đến ${expiryLabel}. Quá thời hạn trên, hệ thống tự động huỷ đơn và giải phóng ghế.`
+      : "Đơn đặt chỗ đã được ghi nhận.";
+
+    renderIcons();
+  }
+
+  /* ---------- Lịch chọn ngày ---------- */
 
   function renderCalendar(container, selectedDate, monthDate) {
     const year = monthDate.getFullYear();
@@ -199,6 +1139,7 @@
     const weekdayNames = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
     const monthName = new Intl.DateTimeFormat("vi-VN", { month: "long", year: "numeric" }).format(firstDay);
     const selectedParts = selectedDate ? selectedDate.split("-").map(Number) : [];
+    const minimum = todayIso();
 
     container.innerHTML = `
       <div class="calendar-header">
@@ -227,9 +1168,11 @@
             selectedParts[0] === date.getFullYear() &&
             selectedParts[1] === date.getMonth() + 1 &&
             selectedParts[2] === date.getDate();
-          return `<button type="button" class="${isMuted ? "is-muted" : ""} ${isSelected ? "is-selected" : ""}" data-date="${value}" aria-pressed="${isSelected}" aria-label="${dateLabel(value)}">${date.getDate()}</button>`;
+          const isDisabled = value < minimum;
+          return `<button type="button" class="${isMuted ? "is-muted" : ""} ${isSelected ? "is-selected" : ""}" data-date="${value}" aria-pressed="${isSelected}" aria-label="${escapeHtml(dateLabel(value))}" ${isDisabled ? "disabled" : ""}>${date.getDate()}</button>`;
         }).join("")}
       </div>`;
+    renderIcons();
   }
 
   function toggleCalendar(field, open) {
@@ -239,685 +1182,244 @@
     closeFloatingPanels(panel);
     panel.hidden = !shouldOpen;
     trigger.setAttribute("aria-expanded", String(shouldOpen));
-    if (shouldOpen) renderIcons();
   }
 
   function closeFloatingPanels(except = null) {
     $$(".calendar-popover, .passenger-popover, .select-popover").forEach((panel) => {
       if (panel === except) return;
       panel.hidden = true;
-      const trigger = document.querySelector(`[aria-controls="${panel.id}"]`);
-      if (trigger) trigger.setAttribute("aria-expanded", "false");
     });
-  }
-
-  function updatePassengerSummary() {
-    const total = Object.values(state.passengers).reduce((sum, count) => sum + count, 0);
-    const parts = [];
-    if (state.passengers.adult) parts.push(`${state.passengers.adult} người lớn`);
-    if (state.passengers.child) parts.push(`${state.passengers.child} trẻ em`);
-    if (state.passengers.infant) parts.push(`${state.passengers.infant} em bé`);
-    $("#passenger-summary").textContent = parts.join(", ");
-    $("#adult-count").textContent = state.passengers.adult;
-    $("#child-count").textContent = state.passengers.child;
-    $("#infant-count").textContent = state.passengers.infant;
-    $$("[data-count]").forEach((button) => {
-      const kind = button.dataset.count;
-      const atMinimum = kind === "adult" ? state.passengers[kind] <= 1 : state.passengers[kind] <= 0;
-      button.disabled = button.dataset.delta === "1" ? total >= 9 : atMinimum;
-    });
-  }
-
-  function getSelectedFlight() {
-    return flights[state.selectedFlightId];
-  }
-
-  function renderTravelerForms() {
-    const passengers = [
-      { kind: "adult", count: state.passengers.adult, label: "Người lớn" },
-      { kind: "child", count: state.passengers.child, label: "Trẻ em" },
-      { kind: "infant", count: state.passengers.infant, label: "Em bé" }
-    ].flatMap(({ kind, count, label }) => Array.from({ length: count }, () => ({ kind, label })));
-
-    $("#traveler-list").innerHTML = passengers.map(({ kind, label }, index) => {
-      const name = state.travelerNames[index] || (index === 0 ? state.travelerName : "");
-      const birthDate = index === 0 ? "18/04/1996" : "";
-      const documentNumber = index === 0 ? "079096012345" : "";
-      const documentLabel = kind === "adult" ? "Số giấy tờ tùy thân" : "Số giấy tờ tùy thân/giấy khai sinh";
-      return `
-        <section class="form-section traveler-section">
-          <div class="section-heading">
-            <span class="section-number">${index + 1}</span>
-            <div><h2>Hành khách ${index + 1} · ${label}</h2><p>Nhập thông tin trùng khớp với giấy tờ sử dụng khi làm thủ tục.</p></div>
-          </div>
-          <div class="form-grid">
-            <div class="field"><label for="traveler-name-${index}">Họ và tên</label><input id="traveler-name-${index}" data-traveler-name type="text" value="${escapeHtml(name)}" autocomplete="${index === 0 ? "name" : "off"}" required></div>
-            <div class="field"><label for="traveler-birth-${index}">Ngày sinh</label><input id="traveler-birth-${index}" type="text" value="${escapeHtml(birthDate)}" placeholder="dd/mm/yyyy" inputmode="numeric" required></div>
-            <div class="field"><label for="traveler-id-${index}">${documentLabel}</label><input id="traveler-id-${index}" type="text" value="${escapeHtml(documentNumber)}" inputmode="numeric" required></div>
-            <fieldset class="field gender-field"><legend>Giới tính</legend><div class="inline-options"><label><input type="radio" name="traveler-gender-${index}" value="Nam" checked> Nam</label><label><input type="radio" name="traveler-gender-${index}" value="Nữ"> Nữ</label></div></fieldset>
-          </div>
-        </section>`;
-    }).join("");
-  }
-
-  function getRequiredSeatCount() {
-    return state.passengers.adult + state.passengers.child;
-  }
-
-  function getSeatFee(seat) {
-    return ["1B", "1C", "1D", "1E", "2A", "2F", "7A", "7F"].includes(seat) ? 250000 : 0;
-  }
-
-  function getAirportCode(location) {
-    return location.match(/\(([A-Za-z]{3})\)/)?.[1]?.toUpperCase() || location.trim().slice(0, 3).toUpperCase();
-  }
-
-  function getFlightDisplayedTotal(flight) {
-    const premium = state.cabin === "Thương gia" ? flight.businessPremium : 0;
-    return flight.baseFare + flight.tax + flight.fee + premium;
-  }
-
-  function getPassengerSummary() {
-    const passengerCount = Object.values(state.passengers).reduce((total, count) => total + count, 0);
-    const firstName = escapeHtml(state.travelerNames[0] || state.travelerName);
-    return passengerCount <= 1 ? firstName : `${firstName} + ${passengerCount - 1} người`;
-  }
-
-  function getPriceBreakdown() {
-    const flight = getSelectedFlight();
-    const quantity = getRequiredSeatCount();
-    const base = flight.baseFare * quantity;
-    const premium = (state.cabin === "Thương gia" ? flight.businessPremium : 0) * quantity;
-    const tax = flight.tax * quantity;
-    const fee = flight.fee * quantity;
-    const seat = state.selectedSeats.reduce((total, selectedSeat) => total + getSeatFee(selectedSeat), 0);
-    const promotion = promotions[state.promoCode];
-    const discount = state.promoApplied && promotion
-      ? promotion.discountPercent
-        ? Math.round(base * promotion.discountPercent / 100)
-        : Math.min(base, promotion.discountAmount)
-      : 0;
-    return {
-      base,
-      premium,
-      tax,
-      fee,
-      seat,
-      discount,
-      total: base + premium + tax + fee + seat - discount
-    };
-  }
-
-  function renderSummary(container) {
-    if (!container) return;
-    const flight = getSelectedFlight();
-    const prices = getPriceBreakdown();
-    const route = `${escapeHtml(state.origin)} → ${escapeHtml(state.destination)}`;
-    const date = dateLabel(state.departureDate);
-
-    container.innerHTML = `
-      <section class="summary-card">
-        <div class="summary-heading"><h2>Tóm tắt hành trình</h2></div>
-        <div class="summary-body">
-          <div class="summary-route">
-            <div class="summary-airport"><strong>${escapeHtml(getAirportCode(state.origin))}</strong><span>${flight.departure} · ${date}</span></div>
-            <i data-lucide="plane" aria-hidden="true"></i>
-            <div class="summary-airport"><strong>${escapeHtml(getAirportCode(state.destination))}</strong><span>${flight.arrival} · ${flight.duration}</span></div>
-          </div>
-          <div class="summary-details">
-            <p><span>Hành khách</span><strong>${getPassengerSummary()}</strong></p>
-            <p><span>Chuyến bay</span><strong>${flight.code}</strong></p>
-            <p><span>Hạng ghế</span><strong>${state.cabin}</strong></p>
-            ${state.selectedSeats.length ? `<p><span>Ghế</span><strong>${state.selectedSeats.join(", ")}</strong></p>` : ""}
-            <p><span>Hành trình</span><strong>${route}</strong></p>
-          </div>
-        </div>
-        <div class="summary-cost"><span>Tạm tính</span><strong>${money(prices.total)}</strong></div>
-      </section>`;
-    renderIcons();
-  }
-
-  function renderFare() {
-    const breakdown = getPriceBreakdown();
-    const quantity = getRequiredSeatCount();
-    const travelerSuffix = quantity > 1 ? ` × ${quantity} hành khách` : "";
-    const rows = [
-      ["Giá vé" + travelerSuffix, breakdown.base],
-      ...(breakdown.premium ? [["Phụ thu hạng thương gia", breakdown.premium]] : []),
-      ["Thuế" + travelerSuffix, breakdown.tax],
-      ["Phí dịch vụ" + travelerSuffix, breakdown.fee],
-      ...state.selectedSeats.map((seat) => ["Ghế " + seat, getSeatFee(seat)]).filter(([, amount]) => amount > 0),
-      ...(breakdown.discount ? [[`Voucher ${state.promoCode}`, -breakdown.discount, true]] : [])
-    ];
-
-    $("#fare-breakdown").innerHTML = rows.map(([label, amount, isDiscount]) => `
-      <div class="fare-row ${isDiscount ? "discount" : ""}">
-        <dt>${label}</dt><dd>${amount < 0 ? "−" : ""}${money(Math.abs(amount))}</dd>
-      </div>`).join("");
-    $("#total-price").textContent = money(breakdown.total);
-    $("#promo-feedback").textContent = state.promoApplied ? `Đã áp dụng mã ${state.promoCode} cho giá vé.` : "";
-    $("#promo-feedback").classList.toggle("is-error", false);
-  }
-
-  function renderSeats() {
-    const occupied = new Set(["1A", "1F", "2B", "2E", "3C", "4D", "5A", "6F", "8B"]);
-    const extra = new Set(["1B", "1C", "1D", "1E", "2A", "2F", "7A", "7F"]);
-    const rows = Array.from({ length: 8 }, (_, index) => index + 1);
-    const columns = ["A", "B", "C", "", "D", "E", "F"];
-
-    $("#seat-grid").innerHTML = rows.map((row) => `
-      <div class="seat-row">
-        <span class="seat-row-label">${row}</span>
-        ${columns.map((column) => {
-          if (!column) return '<span class="aisle-space" aria-hidden="true"></span>';
-          const seatId = `${row}${column}`;
-          const isOccupied = occupied.has(seatId);
-          const isSelected = state.selectedSeats.includes(seatId);
-          const hasExtra = extra.has(seatId);
-          const classes = ["seat", isOccupied ? "is-occupied" : "", isSelected ? "is-selected" : "", hasExtra ? "is-extra" : ""].filter(Boolean).join(" ");
-          const accessibleState = isOccupied ? "đã được đặt" : hasExtra ? "có phụ phí" : "còn trống";
-          return `<button type="button" class="${classes}" data-seat="${seatId}" ${isOccupied ? "disabled" : ""} aria-pressed="${isSelected}" aria-label="Ghế ${seatId}, ${accessibleState}${isSelected ? ", đang chọn" : ""}">${column}</button>`;
-        }).join("")}
-      </div>`).join("");
-
-    const selectedSeatNames = state.selectedSeats.join(", ");
-    const seatTotal = state.selectedSeats.reduce((total, seat) => total + getSeatFee(seat), 0);
-    $("#seat-selection-note").textContent = state.selectedSeats.length
-      ? `Đã chọn ${state.selectedSeats.length}/${getRequiredSeatCount()} ghế: ${selectedSeatNames} · Phụ phí ${money(seatTotal)}`
-      : `Chưa chọn ghế. Hãy chọn ${getRequiredSeatCount()} ghế còn trống.`;
-    renderIcons();
-  }
-
-  function renderConfirmation() {
-    const flight = getSelectedFlight();
-    const prices = getPriceBreakdown();
-    $("#confirmation-summary").innerHTML = `
-      <div class="summary-line"><span>Hành trình</span><strong>${escapeHtml(state.origin)} → ${escapeHtml(state.destination)}</strong></div>
-      <div class="summary-line"><span>Ngày khởi hành</span><strong>${dateLabel(state.departureDate)}</strong></div>
-      <div class="summary-line"><span>Chuyến bay</span><strong>${flight.code} · ${flight.departure}–${flight.arrival}</strong></div>
-      <div class="summary-line"><span>Hành khách</span><strong>${getPassengerSummary()}</strong></div>
-      <div class="summary-line"><span>Trạng thái thanh toán</span><strong>Chờ xác nhận</strong></div>
-      <div class="summary-line"><span>Tổng tiền minh họa</span><strong>${money(prices.total)}</strong></div>`;
-    renderIcons();
-  }
-
-  function updateFlightSearchSummary() {
-    const departure = dateLabel(state.departureDate);
-    $("#results-title").textContent = `Chuyến bay đến ${state.destination}`;
-    $("#results-summary").textContent = `${state.origin} → ${state.destination} · ${departure}${state.tripType === "roundtrip" ? ` · Về ${dateLabel(state.returnDate)}` : ""} · ${state.cabin}`;
-    $$("[data-flight-card]").forEach((card) => {
-      const flight = flights[card.dataset.flightId];
-      const total = getFlightDisplayedTotal(flight);
-      card.dataset.price = String(total);
-      $(".flight-choice strong", card).textContent = money(total);
-      $(".flight-choice span", card).textContent = "đã gồm thuế & phí/người";
-      $(".flight-meta span", card).textContent = state.cabin;
-      const airportLabels = $$(".flight-time span", card);
-      airportLabels[0].textContent = getAirportCode(state.origin);
-      airportLabels[1].textContent = getAirportCode(state.destination);
-    });
-  }
-
-  function applyFilters() {
-    const filters = $$("[data-filter]:checked").map((input) => input.dataset.filter);
-    const cards = $$("[data-flight-card]");
-    let visibleCount = 0;
-
-    cards.forEach((card) => {
-      const price = Number(card.dataset.price);
-      const show = filters.every((filter) => {
-        if (filter === "direct") return card.dataset.direct === "true";
-        if (filter === "stop") return card.dataset.direct === "false";
-        if (filter === "morning" || filter === "afternoon") return card.dataset.time === filter;
-        if (filter === "under-two") return price < 2000000;
-        return true;
-      });
-      card.hidden = !show;
-      if (show) visibleCount += 1;
-    });
-
-    $("#result-count").textContent = `${visibleCount} chuyến bay`;
-    $("#empty-results").hidden = visibleCount !== 0;
-  }
-
-  function sortFlights() {
-    const list = $("#flight-list");
-    const cards = $$("[data-flight-card]", list);
-    const sortBy = $("#flight-sort").value;
-    cards.sort((first, second) => {
-      if (sortBy === "price") return Number(first.dataset.price) - Number(second.dataset.price);
-      if (sortBy === "departure") return first.dataset.flightId.localeCompare(second.dataset.flightId);
-      return first.dataset.flightId === "teo218" ? -1 : 1;
-    });
-    cards.forEach((card) => list.insertBefore(card, $("#empty-results")));
-  }
-
-  function startHoldTimer() {
-    if (state.timerStarted) return;
-    state.timerStarted = true;
-    state.remainingSeconds = state.paymentMethod === "momo" ? 600 : 3600;
-    refreshHoldNotice();
-    state.timerId = window.setInterval(() => {
-      if (state.remainingSeconds > 0) state.remainingSeconds -= 1;
-      updateTimerDisplay();
-      if (state.remainingSeconds === 0) {
-        window.clearInterval(state.timerId);
-        $("#hold-notice").classList.add("is-expired");
-        $("#hold-notice span").innerHTML = "Thời gian giữ chỗ đã hết. Đơn chưa được xác nhận.";
-        $("#confirm-booking").disabled = true;
-      }
-    }, 1000);
-    updateTimerDisplay();
-  }
-
-  function refreshHoldNotice() {
-    const minutes = Math.floor(state.remainingSeconds / 60);
-    const seconds = state.remainingSeconds % 60;
-    const duration = state.paymentMethod === "momo" ? "10 phút" : "1 giờ";
-    $("#hold-notice span").innerHTML = `Thời gian giữ chỗ còn <strong id="hold-timer">${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}</strong> (${duration}). Đơn chưa được xác nhận thanh toán.`;
-  }
-
-  function updateTimerDisplay() {
-    const minutes = Math.floor(state.remainingSeconds / 60);
-    const seconds = state.remainingSeconds % 60;
-    $("#hold-timer").textContent = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-  }
-
-  function updatePaymentMethod() {
-    const selected = $('input[name="payment-method"]:checked');
-    if (!selected) return;
-    state.paymentMethod = selected.value;
-    $$(".payment-option").forEach((option) => {
-      option.classList.toggle("is-selected", $("input", option).checked);
-    });
-    if (state.timerId) window.clearInterval(state.timerId);
-    state.timerId = null;
-    state.timerStarted = false;
-    state.remainingSeconds = state.paymentMethod === "momo" ? 600 : 3600;
-    $("#confirm-booking").disabled = false;
-    $("#hold-notice").classList.remove("is-expired");
-    refreshHoldNotice();
-    if (state.screen === "payment") startHoldTimer();
-  }
-
-  function validateSearch() {
-    const origin = $("#origin");
-    const destination = $("#destination");
-    const error = $("#search-error");
-    origin.removeAttribute("aria-invalid");
-    destination.removeAttribute("aria-invalid");
-
-    if (!origin.value.trim() || !destination.value.trim()) {
-      error.textContent = "Vui lòng nhập cả điểm đi và điểm đến.";
-      error.hidden = false;
-      if (!origin.value.trim()) origin.setAttribute("aria-invalid", "true");
-      if (!destination.value.trim()) destination.setAttribute("aria-invalid", "true");
-      (!origin.value.trim() ? origin : destination).focus();
-      return false;
-    }
-    if (origin.value.trim().toLocaleLowerCase("vi") === destination.value.trim().toLocaleLowerCase("vi")) {
-      error.textContent = "Điểm đi và điểm đến cần khác nhau.";
-      error.hidden = false;
-      destination.setAttribute("aria-invalid", "true");
-      destination.focus();
-      return false;
-    }
-    error.hidden = true;
-    return true;
   }
 
   function bindDateControl(fieldId, inputId, labelId) {
     const field = $(`#${fieldId}`);
     const trigger = $(".date-trigger", field);
     const panel = $(".calendar-popover", field);
-    let visibleMonth = new Date(2026, 10, 1);
+    const input = $(`#${inputId}`);
+    let visibleMonth = new Date(`${input.value || todayIso()}T12:00:00`);
+    visibleMonth = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth(), 1);
 
     function refresh() {
-      renderCalendar(panel, $(`#${inputId}`).value, visibleMonth);
-      panel.querySelectorAll("[data-date]").forEach((button) => {
+      renderCalendar(panel, input.value, visibleMonth);
+      $$("[data-date]", panel).forEach((button) => {
         button.addEventListener("click", () => {
           const value = button.dataset.date;
-          if (inputId === "return-date" && value < state.departureDate) {
+          if (inputId === "return-date" && value < $("#departure-date").value) {
             showToast("Ngày về không thể trước ngày đi.");
             return;
           }
-          if (inputId === "departure-date" && state.tripType === "roundtrip" && value > state.returnDate) {
-            state.returnDate = value;
-            $("#return-date").value = value;
-            $("#return-date-label").textContent = formatDate(value);
+
+          if (inputId === "departure-date") {
+            if (state.search.tripType === "RoundTrip" && $("#return-date").value < value) {
+              $("#return-date").value = value;
+              $("#return-date-label").textContent = formatDate(value);
+            }
           }
-          if (inputId === "departure-date") state.departureDate = value;
-          if (inputId === "return-date") state.returnDate = value;
-          $(`#${inputId}`).value = value;
+
+          input.value = value;
           $(`#${labelId}`).textContent = formatDate(value);
           toggleCalendar(field, false);
         });
       });
-      panel.querySelectorAll("[data-calendar-shift]").forEach((button) => {
+      $$("[data-calendar-shift]", panel).forEach((button) => {
         button.addEventListener("click", () => {
           visibleMonth = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() + Number(button.dataset.calendarShift), 1);
           refresh();
         });
       });
-      renderIcons();
     }
 
     trigger.addEventListener("click", () => {
       if (trigger.disabled) return;
-      refresh();
-      toggleCalendar(field);
+      closeFloatingPanels(panel);
+      const willOpen = panel.hidden;
+      if (willOpen) {
+        const current = new Date(`${input.value || todayIso()}T12:00:00`);
+        visibleMonth = new Date(current.getFullYear(), current.getMonth(), 1);
+        refresh();
+      }
+      panel.hidden = !willOpen;
+      trigger.setAttribute("aria-expanded", String(willOpen));
     });
   }
-
-  function initializeSeatMap() {
-    renderSeats();
-  }
-
-  document.addEventListener("click", (event) => {
-    if (!event.target.closest(".date-field, .passenger-field, .field")) closeFloatingPanels();
-
-    const screenLink = event.target.closest("[data-screen-link]");
-    if (screenLink) {
-      event.preventDefault();
-      setScreen(screenLink.dataset.screenLink);
-      $("#mobile-menu").hidden = true;
-      $(".menu-toggle").setAttribute("aria-expanded", "false");
-      return;
-    }
-
-    const anchor = event.target.closest("[data-home-anchor]");
-    if (anchor) {
-      event.preventDefault();
-      setScreen("home", { scrollToTop: false });
-      $("#mobile-menu").hidden = true;
-      $(".menu-toggle").setAttribute("aria-expanded", "false");
-      $(".menu-toggle").setAttribute("aria-label", "Mở menu");
-      window.setTimeout(() => {
-        const target = document.getElementById(anchor.dataset.homeAnchor);
-        if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 0);
-      return;
-    }
-
-    const socialChannel = event.target.closest("[data-social-channel]");
-    if (socialChannel) {
-      event.preventDefault();
-      showToast(`${socialChannel.dataset.socialChannel} đang là liên kết mẫu, chưa kết nối tài khoản chính thức.`);
-      return;
-    }
-
-    const redeemButton = event.target.closest("[data-redeem-voucher]");
-    if (redeemButton) {
-      const pointsCost = Number(redeemButton.dataset.pointsCost);
-      if (!Number.isInteger(pointsCost) || pointsCost <= 0) {
-        showToast("Voucher này chưa có thông tin điểm đổi hợp lệ.");
-        return;
-      }
-      if (redeemButton.disabled) return;
-
-      state.loyaltyPoints -= pointsCost;
-      redeemButton.dataset.redeemed = "true";
-      redeemButton.disabled = true;
-      state.redeemedPromoCodes.push(redeemButton.dataset.promoCode);
-      updateRewards();
-      redeemButton.textContent = `Đã đổi · ${redeemButton.dataset.promoCode}`;
-      showToast(`Đổi voucher thành công. Mã ${redeemButton.dataset.promoCode} đã được thêm vào tài khoản mẫu.`);
-      return;
-    }
-
-    if (event.target.closest("[data-coming-soon]")) {
-      event.preventDefault();
-      showToast("Màn hình này nằm ngoài phạm vi bản xem trước hiện tại.");
-      return;
-    }
-
-    const cabinOption = event.target.closest("[data-cabin]");
-    if (cabinOption) {
-      state.cabin = cabinOption.dataset.cabin;
-      $("#cabin-value").textContent = state.cabin;
-      $("#cabin-options").hidden = true;
-      $("#cabin-trigger").setAttribute("aria-expanded", "false");
-      $$("#cabin-options [role=option]").forEach((option) => option.setAttribute("aria-selected", String(option === cabinOption)));
-      return;
-    }
-
-    const countButton = event.target.closest("[data-count]");
-    if (countButton) {
-      const kind = countButton.dataset.count;
-      const next = state.passengers[kind] + Number(countButton.dataset.delta);
-      const total = Object.values(state.passengers).reduce((sum, count) => sum + count, 0);
-      if (kind === "adult" && (next < 1 || next < state.passengers.infant)) return;
-      if (kind === "infant" && next > state.passengers.adult) {
-        showToast("Mỗi em bé cần đi cùng một người lớn.");
-        return;
-      }
-      if (next < 0 || (countButton.dataset.delta === "1" && total >= 9)) return;
-      state.passengers[kind] = next;
-      updatePassengerSummary();
-      return;
-    }
-
-    const calendarShift = event.target.closest("[data-calendar-shift]");
-    if (calendarShift) return;
-
-    const dateOption = event.target.closest(".calendar-grid [data-date]");
-    if (dateOption) return;
-
-    const seatButton = event.target.closest("[data-seat]");
-    if (seatButton && !seatButton.disabled) {
-      const seat = seatButton.dataset.seat;
-      if (state.selectedSeats.includes(seat)) {
-        state.selectedSeats = state.selectedSeats.filter((selectedSeat) => selectedSeat !== seat);
-      } else if (state.selectedSeats.length < getRequiredSeatCount()) {
-        state.selectedSeats = [...state.selectedSeats, seat];
-      } else {
-        showToast(`Đã chọn đủ ${getRequiredSeatCount()} ghế.`);
-        return;
-      }
-      renderSeats();
-      renderSummary($("#seat-summary-card"));
-      return;
-    }
-
-    const selectFlight = event.target.closest("[data-select-flight]");
-    if (selectFlight) {
-      state.selectedFlightId = selectFlight.dataset.selectFlight;
-      setScreen("passengers");
-      return;
-    }
-
-    if (event.target.closest("#empty-clear-filters")) {
-      clearFilters();
-      return;
-    }
-  });
-
-  function clearFilters() {
-    $$("[data-filter]").forEach((filter) => { filter.checked = false; });
-    applyFilters();
-  }
-
-  $(".menu-toggle").addEventListener("click", () => {
-    const menu = $("#mobile-menu");
-    const isOpen = menu.hidden;
-    menu.hidden = !isOpen;
-    $(".menu-toggle").setAttribute("aria-expanded", String(isOpen));
-    $(".menu-toggle").setAttribute("aria-label", isOpen ? "Đóng menu" : "Mở menu");
-    $(".menu-toggle").innerHTML = `<i data-lucide="${isOpen ? "x" : "menu"}" aria-hidden="true"></i>`;
-    renderIcons();
-  });
-
-  $$('input[name="trip-type"]').forEach((radio) => {
-    radio.addEventListener("change", () => {
-      state.tripType = radio.value;
-      const isRoundTrip = state.tripType === "roundtrip";
-      $("#return-field").classList.toggle("is-disabled", !isRoundTrip);
-      $("#return-field").hidden = !isRoundTrip;
-      $("#return-date").disabled = !isRoundTrip;
-      $(".date-trigger", $("#return-field")).disabled = !isRoundTrip;
-      if (!isRoundTrip) toggleCalendar($("#return-field"), false);
-    });
-  });
-
-  $("#swap-route").addEventListener("click", () => {
-    const origin = $("#origin");
-    const destination = $("#destination");
-    [origin.value, destination.value] = [destination.value, origin.value];
-    state.origin = origin.value;
-    state.destination = destination.value;
-  });
-
-  $("#cabin-trigger").addEventListener("click", () => {
-    closeFloatingPanels($("#cabin-options"));
-    const options = $("#cabin-options");
-    options.hidden = !options.hidden;
-    $("#cabin-trigger").setAttribute("aria-expanded", String(!options.hidden));
-  });
-
-  $("#passenger-trigger").addEventListener("click", () => {
-    closeFloatingPanels($("#passenger-options"));
-    const options = $("#passenger-options");
-    options.hidden = !options.hidden;
-    $("#passenger-trigger").setAttribute("aria-expanded", String(!options.hidden));
-  });
-
-  $("#passenger-done").addEventListener("click", () => {
-    $("#passenger-options").hidden = true;
-    $("#passenger-trigger").setAttribute("aria-expanded", "false");
-  });
-
-  $("#flight-search-form").addEventListener("submit", (event) => {
-    event.preventDefault();
-    if (!validateSearch()) return;
-    state.origin = $("#origin").value.trim();
-    state.destination = $("#destination").value.trim();
-    state.departureDate = $("#departure-date").value;
-    state.returnDate = $("#return-date").value;
-    if (state.timerId) window.clearInterval(state.timerId);
-    state.timerId = null;
-    state.timerStarted = false;
-    state.remainingSeconds = state.paymentMethod === "momo" ? 600 : 3600;
-    state.selectedFlightId = "teo218";
-    state.selectedSeats = ["7A"];
-    state.promoApplied = false;
-    state.promoCode = "";
-    state.travelerNames = ["Nguyễn Minh Anh"];
-    state.travelerName = "Nguyễn Minh Anh";
-    state.travelerFormsGenerated = false;
-    $("#promo-code").value = "";
-    $("#confirm-booking").disabled = false;
-    $("#hold-notice").classList.remove("is-expired");
-    const submit = $("#search-submit");
-    submit.setAttribute("aria-busy", "true");
-    submit.disabled = true;
-    submit.querySelector("span").textContent = "Đang tìm chuyến…";
-    window.setTimeout(() => {
-      submit.removeAttribute("aria-busy");
-      submit.disabled = false;
-      submit.querySelector("span").textContent = "Tìm chuyến bay";
-      updateFlightSearchSummary();
-      clearFilters();
-      setScreen("results");
-    }, 550);
-  });
-
-  $("#passenger-form").addEventListener("submit", (event) => {
-    event.preventDefault();
-    const form = event.currentTarget;
-    if (!form.reportValidity()) return;
-    state.travelerNames = $$("[data-traveler-name]", form).map((input) => input.value.trim());
-    state.travelerName = state.travelerNames[0];
-    state.contactEmail = $("#contact-email").value.trim();
-    state.contactPhone = $("#contact-phone").value.trim();
-    setScreen("seats");
-  });
-
-  $("#clear-filters").addEventListener("click", clearFilters);
-  $$("[data-filter]").forEach((filter) => filter.addEventListener("change", applyFilters));
-  $("#flight-sort").addEventListener("change", sortFlights);
-
-  $("#continue-to-payment").addEventListener("click", () => {
-    if (state.selectedSeats.length !== getRequiredSeatCount()) {
-      showToast(`Hãy chọn đủ ${getRequiredSeatCount()} ghế trước khi tiếp tục.`);
-      return;
-    }
-    setScreen("payment");
-  });
-
-  $$('input[name="payment-method"]').forEach((radio) => {
-    radio.addEventListener("change", updatePaymentMethod);
-  });
-
-  $("#promo-form").addEventListener("submit", (event) => {
-    event.preventDefault();
-    const code = $("#promo-code").value.trim().toUpperCase();
-    const feedback = $("#promo-feedback");
-    const promotion = promotions[code];
-    const breakdown = getPriceBreakdown();
-    const orderValue = breakdown.base + breakdown.premium + breakdown.tax + breakdown.fee + breakdown.seat;
-
-    if (promotion && state.redeemedPromoCodes.includes(code) && orderValue >= promotion.minOrderValue) {
-      state.promoApplied = true;
-      state.promoCode = code;
-      feedback.classList.remove("is-error");
-      feedback.textContent = `Đã áp dụng mã ${code} cho giá vé minh họa.`;
-      renderFare();
-      renderSummary($("#payment-summary-card"));
-    } else {
-      state.promoApplied = false;
-      state.promoCode = "";
-      const feedbackMessage = !code
-        ? "Nhập mã khuyến mãi để áp dụng."
-        : !promotion || !state.redeemedPromoCodes.includes(code)
-          ? "Bạn cần đổi voucher này bằng điểm trước khi áp dụng."
-          : `Đơn hàng cần đạt tối thiểu ${money(promotion.minOrderValue)} để dùng mã này.`;
-      renderFare();
-      feedback.classList.add("is-error");
-      feedback.textContent = feedbackMessage;
-      renderSummary($("#payment-summary-card"));
-    }
-  });
-
-  $("#confirm-booking").addEventListener("click", () => {
-    if (state.remainingSeconds <= 0) {
-      showToast("Thời gian giữ chỗ đã hết.");
-      return;
-    }
-    if (state.timerId) window.clearInterval(state.timerId);
-    state.timerId = null;
-    setScreen("confirmation");
-  });
-
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") {
-      if ($("#logout-dialog")?.open) return;
-      closeFloatingPanels();
-      const menu = $("#mobile-menu");
-      const menuToggle = $(".menu-toggle");
-      const wasOpen = !menu.hidden;
-      menu.hidden = true;
-      menuToggle.setAttribute("aria-expanded", "false");
-      menuToggle.setAttribute("aria-label", "Mở menu");
-      if (wasOpen) {
-        menuToggle.innerHTML = '<i data-lucide="menu" aria-hidden="true"></i>';
-        renderIcons();
-      }
-    }
-  });
 
   function initializeDateControls() {
+    const minimum = todayIso();
+    const departure = $("#departure-date");
+    const returnInput = $("#return-date");
+
+    if (!departure.value || departure.value < minimum) {
+      departure.value = addDaysIso(minimum, 7);
+      $("#departure-date-label").textContent = formatDate(departure.value);
+    }
+
+    if (!returnInput.value || returnInput.value < departure.value) {
+      returnInput.value = addDaysIso(departure.value, 7);
+      $("#return-date-label").textContent = formatDate(returnInput.value);
+    }
+
     bindDateControl("departure-field", "departure-date", "departure-date-label");
     bindDateControl("return-field", "return-date", "return-date-label");
   }
 
-  function initialize() {
+  /* ---------- Sự kiện ---------- */
+
+  function bindEvents() {
+    $("#flight-search-form").addEventListener("submit", handleSearchSubmit);
+    $("#swap-route").addEventListener("click", () => {
+      const origin = $("#origin");
+      const destination = $("#destination");
+      [origin.value, destination.value] = [destination.value, origin.value];
+    });
+
+    $$('input[name="trip-type"]').forEach((radio) => {
+      radio.addEventListener("change", () => {
+        state.search.tripType = radio.value === "roundtrip" ? "RoundTrip" : "OneWay";
+        const isRoundTrip = state.search.tripType === "RoundTrip";
+        $("#return-field").classList.toggle("is-disabled", !isRoundTrip);
+        $("#return-field").hidden = !isRoundTrip;
+        $("#return-date").disabled = !isRoundTrip;
+        $(".date-trigger", $("#return-field")).disabled = !isRoundTrip;
+        if (!isRoundTrip) toggleCalendar($("#return-field"), false);
+      });
+    });
+
+    $("#cabin-trigger").addEventListener("click", () => {
+      closeFloatingPanels($("#cabin-options"));
+      const options = $("#cabin-options");
+      options.hidden = !options.hidden;
+      $("#cabin-trigger").setAttribute("aria-expanded", String(!options.hidden));
+    });
+
+    $("#passenger-trigger").addEventListener("click", () => {
+      closeFloatingPanels($("#passenger-options"));
+      const options = $("#passenger-options");
+      options.hidden = !options.hidden;
+      $("#passenger-trigger").setAttribute("aria-expanded", String(!options.hidden));
+    });
+
+    $("#passenger-done").addEventListener("click", () => {
+      $("#passenger-options").hidden = true;
+      $("#passenger-trigger").setAttribute("aria-expanded", "false");
+    });
+
+    document.addEventListener("click", (event) => {
+      if (!event.target.closest(".date-field, .passenger-field, .field")) closeFloatingPanels();
+
+      const cabinOption = event.target.closest("[data-cabin]");
+      if (cabinOption) {
+        state.search.seatClass = cabinOption.dataset.cabin === "Thương gia" ? "Business" : "Economy";
+        $("#cabin-value").textContent = cabinOption.dataset.cabin;
+        $("#cabin-options").hidden = true;
+        $("#cabin-trigger").setAttribute("aria-expanded", "false");
+        $$("#cabin-options [role=option]").forEach((option) => {
+          option.setAttribute("aria-selected", String(option === cabinOption));
+        });
+        return;
+      }
+
+      const countButton = event.target.closest("[data-count]");
+      if (countButton) {
+        const kind = countButton.dataset.count;
+        const next = state.passengers[kind] + Number(countButton.dataset.delta);
+        const total = state.passengers.adult + state.passengers.child + state.passengers.infant;
+
+        if (kind === "adult" && next < 1) return;
+        if (kind === "infant" && next > state.passengers.adult) {
+          showToast("Mỗi em bé cần đi cùng một người lớn.");
+          return;
+        }
+        if (next < 0 || (countButton.dataset.delta === "1" && total >= 9)) return;
+
+        state.passengers[kind] = next;
+        if (state.passengers.infant > state.passengers.adult) {
+          state.passengers.infant = state.passengers.adult;
+        }
+        updatePassengerSummary();
+        return;
+      }
+
+      const selectFlightButton = event.target.closest("[data-select-flight]");
+      if (selectFlightButton) {
+        selectFlight(selectFlightButton.dataset.direction, selectFlightButton.dataset.selectFlight);
+        return;
+      }
+
+      const seatButton = event.target.closest("[data-seat]");
+      if (seatButton && !seatButton.disabled) {
+        toggleSeat(seatButton.dataset.seatDirection, Number(seatButton.dataset.seat));
+        return;
+      }
+
+      const screenLink = event.target.closest("[data-screen-link]");
+      if (screenLink) {
+        event.preventDefault();
+        setScreen(screenLink.dataset.screenLink);
+        return;
+      }
+
+      if (event.target.closest("#empty-clear-filters")) {
+        clearFilters();
+      }
+    });
+
+    $("#clear-filters").addEventListener("click", clearFilters);
+    $$("[data-filter]").forEach((filter) => filter.addEventListener("change", applyFilters));
+    $("#flight-sort").addEventListener("change", sortFlights);
+
+    $("#continue-to-passengers").addEventListener("click", () => {
+      if ($("#continue-to-passengers").disabled) return;
+      setScreen("passengers");
+    });
+
+    $("#passenger-form").addEventListener("submit", handlePassengerSubmit);
+    $("#continue-to-payment").addEventListener("click", handleContinueToPayment);
+
+    $$('input[name="payment-method"]').forEach((radio) => {
+      radio.addEventListener("change", handlePaymentMethodChange);
+    });
+
+    $("#promo-form").addEventListener("submit", handlePromoSubmit);
+    $("#confirm-booking").addEventListener("click", handleConfirmBooking);
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape") return;
+      closeFloatingPanels();
+    });
+  }
+
+  function fillAirportOptions() {
+    const datalist = $("#airport-options");
+    if (!datalist) return;
+    datalist.innerHTML = state.airports
+      .map((airport) => `<option value="${escapeHtml(airport.label)}">${escapeHtml(airport.name)}</option>`)
+      .join("");
+  }
+
+  async function initialize() {
+    bindEvents();
     initializeDateControls();
     updatePassengerSummary();
-    initializeSeatMap();
-    renderFare();
-    applyFilters();
-    updateRewards();
     renderIcons();
+
+    try {
+      const [airports, context] = await Promise.all([
+        apiFetch("/airports"),
+        apiFetch("/context")
+      ]);
+
+      state.airports = airports || [];
+      state.context = context;
+      fillAirportOptions();
+
+      if (context.isAuthenticated) {
+        if (context.fullName) $("#contact-name").value = context.fullName;
+        if (context.email) $("#contact-email").value = context.email;
+        if (context.phone) $("#contact-phone").value = context.phone;
+      }
+    } catch (error) {
+      showToast(error.message);
+    }
   }
 
   if (document.readyState === "loading") {

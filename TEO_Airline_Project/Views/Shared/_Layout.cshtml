@@ -1,22 +1,34 @@
-﻿<!doctype html>
+﻿@{
+    var isAuthenticated = !string.IsNullOrWhiteSpace(Context.Session.GetString("UserId"));
+    var currentFullName = Context.Session.GetString("FullName");
+    if (string.IsNullOrWhiteSpace(currentFullName))
+    {
+        currentFullName = Context.Session.GetString("Username") ?? "Tài khoản";
+    }
+
+    var currentAction = ViewContext.RouteData.Values["action"] as string ?? "Index";
+    bool IsCurrent(string action) => string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase);
+    var pageTitle = ViewData["Title"] as string ?? "TEO Airlines — Đặt vé máy bay";
+}
+<!doctype html>
 <html lang="vi">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0F766E">
   <meta name="description" content="Tìm và đặt chuyến bay cùng TEO Airlines.">
-  <title>TEO Airlines — Đặt vé máy bay</title>
+  <title>@pageTitle</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@@tailwindcss/browser@4"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="~/css/style.css">
 </head>
 <body class="min-h-screen bg-page text-ink antialiased">
   <header class="site-header">
     <div class="container header-inner">
-      <a class="brand" href="#home" data-screen-link="home" aria-label="TEO Airlines — Trang chủ">
+      <a class="brand" asp-controller="Home" asp-action="Index" data-screen-link="home" aria-label="TEO Airlines — Trang chủ">
         <span class="brand-mark" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="currentColor">
             <path d="M20.8 3.2c-.9-.9-2.2-.4-3.1.5l-4.3 4.3-7.8-2c-.5-.1-1 .1-1.4.4l-.9.9 5.7 3.2-3.1 3.1-2.8-.7L2 14l3.7 1.8L7.5 19l1.1-1.1-.7-2.8 3.1-3.1 3.2 5.7.9-.9c.4-.4.5-.9.4-1.4l-2-7.8 4.3-4.3c.9-.9 1.4-2.2.5-3.1z"></path>
@@ -26,26 +38,32 @@
       </a>
 
       <nav class="main-nav" aria-label="Điều hướng chính">
-        <a class="nav-link is-active" href="#home" data-screen-link="home" aria-current="page">Đặt vé</a>
-        <a class="nav-link" href="#lookup" data-coming-soon>Tra cứu đặt chỗ</a>
-        <a class="nav-link" href="#benefits" data-home-anchor="benefits">Đổi điểm</a>
-        <a class="nav-link" href="#support" data-home-anchor="support">Hỗ trợ</a>
+        <a class="nav-link @(IsCurrent("Index") ? "is-active" : null)" asp-controller="Home" asp-action="Index" data-screen-link="home" aria-current="@(IsCurrent("Index") ? "page" : null)">Đặt vé</a>
+        <a class="nav-link @(IsCurrent("Lookup") ? "is-active" : null)" asp-controller="Home" asp-action="Lookup" aria-current="@(IsCurrent("Lookup") ? "page" : null)">Tra cứu đặt chỗ</a>
+        <a class="nav-link @(IsCurrent("Rewards") ? "is-active" : null)" asp-controller="Home" asp-action="Rewards" aria-current="@(IsCurrent("Rewards") ? "page" : null)">Đổi điểm</a>
+        <a class="nav-link" asp-controller="Home" asp-action="Index" asp-fragment="support">Hỗ trợ</a>
       </nav>
 
       <div class="header-actions">
-        <a class="button button-outline header-login" asp-controller="Auth" asp-action="Login" data-auth-link>Đăng nhập</a>
-        <a class="button button-primary header-register" href="register.html" data-auth-link>Đăng ký</a>
-        <div class="account-menu">
-          <button class="button button-outline account-trigger" type="button" data-account-trigger aria-haspopup="true" aria-expanded="false" aria-controls="account-popover" hidden>
-            <i data-lucide="user-round" aria-hidden="true"></i><span>Tài khoản</span><i data-lucide="chevron-down" aria-hidden="true"></i>
-          </button>
-          <div class="account-popover" id="account-popover" hidden>
-            <p class="account-popover-label">Tài khoản mẫu</p>
-            <button class="account-signout" type="button" data-signout-open>
-              <i data-lucide="log-out" aria-hidden="true"></i><span>Đăng xuất</span>
-            </button>
-          </div>
-        </div>
+        @if (isAuthenticated)
+        {
+          <details class="account-menu">
+            <summary class="button button-outline account-trigger">
+              <i data-lucide="user-round" aria-hidden="true"></i><span class="account-name">@currentFullName</span><i data-lucide="chevron-down" aria-hidden="true"></i>
+            </summary>
+            <div class="account-popover">
+              <p class="account-popover-label">@currentFullName</p>
+              <button class="account-signout" type="button" data-signout-open>
+                <i data-lucide="log-out" aria-hidden="true"></i><span>Đăng xuất</span>
+              </button>
+            </div>
+          </details>
+        }
+        else
+        {
+          <a class="button button-outline header-login" asp-controller="Auth" asp-action="Login">Đăng nhập</a>
+          <a class="button button-primary header-register" href="register.html">Đăng ký</a>
+        }
       </div>
 
       <button class="icon-button menu-toggle" type="button" aria-label="Mở menu" aria-expanded="false" aria-controls="mobile-menu">
@@ -53,18 +71,24 @@
       </button>
     </div>
     <nav class="mobile-menu" id="mobile-menu" aria-label="Điều hướng trên điện thoại" hidden>
-      <a href="#home" data-screen-link="home">Đặt vé</a>
-      <a href="#lookup" data-coming-soon>Tra cứu đặt chỗ</a>
-      <a href="#benefits" data-home-anchor="benefits">Đổi điểm</a>
-      <a href="#support" data-home-anchor="support">Hỗ trợ</a>
-      <a asp-controller="Auth" asp-action="Login">Đăng nhập</a>
-      <a href="register.html" data-auth-link>Đăng ký</a>
-      <div class="mobile-account" data-auth-account hidden>
-        <span class="mobile-account-label">Tài khoản mẫu</span>
-        <button class="account-signout" type="button" data-signout-open>
-          <i data-lucide="log-out" aria-hidden="true"></i><span>Đăng xuất</span>
-        </button>
-      </div>
+      <a asp-controller="Home" asp-action="Index" data-screen-link="home">Đặt vé</a>
+      <a asp-controller="Home" asp-action="Lookup">Tra cứu đặt chỗ</a>
+      <a asp-controller="Home" asp-action="Rewards">Đổi điểm</a>
+      <a asp-controller="Home" asp-action="Index" asp-fragment="support">Hỗ trợ</a>
+      @if (isAuthenticated)
+      {
+        <div class="mobile-account">
+          <span class="mobile-account-label">@currentFullName</span>
+          <button class="account-signout" type="button" data-signout-open>
+            <i data-lucide="log-out" aria-hidden="true"></i><span>Đăng xuất</span>
+          </button>
+        </div>
+      }
+      else
+      {
+        <a asp-controller="Auth" asp-action="Login">Đăng nhập</a>
+        <a href="register.html">Đăng ký</a>
+      }
     </nav>
   </header>
 
@@ -73,7 +97,7 @@
     <footer class="site-footer" id="support">
         <div class="container footer-inner">
             <div class="footer-brand">
-                <a class="brand brand-footer" href="#home" data-screen-link="home">
+                <a class="brand brand-footer" asp-controller="Home" asp-action="Index" data-screen-link="home">
                     <span class="brand-mark" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 3.2c-.9-.9-2.2-.4-3.1.5l-4.3 4.3-7.8-2c-.5-.1-1 .1-1.4.4l-.9.9 5.7 3.2-3.1 3.1-2.8-.7L2 14l3.7 1.8L7.5 19l1.1-1.1-.7-2.8 3.1-3.1 3.2 5.7.9-.9c.4-.4.5-.9.4-1.4l-2-7.8 4.3-4.3c.9-.9 1.4-2.2.5-3.1z"></path></svg>
                     </span>
@@ -113,8 +137,8 @@
                 <p class="footer-contact-note">Thông tin liên hệ và mạng xã hội là dữ liệu mẫu, chưa kết nối kênh chính thức.</p>
             </div>
             <nav class="footer-links" aria-label="Liên kết hỗ trợ">
-                <a href="#support" data-home-anchor="support">Hỗ trợ khách hàng</a>
-                <a href="#benefits" data-home-anchor="benefits">Đổi điểm</a>
+                <a asp-controller="Home" asp-action="Index" asp-fragment="support">Hỗ trợ khách hàng</a>
+                <a asp-controller="Home" asp-action="Rewards">Đổi điểm</a>
                 <a href="#terms" data-coming-soon>Điều khoản</a>
                 <a href="#privacy" data-coming-soon>Chính sách riêng tư</a>
             </nav>
@@ -126,20 +150,20 @@
             <span class="logout-icon"><i data-lucide="log-out" aria-hidden="true"></i></span>
             <div>
                 <h2 id="logout-title">Đăng xuất khỏi tài khoản?</h2>
-                <p id="logout-description">Bạn sẽ cần đăng nhập lại để tiếp tục dùng tài khoản mẫu.</p>
+                <p id="logout-description">Bạn sẽ cần đăng nhập lại để tiếp tục.</p>
             </div>
         </div>
         <div class="logout-account">
-            <i data-lucide="user-round" aria-hidden="true"></i><span>Tài khoản demo</span>
+            <i data-lucide="user-round" aria-hidden="true"></i><span>@currentFullName</span>
         </div>
-        <div class="logout-actions">
+        <form class="logout-actions" asp-controller="Auth" asp-action="Logout" method="post">
             <button class="button button-secondary" type="button" data-signout-cancel>Huỷ</button>
-            <button class="button button-danger" type="button" data-signout-confirm>Đăng xuất</button>
-        </div>
+            <button class="button button-danger" type="submit" data-signout-confirm>Đăng xuất</button>
+        </form>
     </dialog>
 
     <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
-    <script src="js/app.js"></script>
-    <script src="js/auth.js"></script>
+    <script src="~/js/auth.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

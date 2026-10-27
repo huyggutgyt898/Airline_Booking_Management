@@ -1,0 +1,82 @@
+@{
+    ViewData["Title"] = "Tra cứu đặt chỗ — TEO Airlines";
+    var isAuthenticated = !string.IsNullOrWhiteSpace(Context.Session.GetString("UserId"));
+}
+
+<main id="main-content">
+  <section class="subpage" aria-labelledby="lookup-title">
+    <div class="container page-container">
+      <div class="page-heading">
+        <div>
+          <p class="eyebrow">Tra cứu đặt chỗ</p>
+          <h1 id="lookup-title">Đơn đã đặt</h1>
+          <p class="subheading">Theo dõi trạng thái thanh toán, giờ bay và chỗ ngồi của từng đơn.</p>
+        </div>
+        @if (isAuthenticated)
+        {
+          <button class="button button-outline" type="button" id="lookup-refresh">
+            <i data-lucide="refresh-cw" aria-hidden="true"></i> Làm mới
+          </button>
+        }
+      </div>
+
+      @if (isAuthenticated)
+      {
+        <section class="lookup-block" aria-labelledby="lookup-mine-title">
+          <div class="lookup-block-heading">
+            <h2 id="lookup-mine-title">Đơn của bạn</h2>
+            <p>Đơn chờ thanh toán sẽ tự huỷ khi quá thời gian giữ chỗ.</p>
+          </div>
+          <div class="booking-list" id="lookup-mine-list" aria-live="polite">
+            <p class="mock-note">Đang tải đơn đã đặt…</p>
+          </div>
+        </section>
+      }
+      else
+      {
+        <section class="panel lookup-signin">
+          <div class="lookup-signin-copy">
+            <h2>Đăng nhập để xem mọi đơn đã đặt</h2>
+            <p>Bạn vẫn có thể tra cứu một đơn cụ thể bằng mã đặt chỗ kèm email/số điện thoại ở bên dưới.</p>
+          </div>
+          <div class="lookup-signin-actions">
+            <a class="button button-primary" asp-controller="Auth" asp-action="Login">Đăng nhập</a>
+            <a class="button button-outline" asp-controller="Home" asp-action="Index">Đặt vé mới</a>
+          </div>
+        </section>
+      }
+
+      <section class="panel lookup-form-panel" aria-labelledby="lookup-form-title">
+        <div class="panel-heading">
+          <div>
+            <h2 id="lookup-form-title">Tra cứu bằng mã đặt chỗ</h2>
+            <p>Nhập mã đặt chỗ kèm email hoặc số điện thoại đã dùng khi đặt vé.</p>
+          </div>
+        </div>
+        <form class="lookup-form" id="lookup-form" novalidate>
+          <div class="form-grid">
+            <div class="field">
+              <label for="lookup-code">Mã đặt chỗ</label>
+              <input id="lookup-code" name="lookup-code" type="text" placeholder="Ví dụ: X7K9P2" autocomplete="off" maxlength="12" required>
+            </div>
+            <div class="field">
+              <label for="lookup-contact">Email hoặc số điện thoại</label>
+              <input id="lookup-contact" name="lookup-contact" type="text" placeholder="Email hoặc số điện thoại đã đặt" autocomplete="email" required>
+            </div>
+          </div>
+          <p class="field-error" id="lookup-error" role="alert" hidden></p>
+          <div class="lookup-form-actions">
+            <button class="button button-primary" type="submit" id="lookup-submit">
+              <i data-lucide="search" aria-hidden="true"></i> Tra cứu
+            </button>
+          </div>
+        </form>
+        <div class="booking-list" id="lookup-results" aria-live="polite" hidden></div>
+      </section>
+    </div>
+  </section>
+</main>
+
+@section Scripts {
+  <script src="~/js/lookup.js"></script>
+}

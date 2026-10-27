@@ -1,0 +1,136 @@
+@{
+    Layout = null;
+    var fullName = ViewData["FullName"] as string;
+    var email = ViewData["Email"] as string;
+    var phone = ViewData["Phone"] as string;
+    var acceptTerms = ViewData["AcceptTerms"] is true;
+    var errorMessage = ViewData["ErrorMessage"] as string;
+}
+
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0F766E">
+  <meta name="description" content="Tạo tài khoản TEO Airlines.">
+  <title>Đăng ký — TEO Airlines</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="~/css/style.css">
+</head>
+<body class="auth-page">
+  <main class="auth-shell">
+    <a class="brand auth-brand" asp-controller="Home" asp-action="Index" aria-label="TEO Airlines — Về trang đặt vé">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M20.8 3.2c-.9-.9-2.2-.4-3.1.5l-4.3 4.3-7.8-2c-.5-.1-1 .1-1.4.4l-.9.9 5.7 3.2-3.1 3.1-2.8-.7L2 14l3.7 1.8L7.5 19l1.1-1.1-.7-2.8 3.1-3.1 3.2 5.7.9-.9c.4-.4.5-.9.4-1.4l-2-7.8 4.3-4.3c.9-.9 1.4-2.2.5-3.1z"></path>
+        </svg>
+      </span>
+      <span class="brand-wordmark"><strong>TEO</strong><small>airlines</small></span>
+    </a>
+
+    <section class="auth-panel" aria-labelledby="auth-title">
+      <div class="auth-heading">
+        <h1 id="auth-title">Tạo tài khoản</h1>
+        <p>Đăng ký để sẵn sàng cho hành trình tiếp theo.</p>
+      </div>
+
+      <form class="auth-form" id="register-form" asp-controller="Auth" asp-action="Register" method="post" novalidate>
+
+        @if (!string.IsNullOrWhiteSpace(errorMessage))
+        {
+            <div class="auth-form-message" role="alert" style="color: #dc2626; font-weight: 500; margin-bottom: 1rem;">
+                @errorMessage
+            </div>
+        }
+
+        <div class="auth-field">
+          <label for="register-name">Họ và tên</label>
+          <input id="register-name" name="fullName" type="text" value="@fullName" autocomplete="name" placeholder="Nhập họ và tên" required autofocus aria-describedby="register-name-error">
+          <p class="auth-field-error" id="register-name-error" aria-live="polite"></p>
+        </div>
+
+        <div class="auth-field">
+          <label for="register-email">Email</label>
+          <input id="register-email" name="email" type="email" value="@email" autocomplete="email" placeholder="Nhập email" required aria-describedby="register-email-error">
+          <p class="auth-field-error" id="register-email-error" aria-live="polite"></p>
+        </div>
+
+        <div class="auth-field">
+          <label for="register-phone">Số điện thoại</label>
+          <input id="register-phone" name="phone" type="tel" value="@phone" autocomplete="tel" inputmode="tel" placeholder="Nhập số điện thoại" required aria-describedby="register-phone-error">
+          <p class="auth-field-error" id="register-phone-error" aria-live="polite"></p>
+        </div>
+
+        <div class="auth-field">
+          <label for="register-password">Mật khẩu</label>
+          <div class="auth-password-wrap">
+            <input id="register-password" name="password" type="password" autocomplete="new-password" placeholder="Tạo mật khẩu" minlength="8" required aria-describedby="register-password-error">
+            <button class="password-toggle" type="button" aria-label="Hiện mật khẩu" aria-pressed="false" aria-controls="register-password" data-password-toggle>
+              <svg class="password-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+              <svg class="password-icon-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49" />
+                <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" />
+                <path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143" />
+                <path d="m2 2 20 20" />
+              </svg>
+            </button>
+          </div>
+          <p class="auth-field-hint">Ít nhất 8 ký tự, bao gồm chữ và ký tự đặc biệt</p>
+          <p class="auth-field-error" id="register-password-error" aria-live="polite"></p>
+        </div>
+
+        <div class="auth-field">
+          <label for="register-confirm-password">Xác nhận mật khẩu</label>
+          <div class="auth-password-wrap">
+            <input id="register-confirm-password" name="confirmPassword" type="password" autocomplete="new-password" placeholder="Nhập lại mật khẩu" minlength="8" required aria-describedby="confirm-password-error">
+            <button class="password-toggle" type="button" aria-label="Hiện mật khẩu" aria-pressed="false" aria-controls="register-confirm-password" data-password-toggle>
+              <svg class="password-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+              <svg class="password-icon-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49" />
+                <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" />
+                <path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143" />
+                <path d="m2 2 20 20" />
+              </svg>
+            </button>
+          </div>
+          <p class="auth-field-error" id="confirm-password-error" aria-live="polite"></p>
+        </div>
+
+        <label class="auth-terms">
+          <input id="terms-agreement" name="acceptTerms" type="checkbox" value="true" checked="@acceptTerms" required>
+          <span>Tôi đồng ý với <a asp-controller="Home" asp-action="Index" asp-fragment="support">Điều khoản sử dụng</a> và <a asp-controller="Home" asp-action="Index" asp-fragment="support">Chính sách riêng tư</a>.</span>
+        </label>
+        <p class="auth-field-error" id="terms-error" aria-live="polite"></p>
+
+        <p class="auth-form-message" id="auth-form-message" role="status" aria-live="polite"></p>
+        <button class="button button-primary auth-submit" type="submit" data-auth-submit>
+          <span>Tạo tài khoản</span>
+        </button>
+      </form>
+
+      <div class="auth-social">
+        <div class="auth-divider" aria-hidden="true"><span>hoặc</span></div>
+        <button class="button button-outline auth-google" type="button" data-google-auth>
+          <span class="google-mark" aria-hidden="true">G</span>
+          Đăng ký bằng Google
+        </button>
+      </div>
+
+      <p class="auth-switch">Đã có tài khoản? <a asp-controller="Auth" asp-action="Login">Đăng nhập</a></p>
+      <p class="auth-demo-note">Mật khẩu được mã hoá an toàn và tài khoản dùng được ngay sau khi tạo.</p>
+    </section>
+  </main>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <script src="~/js/auth.js"></script>
+  <script src="~/js/register.js"></script>
+</body>
+</html>
