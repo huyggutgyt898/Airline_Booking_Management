@@ -1,4 +1,5 @@
-﻿@{
+﻿@model TEO_Airline_Project.Models.ViewModels.AdminDashboardViewModel
+@{
     Layout = null;
     var fullName = Context.Session.GetString("FullName") ?? "Quản trị viên";
     var initials = string.Concat(
@@ -145,19 +146,45 @@
         <section class="admin-screen" data-screen-panel="airports" hidden>
           <div class="admin-page-heading">
             <div><h1>Sân bay</h1><p>Quản lý mã sân bay và thông tin địa điểm.</p></div>
-            <button class="admin-button admin-button-primary" type="button" data-record-open="airport"><i data-lucide="plus" aria-hidden="true"></i>Thêm sân bay</button>
+            <button class="admin-button admin-button-primary" type="button" data-airport-create><i data-lucide="plus" aria-hidden="true"></i>Thêm sân bay</button>
           </div>
-          <div class="admin-list-tools"><label class="admin-search"><i data-lucide="search" aria-hidden="true"></i><span class="admin-sr-only">Tìm sân bay</span><input type="search" placeholder="Tìm mã, tên hoặc thành phố" data-table-filter="airports-table"></label><span class="admin-result-count">8 sân bay</span></div>
+          @if (TempData["AirportSuccess"] is string airportSuccess)
+          {
+            <div class="admin-feedback" role="status">@airportSuccess</div>
+          }
+          @if (TempData["AirportError"] is string airportError)
+          {
+            <div class="admin-feedback admin-feedback-error" role="alert">@airportError</div>
+          }
+          <div class="admin-list-tools"><label class="admin-search"><i data-lucide="search" aria-hidden="true"></i><span class="admin-sr-only">Tìm sân bay</span><input type="search" placeholder="Tìm mã, tên hoặc thành phố" data-table-filter="airports-table"></label><span class="admin-result-count" data-airports-count>@Model.Airports.Count sân bay</span></div>
           <div class="admin-table-panel"><table class="admin-table" id="airports-table">
             <thead><tr><th>Mã</th><th>Tên sân bay</th><th>Thành phố</th><th>Quốc gia</th><th class="admin-actions-heading">Thao tác</th></tr></thead>
             <tbody>
-              <tr><td data-label="Mã"><strong>SGN</strong></td><td data-label="Tên sân bay">Tân Sơn Nhất</td><td data-label="Thành phố">Hồ Chí Minh</td><td data-label="Quốc gia">Việt Nam</td><td data-label="Thao tác"><div class="admin-row-actions"><button class="admin-button admin-button-small" type="button" data-record-edit="airport">Sửa</button><button class="admin-button admin-button-small admin-button-ghost" type="button" data-record-delete="Sân bay SGN">Xóa</button></div></td></tr>
-              <tr><td data-label="Mã"><strong>HAN</strong></td><td data-label="Tên sân bay">Nội Bài</td><td data-label="Thành phố">Hà Nội</td><td data-label="Quốc gia">Việt Nam</td><td data-label="Thao tác"><div class="admin-row-actions"><button class="admin-button admin-button-small" type="button" data-record-edit="airport">Sửa</button><button class="admin-button admin-button-small admin-button-ghost" type="button" data-record-delete="Sân bay HAN">Xóa</button></div></td></tr>
-              <tr><td data-label="Mã"><strong>DAD</strong></td><td data-label="Tên sân bay">Đà Nẵng</td><td data-label="Thành phố">Đà Nẵng</td><td data-label="Quốc gia">Việt Nam</td><td data-label="Thao tác"><div class="admin-row-actions"><button class="admin-button admin-button-small" type="button" data-record-edit="airport">Sửa</button><button class="admin-button admin-button-small admin-button-ghost" type="button" data-record-delete="Sân bay DAD">Xóa</button></div></td></tr>
-              <tr><td data-label="Mã"><strong>CXR</strong></td><td data-label="Tên sân bay">Cam Ranh</td><td data-label="Thành phố">Nha Trang</td><td data-label="Quốc gia">Việt Nam</td><td data-label="Thao tác"><div class="admin-row-actions"><button class="admin-button admin-button-small" type="button" data-record-edit="airport">Sửa</button><button class="admin-button admin-button-small admin-button-ghost" type="button" data-record-delete="Sân bay CXR">Xóa</button></div></td></tr>
-              <tr><td data-label="Mã"><strong>PQC</strong></td><td data-label="Tên sân bay">Phú Quốc</td><td data-label="Thành phố">Phú Quốc</td><td data-label="Quốc gia">Việt Nam</td><td data-label="Thao tác"><div class="admin-row-actions"><button class="admin-button admin-button-small" type="button" data-record-edit="airport">Sửa</button><button class="admin-button admin-button-small admin-button-ghost" type="button" data-record-delete="Sân bay PQC">Xóa</button></div></td></tr>
+              @foreach (var airport in Model.Airports)
+              {
+                <tr data-airport-row>
+                  <td data-label="Mã"><strong>@airport.AirportCode</strong></td>
+                  <td data-label="Tên sân bay">@airport.AirportName</td>
+                  <td data-label="Thành phố">@airport.City</td>
+                  <td data-label="Quốc gia">@airport.Country</td>
+                  <td data-label="Thao tác">
+                    <div class="admin-row-actions">
+                      <button class="admin-button admin-button-small" type="button"
+                              data-airport-edit
+                              data-code="@airport.AirportCode"
+                              data-name="@airport.AirportName"
+                              data-city="@airport.City"
+                              data-country="@airport.Country">Sửa</button>
+                      <button class="admin-button admin-button-small admin-button-ghost" type="button"
+                              data-airport-delete
+                              data-code="@airport.AirportCode">Xóa</button>
+                    </div>
+                  </td>
+                </tr>
+              }
+              <tr data-airports-empty hidden><td colspan="5">Không tìm thấy sân bay phù hợp.</td></tr>
             </tbody>
-          </table><div class="admin-table-footer"><span>Hiển thị 1–5 trên 8 sân bay</span><div class="admin-pagination"><button type="button" aria-label="Trang trước" disabled>‹</button><button type="button" aria-current="page">1</button><button type="button">2</button><button type="button" aria-label="Trang sau">›</button></div></div></div>
+          </table><div class="admin-table-footer"><span data-airports-summary></span><div class="admin-pagination" data-airports-pagination></div></div></div>
         </section>
 
         <section class="admin-screen" data-screen-panel="routes" hidden>
@@ -254,6 +281,70 @@
       </div>
     </main>
   </div>
+
+  <dialog class="admin-dialog" id="airport-dialog" aria-labelledby="airport-dialog-title"
+          data-open="@Model.OpenAirportDialog.ToString().ToLowerInvariant()"
+          data-mode="@Model.AirportDialogMode">
+    <form class="admin-dialog-form" method="post" asp-controller="Airports" asp-action="Create"
+          data-airport-form
+          data-create-url="@Url.Action("Create", "Airports")"
+          data-edit-url="@Url.Action("Edit", "Airports")">
+      <header class="admin-dialog-heading">
+        <div><h2 id="airport-dialog-title">Thêm sân bay</h2><p>Nhập mã sân bay và thông tin địa điểm.</p></div>
+        <button class="admin-icon-button" type="button" data-airport-dialog-close aria-label="Đóng cửa sổ"><i data-lucide="x" aria-hidden="true"></i></button>
+      </header>
+      <div class="admin-validation-summary" asp-validation-summary="All" role="alert"></div>
+      <div class="admin-dialog-fields">
+        <div class="admin-field">
+          <label asp-for="AirportInput.Code">Mã sân bay</label>
+          <input asp-for="AirportInput.Code" maxlength="10" required autocomplete="off" data-airport-code-field
+                 readonly="@(Model.AirportDialogMode == "edit" ? "readonly" : null)">
+          <span asp-validation-for="AirportInput.Code" class="admin-validation-message"></span>
+        </div>
+        <div class="admin-field">
+          <label asp-for="AirportInput.Name">Tên sân bay</label>
+          <input asp-for="AirportInput.Name" maxlength="150" required>
+          <span asp-validation-for="AirportInput.Name" class="admin-validation-message"></span>
+        </div>
+        <div class="admin-field">
+          <label asp-for="AirportInput.City">Thành phố</label>
+          <input asp-for="AirportInput.City" maxlength="100" required>
+          <span asp-validation-for="AirportInput.City" class="admin-validation-message"></span>
+        </div>
+        <div class="admin-field">
+          <label asp-for="AirportInput.Country">Quốc gia</label>
+          <input asp-for="AirportInput.Country" maxlength="100" required>
+          <span asp-validation-for="AirportInput.Country" class="admin-validation-message"></span>
+        </div>
+      </div>
+      <input type="hidden" name="airportCode" value="@Model.AirportInput.Code" data-airport-original-code>
+      <footer class="admin-dialog-actions">
+        <button class="admin-button admin-button-outline" type="button" data-airport-dialog-close>Hủy</button>
+        <button class="admin-button admin-button-primary" type="submit">Lưu thay đổi</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <dialog class="admin-dialog admin-confirm-dialog" id="airport-delete-dialog" aria-labelledby="airport-delete-title">
+    <form class="admin-dialog-form" method="post" asp-controller="Airports" asp-action="Delete" data-airport-delete-form>
+      <header class="admin-dialog-heading">
+        <div><h2 id="airport-delete-title">Xóa sân bay?</h2><p>Bạn có chắc muốn xóa sân bay <strong data-airport-delete-name></strong>? Hành động này không thể hoàn tác.</p></div>
+      </header>
+      <input type="hidden" name="airportCode" data-airport-delete-code>
+      <div class="admin-field admin-delete-confirm-field">
+        <label for="airport-delete-confirmation">Nhập chính xác mã sân bay để xác nhận</label>
+        <input id="airport-delete-confirmation" name="confirmationCode" type="text"
+               required autocomplete="off" autocapitalize="off" spellcheck="false"
+               aria-describedby="airport-delete-confirmation-help"
+               data-airport-delete-confirmation>
+        <span id="airport-delete-confirmation-help" class="admin-validation-message">Mã sân bay phải khớp cả chữ hoa và ký tự.</span>
+      </div>
+      <footer class="admin-dialog-actions">
+        <button class="admin-button admin-button-outline" type="button" data-airport-delete-cancel>Hủy</button>
+        <button class="admin-button admin-button-danger" type="submit" data-airport-delete-submit disabled>Xóa sân bay</button>
+      </footer>
+    </form>
+  </dialog>
 
   <dialog class="admin-dialog" id="record-dialog" aria-labelledby="record-dialog-title">
     <form class="admin-dialog-form" data-record-form>

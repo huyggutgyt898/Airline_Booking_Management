@@ -1,11 +1,20 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using TEO_Airline_Project.Models;
+using TEO_Airline_Project.Models.ViewModels;
 
 namespace TEO_Airline_Project.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly AirlineBookingDBContext _context;
+
+        public HomeController(AirlineBookingDBContext context)
+        {
+            _context = context;
+        }
+
         public IActionResult Index()
         {
             if (RedirectForRole() is { } redirect)
@@ -59,7 +68,7 @@ namespace TEO_Airline_Project.Controllers
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Admin()
+        public async Task<IActionResult> Admin()
         {
             if (string.IsNullOrWhiteSpace(HttpContext.Session.GetString("UserId")))
             {
@@ -74,7 +83,15 @@ namespace TEO_Airline_Project.Controllers
                 return RedirectToRoleHome();
             }
 
-            return View("admin");
+            var model = new AdminDashboardViewModel
+            {
+                Airports = await _context.Airports
+                    .AsNoTracking()
+                    .OrderBy(airport => airport.AirportCode)
+                    .ToListAsync()
+            };
+
+            return View("admin", model);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

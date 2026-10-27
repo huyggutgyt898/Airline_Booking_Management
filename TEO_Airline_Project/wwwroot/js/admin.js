@@ -101,15 +101,6 @@
     }
   };
   const formConfigs = {
-    airport: {
-      title: "sân bay",
-      fields: [
-        { name: "code", label: "Mã sân bay", required: true, fromCell: 0 },
-        { name: "name", label: "Tên sân bay", required: true, fromCell: 1 },
-        { name: "city", label: "Thành phố", required: true, fromCell: 2 },
-        { name: "country", label: "Quốc gia", required: true, fromCell: 3 }
-      ]
-    },
     route: {
       title: "tuyến bay",
       fields: [
@@ -162,6 +153,8 @@
   let activePeriod = "month";
   let activeChartMode = "revenue";
   let pendingDeleteName = "";
+  let airportPage = 1;
+  const airportPageSize = 5;
 
   function renderIcons() {
     if (window.lucide && typeof window.lucide.createIcons === "function") {
@@ -458,6 +451,12 @@
   }
 
   function setTableFilters(table) {
+    if (table.id === "airports-table") {
+      airportPage = 1;
+      renderAirportTable();
+      return;
+    }
+
     const search = $(`[data-table-filter="${table.id}"]`);
     const select = $(`[data-table-select="${table.id}"]`);
     const query = search?.value.trim().toLocaleLowerCase("vi");
@@ -468,6 +467,131 @@
       row.hidden = !(matchesSearch && matchesSelect);
     });
   }
+
+  function renderAirportTable() {
+    const table = $("#airports-table");
+    const search = $('[data-table-filter="airports-table"]');
+    const rows = $$("tbody tr[data-airport-row]", table);
+    const query = search.value.trim().toLocaleLowerCase("vi");
+    const matches = rows.filter((row) => row.textContent.toLocaleLowerCase("vi").includes(query));
+    const pageCount = Math.max(1, Math.ceil(matches.length / airportPageSize));
+    airportPage = Math.min(airportPage, pageCount);
+
+    rows.forEach((row) => {
+      const matchIndex = matches.indexOf(row);
+      row.hidden = matchIndex < 0 ||
+        Math.floor(matchIndex / airportPageSize) + 1 !== airportPage;
+    });
+
+    const emptyRow = $("[data-airports-empty]", table);
+    emptyRow.hidden = matches.length !== 0;
+    $("[data-airports-count]").textContent = `${matches.length} sân bay`;
+    $("[data-airports-summary]").textContent = matches.length === 0
+      ? "Không có sân bay phù hợp"
+      : `Hiển thị ${(airportPage - 1) * airportPageSize + 1}–${Math.min(airportPage * airportPageSize, matches.length)} trên ${matches.length} sân bay`;
+
+    const pagination = $("[data-airports-pagination]");
+    pagination.replaceChildren();
+    if (matches.length <= airportPageSize) return;
+
+    const addPageButton = (label, page, ariaLabel, current = false) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = label;
+      button.setAttribute("aria-label", ariaLabel);
+      if (current) button.setAttribute("aria-current", "page");
+      button.addEventListener("click", () => {
+        airportPage = page;
+        renderAirportTable();
+      });
+      pagination.append(button);
+    };
+
+    addPageButton("‹", Math.max(1, airportPage - 1), "Trang trước");
+    for (let page = 1; page <= pageCount; page += 1) {
+      addPageButton(String(page), page, `Trang ${page}`, page === airportPage);
+    }
+    addPageButton("›", Math.min(pageCount, airportPage + 1), "Trang sau");
+  }
+
+  function openAirportDialog(mode, button = null) {
+    const dialog = $("#airport-dialog");
+    const form = $("[data-airport-form]");
+    const code = $("[data-airport-code-field]");
+    form.reset();
+    form.action = mode === "edit" ? form.dataset.editUrl : form.dataset.createUrl;
+    $("#airport-dialog-title").textContent = mode === "edit" ? "Sửa sân bay" : "Thêm sân bay";
+    code.readOnly = mode === "edit";
+    $("[data-airport-original-code]").value = mode === "edit" ? button.dataset.code : "";
+
+    if (mode === "edit") {
+      code.value = button.dataset.code;
+      $("#AirportInput_Name").value = button.dataset.name;
+      $("#AirportInput_City").value = button.dataset.city;
+      $("#AirportInput_Country").value = button.dataset.country;
+    }
+
+    dialog.showModal();
+    code.focus();
+  }
+
+  $$("[data-airport-create]").forEach((button) => {
+    button.addEventListener("click", () => openAirportDialog("create"));
+  });
+  $$("[data-airport-edit]").forEach((button) => {
+    button.addEventListener("click", () => openAirportDialog("edit", button));
+  });
+  $$("[data-airport-delete]").forEach((button) => {
+    button.addEventListener("click", () => {
+      $("[data-airport-delete-code]").value = button.dataset.code;
+      $("[data-airport-delete-name]").textContent = button.dataset.code;
+      const confirmation = $("[data-airport-delete-confirmation]");
+      confirmation.value = "";
+      $("[data-airport-delete-submit]").disabled = true;
+      $("#airport-delete-dialog").showModal();
+      confirmation.focus();
+    });
+  });
+  $$("[data-airport-dialog-close]").forEach((button) => {
+    button.addEventListener("click", () => $("#airport-dialog").close());
+  });
+  $("[data-airport-delete-cancel]").addEventListener("click", () => {
+    $("#airport-delete-dialog").close();
+  });
+  $("[data-airport-delete-confirmation]").addEventListener("input", (event) => {
+    const expectedCode = $("[data-airport-delete-code]").value;
+    $("[data-airport-delete-submit]").disabled = event.currentTarget.value !== expectedCode;
+  });
+  $("[data-airport-delete-form]").addEventListener("submit", (event) => {
+    const confirmation = $("[data-airport-delete-confirmation]");
+    if (confirmation.value !== $("[data-airport-delete-code]").value) {
+      event.preventDefault();
+      confirmation.setCustomValidity("Nhập chính xác mã sân bay để xác nhận.");
+      confirmation.reportValidity();
+      confirmation.focus();
+      return;
+    }
+
+    confirmation.setCustomValidity("");
+  });
+  $("#airport-delete-dialog").addEventListener("close", () => {
+    $("[data-airport-delete-confirmation]").value = "";
+    $("[data-airport-delete-submit]").disabled = true;
+  });
+
+  if ($("#airport-dialog").dataset.open === "true") {
+    const dialog = $("#airport-dialog");
+    const form = $("[data-airport-form]");
+    const mode = dialog.dataset.mode;
+    form.action = mode === "edit" ? form.dataset.editUrl : form.dataset.createUrl;
+    const code = $("[data-airport-code-field]");
+    code.readOnly = mode === "edit";
+    if (mode === "edit") {
+      $("[data-airport-original-code]").value = code.value;
+    }
+    dialog.showModal();
+  }
+  renderAirportTable();
 
   $$("[data-admin-screen]").forEach((link) => {
     link.addEventListener("click", (event) => {

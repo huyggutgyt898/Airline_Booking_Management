@@ -1268,6 +1268,15 @@
   margin-bottom: 20px;
 }
 
+.admin-delete-confirm-field {
+  margin-top: 20px;
+}
+
+.admin-button-danger:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
 .admin-toast {
   position: fixed;
   z-index: 100;
@@ -1641,4 +1650,39 @@
   .admin-button {
     transition: none;
   }
+}
+
+.admin-feedback {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 13px;
+}
+
+.admin-feedback-error,
+.admin-validation-message,
+.admin-validation-summary.validation-summary-errors {
+  color: var(--danger);
+}
+
+.admin-validation-summary:not(.validation-summary-errors) {
+  display: none;
+}
+
+.admin-validation-summary.validation-summary-errors {
+  font-size: 12px;
+}
+
+.admin-validation-message {
+  display: block;
+  min-height: 16px;
+  font-size: 11px;
+}
+
+.admin-field input:read-only {
+  background: var(--background);
+  color: var(--muted);
 }
