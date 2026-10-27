@@ -101,17 +101,6 @@
     }
   };
   const formConfigs = {
-    flight: {
-      title: "chuyến bay",
-      fields: [
-        { name: "number", label: "Số hiệu chuyến bay", required: true, fromCell: 0 },
-        { name: "route", label: "Tuyến bay", required: true, fromCell: 1 },
-        { name: "departure", label: "Thời gian khởi hành", type: "datetime-local", required: true, fromCell: 2, read: (row) => dateTimeValue(row.cells[2]) },
-        { name: "arrival", label: "Thời gian đến", type: "datetime-local", required: true, fromCell: 3, read: (row) => dateTimeValue(row.cells[3]) },
-        { name: "aircraft", label: "Máy bay", required: true, fromCell: 4 },
-        { name: "status", label: "Trạng thái", type: "select", options: ["Theo lịch", "Trễ chuyến", "Đã hủy", "Đã hoàn tất"], required: true, fromCell: 5 }
-      ]
-    },
     pricing: {
       title: "mức giá",
       fields: [
@@ -642,6 +631,87 @@
     }
     dialog.showModal();
   }
+
+  function openFlightDialog(mode, button = null) {
+    const dialog = $("#flight-dialog");
+    const form = $("[data-flight-form]");
+    const flightNumber = $("#FlightInput_FlightNumber");
+    form.reset();
+    form.action = mode === "edit" ? form.dataset.editUrl : form.dataset.createUrl;
+    $("#flight-dialog-title").textContent = mode === "edit" ? "Sửa chuyến bay" : "Thêm chuyến bay";
+    $("[data-flight-id]").value = mode === "edit" ? button.dataset.id : "0";
+
+    if (mode === "edit") {
+      flightNumber.value = button.dataset.number;
+      $("#FlightInput_RouteId").value = button.dataset.routeId;
+      $("#FlightInput_DepartureTime").value = button.dataset.departure;
+      $("#FlightInput_ArrivalTime").value = button.dataset.arrival;
+      $("#FlightInput_AircraftId").value = button.dataset.aircraftId;
+      $("#FlightInput_Status").value = button.dataset.status;
+    }
+
+    dialog.showModal();
+    flightNumber.focus();
+  }
+
+  $$("[data-flight-create]").forEach((button) => {
+    button.addEventListener("click", () => openFlightDialog("create"));
+  });
+  $$("[data-flight-edit]").forEach((button) => {
+    button.addEventListener("click", () => openFlightDialog("edit", button));
+  });
+  $$("[data-flight-dialog-close]").forEach((button) => {
+    button.addEventListener("click", () => $("#flight-dialog").close());
+  });
+  $$("[data-flight-delete]").forEach((button) => {
+    button.addEventListener("click", () => {
+      $("[data-flight-delete-id]").value = button.dataset.id;
+      $("[data-flight-delete-hidden-number]").value = button.dataset.number;
+      $("[data-flight-delete-number]").textContent = button.dataset.number;
+      $("[data-flight-delete-route]").textContent = button.dataset.route;
+      $("[data-flight-delete-departure]").textContent = button.dataset.departure;
+      const confirmation = $("[data-flight-delete-confirmation]");
+      confirmation.value = "";
+      confirmation.setCustomValidity("");
+      $("[data-flight-delete-submit]").disabled = true;
+      $("#flight-delete-dialog").showModal();
+      confirmation.focus();
+    });
+  });
+  $("[data-flight-delete-cancel]").addEventListener("click", () => {
+    $("#flight-delete-dialog").close();
+  });
+  $("[data-flight-delete-confirmation]").addEventListener("input", (event) => {
+    const expectedNumber = $("[data-flight-delete-hidden-number]").value;
+    $("[data-flight-delete-submit]").disabled = event.currentTarget.value !== expectedNumber;
+    event.currentTarget.setCustomValidity("");
+  });
+  $("[data-flight-delete-form]").addEventListener("submit", (event) => {
+    const confirmation = $("[data-flight-delete-confirmation]");
+    if (confirmation.value !== $("[data-flight-delete-hidden-number]").value) {
+      event.preventDefault();
+      confirmation.setCustomValidity("Nhập chính xác số hiệu chuyến bay để xác nhận.");
+      confirmation.reportValidity();
+      confirmation.focus();
+      return;
+    }
+
+    confirmation.setCustomValidity("");
+  });
+  $("#flight-delete-dialog").addEventListener("close", () => {
+    $("[data-flight-delete-confirmation]").value = "";
+    $("[data-flight-delete-submit]").disabled = true;
+  });
+
+  let flightSearchTimer;
+  const flightSearchInput = $("[data-flight-search-input]");
+  const flightSearchForm = flightSearchInput.form;
+  flightSearchInput.addEventListener("input", () => {
+    window.clearTimeout(flightSearchTimer);
+    flightSearchTimer = window.setTimeout(() => flightSearchForm.requestSubmit(), 350);
+  });
+  $("[data-flight-status-filter]").addEventListener("change", () => flightSearchForm.requestSubmit());
+
   renderAirportTable();
 
   $$("[data-admin-screen]").forEach((link) => {
@@ -751,7 +821,15 @@
     button.addEventListener("click", () => showToast("Giao diện minh họa — phân trang chưa kết nối dữ liệu."));
   });
 
-  setScreen(window.location.hash.slice(1) || "overview");
+  const flightDialog = $("#flight-dialog");
+  const shouldOpenFlightDialog = flightDialog.dataset.open === "true";
+  setScreen(shouldOpenFlightDialog ? "flights" : window.location.hash.slice(1) || "overview");
+  if (shouldOpenFlightDialog) {
+    const form = $("[data-flight-form]");
+    form.action = flightDialog.dataset.mode === "edit" ? form.dataset.editUrl : form.dataset.createUrl;
+    flightDialog.showModal();
+    $("#FlightInput_FlightNumber").focus();
+  }
   updateDashboard("month");
   setAircraft($("[data-aircraft][aria-pressed='true']"));
   renderIcons();

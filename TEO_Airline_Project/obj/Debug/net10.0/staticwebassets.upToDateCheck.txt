@@ -74,7 +74,7 @@ wwwroot\lib\jquery\LICENSE.txt
 D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\wwwroot\js\counter.js
 D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\wwwroot\js\auth.js
 D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\wwwroot\js\app.js
-D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\wwwroot\css\admin.css
+D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\wwwroot\js\admin.js
 D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\wwwroot\favicon.ico
 D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\wwwroot\css\style.css
 D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\wwwroot\css\site.css
@@ -139,7 +139,7 @@ D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\wwwroot\
 D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
 D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\wwwroot\js\site.js
 D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\wwwroot\css\counter.css
-D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\wwwroot\js\admin.js
+D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\wwwroot\css\admin.css
 D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\wwwroot\js\register.js
 D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\wwwroot\js\lookup.js
 D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\wwwroot\js\rewards.js

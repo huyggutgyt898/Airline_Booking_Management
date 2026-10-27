@@ -1,7 +1,9 @@
 ﻿@model TEO_Airline_Project.Models.ViewModels.AdminDashboardViewModel
+@using TEO_Airline_Project.Models.ViewModels
+@using TEO_Airline_Project.Services
 @{
     Layout = null;
-    var fullName = Context.Session.GetString("FullName") ?? "Quản trị viên";
+    var fullName = ViewContext.HttpContext.Session.GetString("FullName") ?? "Quản trị viên";
     var initials = string.Concat(
         fullName.Split(' ', StringSplitOptions.RemoveEmptyEntries)
             .TakeLast(2)
@@ -12,8 +14,33 @@
         {
             routePage = routePageNumber,
             routeSearch = Model.RouteSearch,
-            routeType = Model.RouteTypeFilter
+            routeType = Model.RouteTypeFilter,
+            flightPage = Model.FlightPage,
+            flightSearch = Model.FlightSearch,
+            flightStatus = Model.FlightStatusFilter
         }) + "#routes";
+    }
+    string FlightPageUrl(int flightPageNumber)
+    {
+        return Url.Action("Admin", "Home", new
+        {
+            routePage = Model.RoutePage,
+            routeSearch = Model.RouteSearch,
+            routeType = Model.RouteTypeFilter,
+            flightPage = flightPageNumber,
+            flightSearch = Model.FlightSearch,
+            flightStatus = Model.FlightStatusFilter
+        }) + "#flights";
+    }
+    string ClearFlightFiltersUrl()
+    {
+        return Url.Action("Admin", "Home", new
+        {
+            routePage = Model.RoutePage,
+            routeSearch = Model.RouteSearch,
+            routeType = Model.RouteTypeFilter,
+            flightPage = 1
+        }) + "#flights";
     }
 }
 <!doctype html>
@@ -321,19 +348,118 @@
         <section class="admin-screen" data-screen-panel="flights" hidden>
           <div class="admin-page-heading">
             <div><h1>Chuyến bay</h1><p>Lịch khai thác, tàu bay và trạng thái chuyến.</p></div>
-            <button class="admin-button admin-button-primary" type="button" data-record-open="flight"><i data-lucide="plus" aria-hidden="true"></i>Thêm chuyến bay</button>
+            <button class="admin-button admin-button-primary" type="button" data-flight-create><i data-lucide="plus" aria-hidden="true"></i>Thêm chuyến bay</button>
           </div>
-          <div class="admin-list-tools"><label class="admin-search"><i data-lucide="search" aria-hidden="true"></i><span class="admin-sr-only">Tìm chuyến bay</span><input type="search" placeholder="Tìm số hiệu hoặc chặng bay" data-table-filter="flights-table"></label><label class="admin-select-label"><span class="admin-sr-only">Lọc trạng thái chuyến</span><select data-table-select="flights-table"><option value="">Tất cả trạng thái</option><option>Theo lịch</option><option>Trễ chuyến</option><option>Đã hủy</option><option>Đã hoàn tất</option></select></label><span class="admin-result-count">18 chuyến bay</span></div>
+          @if (TempData["FlightSuccess"] is string flightSuccess)
+          {
+            <div class="admin-feedback" role="status">@flightSuccess</div>
+          }
+          @if (TempData["FlightError"] is string flightError)
+          {
+            <div class="admin-feedback admin-feedback-error" role="alert">@flightError</div>
+          }
+          <form class="admin-list-tools" method="get" asp-controller="Home" asp-action="Admin" data-flight-search>
+            <input type="hidden" name="routePage" value="@Model.RoutePage">
+            <input type="hidden" name="routeSearch" value="@Model.RouteSearch">
+            <input type="hidden" name="routeType" value="@Model.RouteTypeFilter">
+            <input type="hidden" name="flightPage" value="1">
+            <label class="admin-search"><i data-lucide="search" aria-hidden="true"></i><span class="admin-sr-only">Tìm chuyến bay</span><input type="search" name="flightSearch" value="@Model.FlightSearch" placeholder="Tìm số hiệu, chặng bay hoặc máy bay" data-flight-search-input></label>
+            <label class="admin-select-label"><span class="admin-sr-only">Lọc trạng thái chuyến</span><select name="flightStatus" data-flight-status-filter><option value="">Tất cả trạng thái</option>@foreach (var status in AdminFlightStatus.Options)
+              {
+                <option value="@status.Value" selected="@(Model.FlightStatusFilter == status.Value)">@status.Label</option>
+              }</select></label>
+            <button class="admin-button admin-button-small" type="submit">Lọc</button>
+            <span class="admin-result-count">@Model.FilteredFlightCount chuyến bay</span>
+          </form>
           <div class="admin-table-panel"><table class="admin-table" id="flights-table">
             <thead><tr><th>Số hiệu</th><th>Hành trình</th><th>Khởi hành</th><th>Đến nơi</th><th>Máy bay</th><th>Trạng thái</th><th class="admin-actions-heading">Thao tác</th></tr></thead>
             <tbody>
-              <tr><td data-label="Số hiệu"><strong>TEO 218</strong></td><td data-label="Hành trình">SGN <span class="admin-route-arrow">→</span> HAN</td><td data-label="Khởi hành">21/10/2026 <span class="admin-cell-meta">07:30</span></td><td data-label="Đến nơi">21/10/2026 <span class="admin-cell-meta">09:40</span></td><td data-label="Máy bay">Airbus A321</td><td data-label="Trạng thái"><span class="admin-badge admin-badge-success">Theo lịch</span></td><td data-label="Thao tác"><div class="admin-row-actions"><button class="admin-button admin-button-small" type="button" data-record-edit="flight">Sửa</button><button class="admin-button admin-button-small admin-button-ghost" type="button" data-record-delete="Chuyến TEO 218">Xóa</button></div></td></tr>
-              <tr><td data-label="Số hiệu"><strong>TEO 302</strong></td><td data-label="Hành trình">SGN <span class="admin-route-arrow">→</span> HAN</td><td data-label="Khởi hành">21/10/2026 <span class="admin-cell-meta">10:15</span></td><td data-label="Đến nơi">21/10/2026 <span class="admin-cell-meta">12:30</span></td><td data-label="Máy bay">Airbus A320</td><td data-label="Trạng thái"><span class="admin-badge admin-badge-warning">Trễ chuyến</span></td><td data-label="Thao tác"><div class="admin-row-actions"><button class="admin-button admin-button-small" type="button" data-record-edit="flight">Sửa</button><button class="admin-button admin-button-small admin-button-ghost" type="button" data-record-delete="Chuyến TEO 302">Xóa</button></div></td></tr>
-              <tr><td data-label="Số hiệu"><strong>TEO 416</strong></td><td data-label="Hành trình">HAN <span class="admin-route-arrow">→</span> DAD</td><td data-label="Khởi hành">21/10/2026 <span class="admin-cell-meta">14:00</span></td><td data-label="Đến nơi">21/10/2026 <span class="admin-cell-meta">15:20</span></td><td data-label="Máy bay">Airbus A321</td><td data-label="Trạng thái"><span class="admin-badge admin-badge-success">Theo lịch</span></td><td data-label="Thao tác"><div class="admin-row-actions"><button class="admin-button admin-button-small" type="button" data-record-edit="flight">Sửa</button><button class="admin-button admin-button-small admin-button-ghost" type="button" data-record-delete="Chuyến TEO 416">Xóa</button></div></td></tr>
-              <tr><td data-label="Số hiệu"><strong>TEO 118</strong></td><td data-label="Hành trình">DAD <span class="admin-route-arrow">→</span> SGN</td><td data-label="Khởi hành">20/10/2026 <span class="admin-cell-meta">18:20</span></td><td data-label="Đến nơi">20/10/2026 <span class="admin-cell-meta">20:05</span></td><td data-label="Máy bay">Boeing 787-9</td><td data-label="Trạng thái"><span class="admin-badge admin-badge-neutral">Đã hoàn tất</span></td><td data-label="Thao tác"><div class="admin-row-actions"><button class="admin-button admin-button-small" type="button" data-record-edit="flight">Sửa</button><button class="admin-button admin-button-small admin-button-ghost" type="button" data-record-delete="Chuyến TEO 118">Xóa</button></div></td></tr>
-              <tr><td data-label="Số hiệu"><strong>TEO 223</strong></td><td data-label="Hành trình">SGN <span class="admin-route-arrow">→</span> CXR</td><td data-label="Khởi hành">22/10/2026 <span class="admin-cell-meta">08:00</span></td><td data-label="Đến nơi">22/10/2026 <span class="admin-cell-meta">09:10</span></td><td data-label="Máy bay">Airbus A320</td><td data-label="Trạng thái"><span class="admin-badge admin-badge-neutral">Đã hủy</span></td><td data-label="Thao tác"><div class="admin-row-actions"><button class="admin-button admin-button-small" type="button" data-record-edit="flight">Sửa</button><button class="admin-button admin-button-small admin-button-ghost" type="button" data-record-delete="Chuyến TEO 223">Xóa</button></div></td></tr>
+              @foreach (var flight in Model.Flights)
+              {
+                <tr>
+                  <td data-label="Số hiệu"><strong>@flight.FlightNumber</strong></td>
+                  <td data-label="Hành trình">@flight.DepartureAirportCode <span class="admin-route-arrow">→</span> @flight.ArrivalAirportCode<span class="admin-cell-meta">@flight.DepartureCity → @flight.ArrivalCity</span></td>
+                  <td data-label="Khởi hành">@flight.DepartureTime.ToString("dd/MM/yyyy") <span class="admin-cell-meta">@flight.DepartureTime.ToString("HH:mm")</span></td>
+                  <td data-label="Đến nơi">@flight.ArrivalTime.ToString("dd/MM/yyyy") <span class="admin-cell-meta">@flight.ArrivalTime.ToString("HH:mm")</span></td>
+                  <td data-label="Máy bay">@flight.AircraftModel</td>
+                  <td data-label="Trạng thái"><span class="admin-badge @AdminFlightStatus.BadgeClassFor(flight.Status)">@AdminFlightStatus.LabelFor(flight.Status)</span></td>
+                  <td data-label="Thao tác"><div class="admin-row-actions">
+                    <button class="admin-button admin-button-small" type="button" data-flight-edit
+                            data-id="@flight.FlightId" data-number="@flight.FlightNumber"
+                            data-route-id="@flight.RouteId"
+                            data-departure="@flight.DepartureTime.ToString("yyyy-MM-ddTHH:mm")"
+                            data-arrival="@flight.ArrivalTime.ToString("yyyy-MM-ddTHH:mm")"
+                            data-aircraft-id="@flight.AircraftId" data-status="@flight.Status">Sửa</button>
+                    <button class="admin-button admin-button-small admin-button-ghost admin-button-row-danger" type="button" data-flight-delete
+                            data-id="@flight.FlightId" data-number="@flight.FlightNumber"
+                            data-route="@flight.DepartureAirportCode → @flight.ArrivalAirportCode"
+                            data-departure="@flight.DepartureTime.ToString("dd/MM/yyyy HH:mm")">Xóa</button>
+                  </div></td>
+                </tr>
+              }
+              @if (Model.Flights.Count == 0)
+              {
+                <tr><td colspan="7" class="admin-empty-row">
+                  @if (!string.IsNullOrEmpty(Model.FlightSearch) || !string.IsNullOrEmpty(Model.FlightStatusFilter))
+                  {
+                    @:Không có chuyến bay khớp với bộ lọc hiện tại.
+                    <a class="admin-empty-link" href="@ClearFlightFiltersUrl()">Xóa bộ lọc</a>
+                  }
+                  else
+                  {
+                    @:Chưa có chuyến bay nào.
+                  }
+                </td></tr>
+              }
             </tbody>
-          </table><div class="admin-table-footer"><span>Hiển thị 1–4 trên 18 chuyến bay</span><div class="admin-pagination"><button type="button" aria-label="Trang trước" disabled>‹</button><button type="button" aria-current="page">1</button><button type="button">2</button><button type="button" aria-label="Trang sau">›</button></div></div></div>
+          </table>
+            <div class="admin-table-footer">
+              <span>
+                @if (Model.FilteredFlightCount == 0)
+                {
+                  @:Không có chuyến bay
+                }
+                else
+                {
+                  var firstFlight = (Model.FlightPage - 1) * AdminDashboardViewModelBuilder.FlightPageSize + 1;
+                  var lastFlight = Math.Min(Model.FlightPage * AdminDashboardViewModelBuilder.FlightPageSize, Model.FilteredFlightCount);
+                  @:Hiển thị @firstFlight–@lastFlight trên @Model.FilteredFlightCount chuyến bay
+                }
+              </span>
+              @if (Model.FlightPageCount > 1)
+              {
+                <nav class="admin-pagination" aria-label="Phân trang chuyến bay">
+                  @if (Model.FlightPage > 1)
+                  {
+                    <a href="@FlightPageUrl(Model.FlightPage - 1)" aria-label="Trang trước">‹</a>
+                  }
+                  else
+                  {
+                    <span aria-disabled="true">‹</span>
+                  }
+                  @for (var flightPageNumber = Math.Max(1, Model.FlightPage - 2); flightPageNumber <= Math.Min(Model.FlightPageCount, Model.FlightPage + 2); flightPageNumber++)
+                  {
+                    if (flightPageNumber == Model.FlightPage)
+                    {
+                      <span aria-current="page">@flightPageNumber</span>
+                    }
+                    else
+                    {
+                      <a href="@FlightPageUrl(flightPageNumber)">@flightPageNumber</a>
+                    }
+                  }
+                  @if (Model.FlightPage < Model.FlightPageCount)
+                  {
+                    <a href="@FlightPageUrl(Model.FlightPage + 1)" aria-label="Trang sau">›</a>
+                  }
+                  else
+                  {
+                    <span aria-disabled="true">›</span>
+                  }
+                </nav>
+              }
+            </div>
+          </div>
         </section>
 
         <section class="admin-screen" data-screen-panel="aircraft" hidden>
@@ -528,6 +654,109 @@
       <footer class="admin-dialog-actions">
         <button class="admin-button admin-button-outline" type="button" data-airport-delete-cancel>Hủy</button>
         <button class="admin-button admin-button-danger" type="submit" data-airport-delete-submit disabled>Xóa sân bay</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <dialog class="admin-dialog" id="flight-dialog" aria-labelledby="flight-dialog-title"
+          data-open="@Model.OpenFlightDialog.ToString().ToLowerInvariant()" data-mode="@Model.FlightDialogMode">
+    <form class="admin-dialog-form" method="post" asp-controller="Flights" asp-action="Create"
+          data-flight-form data-create-url="@Url.Action("Create", "Flights")" data-edit-url="@Url.Action("Edit", "Flights")">
+      <header class="admin-dialog-heading">
+        <div><h2 id="flight-dialog-title">Thêm chuyến bay</h2><p>Thông tin chuyến bay được lưu trực tiếp vào cơ sở dữ liệu.</p></div>
+        <button class="admin-icon-button" type="button" data-flight-dialog-close aria-label="Đóng cửa sổ"><i data-lucide="x" aria-hidden="true"></i></button>
+      </header>
+      <div class="admin-validation-summary" asp-validation-summary="All" role="alert"></div>
+      <div class="admin-dialog-fields">
+        <input type="hidden" asp-for="FlightInput.FlightId" data-flight-id>
+        <input type="hidden" name="routePage" value="@Model.RoutePage">
+        <input type="hidden" name="routeSearch" value="@Model.RouteSearch">
+        <input type="hidden" name="routeType" value="@Model.RouteTypeFilter">
+        <input type="hidden" name="flightPage" value="@Model.FlightPage">
+        <input type="hidden" name="flightSearch" value="@Model.FlightSearch">
+        <input type="hidden" name="flightStatus" value="@Model.FlightStatusFilter">
+        <div class="admin-field">
+          <label asp-for="FlightInput.FlightNumber"></label>
+          <input asp-for="FlightInput.FlightNumber" maxlength="20" autocomplete="off">
+          <span class="admin-validation-message" asp-validation-for="FlightInput.FlightNumber"></span>
+        </div>
+        <div class="admin-field">
+          <label asp-for="FlightInput.Status"></label>
+          <select asp-for="FlightInput.Status">
+            @foreach (var status in AdminFlightStatus.Options)
+            {
+              <option value="@status.Value">@status.Label</option>
+            }
+          </select>
+          <span class="admin-validation-message" asp-validation-for="FlightInput.Status"></span>
+        </div>
+        <div class="admin-field admin-field-full">
+          <label asp-for="FlightInput.RouteId"></label>
+          <select asp-for="FlightInput.RouteId">
+            <option value="">Chọn tuyến bay</option>
+            @foreach (var route in Model.FlightRouteOptions)
+            {
+              <option value="@route.RouteId">@route.DepartureAirportCode — @route.DepartureCity → @route.ArrivalAirportCode — @route.ArrivalCity</option>
+            }
+          </select>
+          <span class="admin-validation-message" asp-validation-for="FlightInput.RouteId"></span>
+        </div>
+        <div class="admin-field">
+          <label asp-for="FlightInput.DepartureTime"></label>
+          <input asp-for="FlightInput.DepartureTime" type="datetime-local">
+          <span class="admin-validation-message" asp-validation-for="FlightInput.DepartureTime"></span>
+        </div>
+        <div class="admin-field">
+          <label asp-for="FlightInput.ArrivalTime"></label>
+          <input asp-for="FlightInput.ArrivalTime" type="datetime-local">
+          <span class="admin-validation-message" asp-validation-for="FlightInput.ArrivalTime"></span>
+        </div>
+        <div class="admin-field admin-field-full">
+          <label asp-for="FlightInput.AircraftId"></label>
+          <select asp-for="FlightInput.AircraftId">
+            <option value="">Chọn máy bay</option>
+            @foreach (var aircraft in Model.FlightAircraftOptions)
+            {
+              <option value="@aircraft.AircraftId">@aircraft.Model</option>
+            }
+          </select>
+          <span class="admin-validation-message" asp-validation-for="FlightInput.AircraftId"></span>
+        </div>
+      </div>
+      <footer class="admin-dialog-actions">
+        <button class="admin-button admin-button-outline" type="button" data-flight-dialog-close>Hủy</button>
+        <button class="admin-button admin-button-primary" type="submit">Lưu chuyến bay</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <dialog class="admin-dialog admin-confirm-dialog" id="flight-delete-dialog" aria-labelledby="flight-delete-title">
+    <form class="admin-dialog-form" method="post" asp-controller="Flights" asp-action="Delete" data-flight-delete-form>
+      <header class="admin-dialog-heading">
+        <div>
+          <h2 id="flight-delete-title">Xóa chuyến bay?</h2>
+          <p>Chuyến <strong data-flight-delete-number></strong> · <span data-flight-delete-route></span> · <span data-flight-delete-departure></span></p>
+        </div>
+      </header>
+      <p class="admin-delete-warning">Để xác nhận, hãy nhập chính xác số hiệu chuyến bay. Chuyến có vé, giá hoặc yêu cầu đổi chuyến liên quan sẽ không thể xóa.</p>
+      <input type="hidden" name="flightId" data-flight-delete-id>
+      <input type="hidden" name="flightNumber" data-flight-delete-hidden-number>
+      <input type="hidden" name="routePage" value="@Model.RoutePage">
+      <input type="hidden" name="routeSearch" value="@Model.RouteSearch">
+      <input type="hidden" name="routeType" value="@Model.RouteTypeFilter">
+      <input type="hidden" name="flightPage" value="@Model.FlightPage">
+      <input type="hidden" name="flightSearch" value="@Model.FlightSearch">
+      <input type="hidden" name="flightStatus" value="@Model.FlightStatusFilter">
+      <div class="admin-field admin-delete-confirm-field">
+        <label for="flight-delete-confirmation">Nhập chính xác số hiệu chuyến bay</label>
+        <input id="flight-delete-confirmation" name="confirmationFlightNumber" type="text"
+               required autocomplete="off" autocapitalize="off" spellcheck="false"
+               aria-describedby="flight-delete-confirmation-help" data-flight-delete-confirmation>
+        <span id="flight-delete-confirmation-help" class="admin-validation-message">Số hiệu phải khớp chính xác, bao gồm chữ hoa, chữ thường và khoảng trắng.</span>
+      </div>
+      <footer class="admin-dialog-actions">
+        <button class="admin-button admin-button-outline" type="button" data-flight-delete-cancel>Hủy</button>
+        <button class="admin-button admin-button-danger-soft" type="submit" data-flight-delete-submit disabled>Xóa chuyến bay</button>
       </footer>
     </form>
   </dialog>

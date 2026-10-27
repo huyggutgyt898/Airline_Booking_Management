@@ -382,6 +382,30 @@
   background: #b91c1c;
 }
 
+.admin-button-danger-soft {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--danger) 10%, white);
+  color: color-mix(in srgb, var(--danger) 85%, black);
+  font-weight: 600;
+}
+
+.admin-button-danger-soft:hover:not(:disabled) {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--danger) 15%, white);
+  color: color-mix(in srgb, var(--danger) 85%, black);
+}
+
+.admin-button-danger-soft:disabled:hover {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--danger) 10%, white);
+  color: color-mix(in srgb, var(--danger) 85%, black);
+}
+
+.admin-button-danger-soft:disabled {
+  cursor: not-allowed;
+  opacity: .5;
+}
+
 .admin-button-ghost {
   border-color: transparent;
   background: transparent;
@@ -389,6 +413,12 @@
 
 .admin-button-ghost:hover {
   background: #e4e7ec;
+}
+
+.admin-button-row-danger:hover {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--danger) 10%, white);
+  color: color-mix(in srgb, var(--danger) 85%, black);
 }
 
 .admin-button-small {
@@ -815,6 +845,23 @@
 
 .admin-table tbody tr:last-child td {
   border-bottom: 0;
+}
+
+.admin-empty-row {
+  grid-column: 1 / -1;
+  padding: 24px 14px !important;
+  color: var(--muted);
+  text-align: center;
+}
+
+.admin-empty-row::before {
+  display: none !important;
+}
+
+.admin-empty-link {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .admin-table tbody tr:hover td {
@@ -1698,6 +1745,13 @@
   display: block;
   min-height: 16px;
   font-size: 11px;
+}
+
+.admin-delete-warning {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 .admin-field input:read-only {

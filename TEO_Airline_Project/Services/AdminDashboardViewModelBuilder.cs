@@ -7,6 +7,7 @@ namespace TEO_Airline_Project.Services;
 public static class AdminDashboardViewModelBuilder
 {
     public const int RoutePageSize = 10;
+    public const int FlightPageSize = 10;
 
     public static async Task<AdminDashboardViewModel> BuildAsync(
         AirlineBookingDBContext context,
@@ -15,7 +16,13 @@ public static class AdminDashboardViewModelBuilder
         string? routeType = null,
         RouteInputModel? routeInput = null,
         string routeDialogMode = "create",
-        bool openRouteDialog = false)
+        bool openRouteDialog = false,
+        int flightPage = 1,
+        string? flightSearch = null,
+        string? flightStatus = null,
+        FlightInputModel? flightInput = null,
+        string flightDialogMode = "create",
+        bool openFlightDialog = false)
     {
         var airports = await context.Airports
             .AsNoTracking()
@@ -69,6 +76,79 @@ public static class AdminDashboardViewModelBuilder
             })
             .ToListAsync();
 
+        var flightRoutes = await context.Routes
+            .AsNoTracking()
+            .OrderBy(route => route.DepartureAirportCode)
+            .ThenBy(route => route.ArrivalAirportCode)
+            .Select(route => new AdminRouteOptionViewModel
+            {
+                RouteId = route.RouteId,
+                DepartureAirportCode = route.DepartureAirportCode,
+                DepartureCity = route.DepartureAirportCodeNavigation.City,
+                ArrivalAirportCode = route.ArrivalAirportCode,
+                ArrivalCity = route.ArrivalAirportCodeNavigation.City
+            })
+            .ToListAsync();
+
+        var flightAircraft = await context.Aircrafts
+            .AsNoTracking()
+            .OrderBy(aircraft => aircraft.Model)
+            .Select(aircraft => new AdminAircraftOptionViewModel
+            {
+                AircraftId = aircraft.AircraftId,
+                Model = aircraft.Model
+            })
+            .ToListAsync();
+
+        var flightsQuery = context.Flights.AsNoTracking();
+        flightSearch = flightSearch?.Trim();
+        flightStatus = AdminFlightStatus.Options.Any(option => option.Value == flightStatus)
+            ? flightStatus
+            : "";
+        if (!string.IsNullOrEmpty(flightSearch))
+        {
+            flightsQuery = flightsQuery.Where(flight =>
+                flight.FlightNumber.Contains(flightSearch) ||
+                flight.Route.DepartureAirportCode.Contains(flightSearch) ||
+                flight.Route.ArrivalAirportCode.Contains(flightSearch) ||
+                flight.Route.DepartureAirportCodeNavigation.City.Contains(flightSearch) ||
+                flight.Route.ArrivalAirportCodeNavigation.City.Contains(flightSearch) ||
+                flight.Aircraft.Model.Contains(flightSearch));
+        }
+
+        if (!string.IsNullOrEmpty(flightStatus))
+        {
+            flightsQuery = flightsQuery.Where(flight => flight.Status == flightStatus);
+        }
+
+        var filteredFlightCount = await flightsQuery.CountAsync();
+        var flightPageCount = Math.Max(
+            1,
+            (int)Math.Ceiling(filteredFlightCount / (double)FlightPageSize));
+        flightPage = Math.Clamp(flightPage, 1, flightPageCount);
+
+        var flights = await flightsQuery
+            .OrderBy(flight => flight.DepartureTime)
+            .ThenBy(flight => flight.FlightId)
+            .Skip((flightPage - 1) * FlightPageSize)
+            .Take(FlightPageSize)
+            .Select(flight => new AdminFlightListItemViewModel
+            {
+                FlightId = flight.FlightId,
+                RouteId = flight.RouteId,
+                AircraftId = flight.AircraftId,
+                FlightNumber = flight.FlightNumber,
+                DepartureAirportCode = flight.Route.DepartureAirportCode,
+                DepartureCity = flight.Route.DepartureAirportCodeNavigation.City,
+                ArrivalAirportCode = flight.Route.ArrivalAirportCode,
+                ArrivalCity = flight.Route.ArrivalAirportCodeNavigation.City,
+                DepartureTime = flight.DepartureTime,
+                ArrivalTime = flight.ArrivalTime,
+                AircraftModel = flight.Aircraft.Model,
+                Status = flight.Status
+            })
+            .ToListAsync();
+
         return new AdminDashboardViewModel
         {
             Airports = airports,
@@ -82,7 +162,18 @@ public static class AdminDashboardViewModelBuilder
             RouteTypeFilter = routeType ?? "",
             RouteInput = routeInput ?? new RouteInputModel(),
             RouteDialogMode = routeDialogMode,
-            OpenRouteDialog = openRouteDialog
+            OpenRouteDialog = openRouteDialog,
+            Flights = flights,
+            FlightRouteOptions = flightRoutes,
+            FlightAircraftOptions = flightAircraft,
+            FilteredFlightCount = filteredFlightCount,
+            FlightPage = flightPage,
+            FlightPageCount = flightPageCount,
+            FlightSearch = flightSearch ?? "",
+            FlightStatusFilter = flightStatus ?? "",
+            FlightInput = flightInput ?? new FlightInputModel(),
+            FlightDialogMode = flightDialogMode,
+            OpenFlightDialog = openFlightDialog
         };
     }
 }

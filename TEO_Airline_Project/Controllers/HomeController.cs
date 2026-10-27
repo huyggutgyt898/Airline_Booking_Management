@@ -72,7 +72,10 @@ namespace TEO_Airline_Project.Controllers
         public async Task<IActionResult> Admin(
             int routePage = 1,
             string? routeSearch = null,
-            string? routeType = null)
+            string? routeType = null,
+            int flightPage = 1,
+            string? flightSearch = null,
+            string? flightStatus = null)
         {
             if (string.IsNullOrWhiteSpace(HttpContext.Session.GetString("UserId")))
             {
@@ -91,7 +94,10 @@ namespace TEO_Airline_Project.Controllers
                 _context,
                 routePage,
                 routeSearch,
-                routeType);
+                routeType,
+                flightPage: flightPage,
+                flightSearch: flightSearch,
+                flightStatus: flightStatus);
 
             return View("admin", model);
         }
