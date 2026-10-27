@@ -62,7 +62,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Document",
@@ -76,31 +76,6 @@
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
               "WhenOpened": "2026-10-23T08:25:58.388Z",
               "IsPinned": true
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "Booking.cs",
-              "DocumentMoniker": "D:\\Subject\\Requirements analysis and design\\Project\\TEO_Airline_Project\\Models\\Entities\\Booking.cs",
-              "RelativeDocumentMoniker": "Models\\Entities\\Booking.cs",
-              "ToolTip": "D:\\Subject\\Requirements analysis and design\\Project\\TEO_Airline_Project\\Models\\Entities\\Booking.cs",
-              "RelativeToolTip": "Models\\Entities\\Booking.cs",
-              "ViewState": "AgIAACQAAAAAAAAAAAAgwCoAAABWAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-22T15:59:07.712Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Login.cshtml",
-              "DocumentMoniker": "D:\\Subject\\Requirements analysis and design\\Project\\TEO_Airline_Project\\Views\\Auth\\Login.cshtml",
-              "RelativeDocumentMoniker": "Views\\Auth\\Login.cshtml",
-              "ToolTip": "D:\\Subject\\Requirements analysis and design\\Project\\TEO_Airline_Project\\Views\\Auth\\Login.cshtml",
-              "RelativeToolTip": "Views\\Auth\\Login.cshtml",
-              "ViewState": "AgIAAGAAAAAAAAAAAAAgwGMAAAAHAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-10-22T14:45:45.867Z",
-              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -124,8 +99,7 @@
               "RelativeToolTip": "Controllers\\AuthController.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAADUBAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-22T14:37:32.856Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-10-22T14:37:32.856Z"
             },
             {
               "$type": "Document",
@@ -135,14 +109,10 @@
               "RelativeDocumentMoniker": "Views\\Home\\Index.cshtml",
               "ToolTip": "D:\\Subject\\Requirements analysis and design\\Project\\TEO_Airline_Project\\Views\\Home\\Index.cshtml",
               "RelativeToolTip": "Views\\Home\\Index.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAADUBAAA0AAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADUBAAAXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2026-10-22T01:46:29.433Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
             },
             {
               "$type": "Document",
@@ -155,6 +125,34 @@
               "ViewState": "AgIAAA0AAAAAAAAAAAAYwBwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-10-22T14:09:15.814Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Booking.cs",
+              "DocumentMoniker": "D:\\Subject\\Requirements analysis and design\\Project\\TEO_Airline_Project\\Models\\Entities\\Booking.cs",
+              "RelativeDocumentMoniker": "Models\\Entities\\Booking.cs",
+              "ToolTip": "D:\\Subject\\Requirements analysis and design\\Project\\TEO_Airline_Project\\Models\\Entities\\Booking.cs",
+              "RelativeToolTip": "Models\\Entities\\Booking.cs",
+              "ViewState": "AgIAACQAAAAAAAAAAAAgwCoAAABWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-22T15:59:07.712Z"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Login.cshtml",
+              "DocumentMoniker": "D:\\Subject\\Requirements analysis and design\\Project\\TEO_Airline_Project\\Views\\Auth\\Login.cshtml",
+              "RelativeDocumentMoniker": "Views\\Auth\\Login.cshtml",
+              "ToolTip": "D:\\Subject\\Requirements analysis and design\\Project\\TEO_Airline_Project\\Views\\Auth\\Login.cshtml",
+              "RelativeToolTip": "Views\\Auth\\Login.cshtml",
+              "ViewState": "AgIAAGAAAAAAAAAAAAAgwGMAAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-10-22T14:45:45.867Z"
             },
             {
               "$type": "Document",

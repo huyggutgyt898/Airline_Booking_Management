@@ -901,6 +901,118 @@ input:disabled {
   line-height: 1.65;
 }
 
+.destination-section {
+  padding-block: 36px 52px;
+}
+
+.destination-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.destination-card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: var(--surface);
+}
+
+.destination-image {
+  position: relative;
+  overflow: hidden;
+  background: #e4e7ec;
+  aspect-ratio: 16 / 10;
+}
+
+.destination-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.destination-photo-credit {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 4px 8px;
+  background: rgb(8 24 48 / 76%);
+  color: #fff;
+  font-size: 9px;
+  line-height: 1.35;
+}
+
+.destination-photo-credit:hover {
+  text-decoration: underline;
+}
+
+.destination-content {
+  padding: 14px 15px 16px;
+}
+
+.destination-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.destination-title-row h3 {
+  min-width: 0;
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.destination-code {
+  flex: 0 0 auto;
+  padding: 3px 7px;
+  border-radius: 5px;
+  background: var(--brand-soft);
+  color: var(--brand);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.destination-description {
+  margin: 6px 0 10px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.destination-places {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  color: var(--ink);
+  font-size: 11px;
+  line-height: 1.45;
+  list-style: none;
+}
+
+.destination-places li {
+  position: relative;
+  padding-left: 12px;
+}
+
+.destination-places li::before {
+  position: absolute;
+  top: 0.55em;
+  left: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--brand);
+  content: "";
+}
+
 .offer-link {
   display: inline-flex;
   min-height: 40px;
@@ -2393,6 +2505,9 @@ input:disabled {
 }
 
 .logout-dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
   width: min(448px, calc(100% - 32px));
   max-width: none;
   padding: 24px;
@@ -3066,6 +3181,28 @@ input:disabled {
 
   .section-heading-block > p:last-child {
     font-size: 13px;
+  }
+
+  .destination-section {
+    padding-block: 28px 36px;
+  }
+
+  .destination-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .destination-content {
+    padding: 11px;
+  }
+
+  .destination-title-row h3 {
+    font-size: 15px;
+  }
+
+  .destination-description {
+    min-height: 36px;
+    margin-bottom: 8px;
   }
 
   .offers-grid {

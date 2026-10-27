@@ -418,9 +418,18 @@ C:\Users\ASUS\.qoder\tmp\teo-verify3\TEO_Airline_Project.deps.json
 C:\Users\ASUS\.qoder\tmp\teo-verify3\TEO_Airline_Project.runtimeconfig.json
 C:\Users\ASUS\.qoder\tmp\teo-verify3\TEO_Airline_Project.dll
 C:\Users\ASUS\.qoder\tmp\teo-verify3\TEO_Airline_Project.pdb
-D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\obj\Debug\net10.0\compressed\gtg7pqf1cv-{0}-ire7f64upt-ire7f64upt.gz
 D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\obj\Debug\net10.0\compressed\8jilkc3sc4-{0}-2wt4rdw4kk-2wt4rdw4kk.gz
 D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\obj\Debug\net10.0\compressed\2gyxz3od68-{0}-65pmxyxr84-65pmxyxr84.gz
 D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\obj\Debug\net10.0\compressed\owyapizb12-{0}-qjnwl8mxwf-qjnwl8mxwf.gz
 D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\obj\Debug\net10.0\compressed\9zgxgrgvaw-{0}-pnzasqsw6x-pnzasqsw6x.gz
-D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt
+D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\obj\Debug\net10.0\compressed\gtg7pqf1cv-{0}-4am16oafnu-4am16oafnu.gz
+C:\Users\ASUS\AppData\Local\Temp\TEO_Airline_Project_BuildCheck\appsettings.Development.json
+C:\Users\ASUS\AppData\Local\Temp\TEO_Airline_Project_BuildCheck\appsettings.json
+C:\Users\ASUS\AppData\Local\Temp\TEO_Airline_Project_BuildCheck\efpt.config.json
+C:\Users\ASUS\AppData\Local\Temp\TEO_Airline_Project_BuildCheck\TEO_Airline_Project.staticwebassets.runtime.json
+C:\Users\ASUS\AppData\Local\Temp\TEO_Airline_Project_BuildCheck\TEO_Airline_Project.staticwebassets.endpoints.json
+C:\Users\ASUS\AppData\Local\Temp\TEO_Airline_Project_BuildCheck\TEO_Airline_Project.exe
+C:\Users\ASUS\AppData\Local\Temp\TEO_Airline_Project_BuildCheck\TEO_Airline_Project.deps.json
+C:\Users\ASUS\AppData\Local\Temp\TEO_Airline_Project_BuildCheck\TEO_Airline_Project.runtimeconfig.json
+C:\Users\ASUS\AppData\Local\Temp\TEO_Airline_Project_BuildCheck\TEO_Airline_Project.dll
+C:\Users\ASUS\AppData\Local\Temp\TEO_Airline_Project_BuildCheck\TEO_Airline_Project.pdb
