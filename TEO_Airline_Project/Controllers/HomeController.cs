@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using TEO_Airline_Project.Models;
 using TEO_Airline_Project.Models.ViewModels;
+using TEO_Airline_Project.Services;
 
 namespace TEO_Airline_Project.Controllers
 {
@@ -68,7 +69,10 @@ namespace TEO_Airline_Project.Controllers
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public async Task<IActionResult> Admin()
+        public async Task<IActionResult> Admin(
+            int routePage = 1,
+            string? routeSearch = null,
+            string? routeType = null)
         {
             if (string.IsNullOrWhiteSpace(HttpContext.Session.GetString("UserId")))
             {
@@ -83,13 +87,11 @@ namespace TEO_Airline_Project.Controllers
                 return RedirectToRoleHome();
             }
 
-            var model = new AdminDashboardViewModel
-            {
-                Airports = await _context.Airports
-                    .AsNoTracking()
-                    .OrderBy(airport => airport.AirportCode)
-                    .ToListAsync()
-            };
+            var model = await AdminDashboardViewModelBuilder.BuildAsync(
+                _context,
+                routePage,
+                routeSearch,
+                routeType);
 
             return View("admin", model);
         }

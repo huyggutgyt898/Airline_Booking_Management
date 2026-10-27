@@ -101,14 +101,6 @@
     }
   };
   const formConfigs = {
-    route: {
-      title: "tuyến bay",
-      fields: [
-        { name: "departure", label: "Sân bay đi", required: true, fromCell: 1, read: (row) => row.cells[1]?.textContent.split("·")[0].trim() },
-        { name: "arrival", label: "Sân bay đến", required: true, fromCell: 2, read: (row) => row.cells[2]?.textContent.split("·")[0].trim() },
-        { name: "type", label: "Loại tuyến", type: "select", options: ["Nội địa", "Quốc tế"], required: true, fromCell: 3 }
-      ]
-    },
     flight: {
       title: "chuyến bay",
       fields: [
@@ -533,6 +525,65 @@
 
     dialog.showModal();
     code.focus();
+  }
+
+  function openRouteDialog(mode, button = null) {
+    const dialog = $("#route-dialog");
+    const form = $("[data-route-form]");
+    const departure = $("#RouteInput_DepartureAirportCode");
+    const arrival = $("#RouteInput_ArrivalAirportCode");
+    const type = $("#RouteInput_RouteType");
+    form.reset();
+    form.action = mode === "edit" ? form.dataset.editUrl : form.dataset.createUrl;
+    $("#route-dialog-title").textContent = mode === "edit" ? "Sửa tuyến bay" : "Thêm tuyến bay";
+    $("[data-route-id]").value = mode === "edit" ? button.dataset.id : "";
+
+    if (mode === "edit") {
+      departure.value = button.dataset.departure;
+      arrival.value = button.dataset.arrival;
+      type.value = button.dataset.type;
+    } else {
+      type.value = "Domestic";
+    }
+
+    dialog.showModal();
+    departure.focus();
+  }
+
+  $$("[data-route-create]").forEach((button) => {
+    button.addEventListener("click", () => openRouteDialog("create"));
+  });
+  $$("[data-route-edit]").forEach((button) => {
+    button.addEventListener("click", () => openRouteDialog("edit", button));
+  });
+  $$("[data-route-delete]").forEach((button) => {
+    button.addEventListener("click", () => {
+      $("[data-route-delete-id]").value = button.dataset.id;
+      $("[data-route-delete-name]").textContent = button.dataset.name;
+      $("#route-delete-dialog").showModal();
+    });
+  });
+  $$("[data-route-dialog-close]").forEach((button) => {
+    button.addEventListener("click", () => $("#route-dialog").close());
+  });
+  $("[data-route-delete-cancel]").addEventListener("click", () => {
+    $("#route-delete-dialog").close();
+  });
+
+  let routeSearchTimer;
+  const routeSearchForm = $('[data-route-search]').form;
+  $('[data-route-search]').addEventListener("input", () => {
+    window.clearTimeout(routeSearchTimer);
+    routeSearchTimer = window.setTimeout(() => routeSearchForm.requestSubmit(), 350);
+  });
+  $('[data-route-type-filter]').addEventListener("change", () => routeSearchForm.requestSubmit());
+
+  if ($("#route-dialog").dataset.open === "true") {
+    const dialog = $("#route-dialog");
+    const form = $("[data-route-form]");
+    const mode = dialog.dataset.mode;
+    form.action = mode === "edit" ? form.dataset.editUrl : form.dataset.createUrl;
+    dialog.showModal();
   }
 
   $$("[data-airport-create]").forEach((button) => {

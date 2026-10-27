@@ -895,7 +895,9 @@
   gap: 4px;
 }
 
-.admin-pagination button {
+.admin-pagination button,
+.admin-pagination a,
+.admin-pagination > span:not(.admin-pagination-ellipsis) {
   display: grid;
   width: 34px;
   height: 34px;
@@ -906,15 +908,31 @@
   font-size: 12px;
 }
 
-.admin-pagination button[aria-current="page"] {
+.admin-pagination a {
+  color: inherit;
+}
+
+.admin-pagination a:hover {
+  background: var(--background);
+  text-decoration: none;
+}
+
+.admin-pagination button[aria-current="page"],
+.admin-pagination span[aria-current="page"] {
   border-color: var(--brand);
   background: var(--brand);
   color: var(--brand-foreground);
 }
 
-.admin-pagination button:disabled {
+.admin-pagination button:disabled,
+.admin-pagination span[aria-disabled="true"] {
   color: #98a2b3;
   cursor: not-allowed;
+}
+
+.admin-pagination-ellipsis {
+  align-self: center;
+  padding-inline: 2px;
 }
 
 .admin-aircraft-layout {
