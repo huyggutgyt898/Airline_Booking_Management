@@ -30,7 +30,13 @@ public static class AdminDashboardViewModelBuilder
         bool openAircraftDialog = false,
         AirportInputModel? airportInput = null,
         string airportDialogMode = "create",
-        bool openAirportDialog = false)
+        bool openAirportDialog = false,
+        int? pricingFlightId = null,
+        FlightPricingInputModel? flightPricingInput = null,
+        bool openFlightPricingDialog = false,
+        int? editingFlightPriceId = null,
+        FlightPricingEditInputModel? flightPricingEditInput = null,
+        bool openFlightPricingEditDialog = false)
     {
         var airports = await context.Airports
             .AsNoTracking()
@@ -187,6 +193,67 @@ public static class AdminDashboardViewModelBuilder
             })
             .ToListAsync();
 
+        var pricingFlights = await context.Flights
+            .AsNoTracking()
+            .Where(flight => context.FlightPricings.Any(pricing => pricing.FlightId == flight.FlightId))
+            .OrderBy(flight => flight.DepartureTime)
+            .ThenBy(flight => flight.FlightId)
+            .Select(flight => new AdminPricingFlightOptionViewModel
+            {
+                FlightId = flight.FlightId,
+                FlightNumber = flight.FlightNumber,
+                DepartureAirportCode = flight.Route.DepartureAirportCode,
+                ArrivalAirportCode = flight.Route.ArrivalAirportCode,
+                DepartureTime = flight.DepartureTime,
+                AircraftModel = flight.Aircraft.Model,
+                PriceCount = context.FlightPricings.Count(pricing => pricing.FlightId == flight.FlightId)
+            })
+            .ToListAsync();
+
+        var availablePricingFlights = await context.Flights
+            .AsNoTracking()
+            .Where(flight => !context.FlightPricings.Any(pricing => pricing.FlightId == flight.FlightId))
+            .OrderBy(flight => flight.DepartureTime)
+            .ThenBy(flight => flight.FlightId)
+            .Select(flight => new AdminPricingFlightOptionViewModel
+            {
+                FlightId = flight.FlightId,
+                FlightNumber = flight.FlightNumber,
+                DepartureAirportCode = flight.Route.DepartureAirportCode,
+                ArrivalAirportCode = flight.Route.ArrivalAirportCode,
+                DepartureTime = flight.DepartureTime,
+                AircraftModel = flight.Aircraft.Model
+            })
+            .ToListAsync();
+
+        pricingFlightId = pricingFlights.Any(flight => flight.FlightId == pricingFlightId)
+            ? pricingFlightId
+            : pricingFlights.FirstOrDefault()?.FlightId;
+
+        var selectedPricingFlight = pricingFlights.FirstOrDefault(
+            flight => flight.FlightId == pricingFlightId);
+        var flightPricingRows = pricingFlightId is int selectedFlightId
+            ? await context.FlightPricings
+                .AsNoTracking()
+                .Where(pricing => pricing.FlightId == selectedFlightId)
+                .OrderBy(pricing => pricing.SeatClass == "Economy" ? 0 :
+                    pricing.SeatClass == "Business" ? 1 : 2)
+                .ThenBy(pricing => pricing.PassengerType == "Adult" ? 0 :
+                    pricing.PassengerType == "Child" ? 1 :
+                    pricing.PassengerType == "Infant" ? 2 : 3)
+                .ThenBy(pricing => pricing.PriceId)
+                .Select(pricing => new AdminFlightPricingViewModel
+                {
+                    PriceId = pricing.PriceId,
+                    SeatClass = pricing.SeatClass,
+                    PassengerType = pricing.PassengerType,
+                    BasePrice = pricing.BasePrice,
+                    TaxAmount = pricing.TaxAmount,
+                    ServiceFee = pricing.ServiceFee
+                })
+                .ToListAsync()
+            : [];
+
         return new AdminDashboardViewModel
         {
             Airports = airports,
@@ -220,7 +287,16 @@ public static class AdminDashboardViewModelBuilder
             FlightStatusFilter = flightStatus ?? "",
             FlightInput = flightInput ?? new FlightInputModel(),
             FlightDialogMode = flightDialogMode,
-            OpenFlightDialog = openFlightDialog
+            OpenFlightDialog = openFlightDialog,
+            PricingFlights = pricingFlights,
+            AvailablePricingFlights = availablePricingFlights,
+            SelectedPricingFlight = selectedPricingFlight,
+            FlightPricingRows = flightPricingRows,
+            FlightPricingInput = flightPricingInput ?? new FlightPricingInputModel(),
+            FlightPricingEditInput = flightPricingEditInput ?? new FlightPricingEditInputModel(),
+            EditingFlightPriceId = editingFlightPriceId,
+            OpenFlightPricingDialog = openFlightPricingDialog,
+            OpenFlightPricingEditDialog = openFlightPricingEditDialog
         };
     }
 

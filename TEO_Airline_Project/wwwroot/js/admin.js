@@ -101,17 +101,6 @@
     }
   };
   const formConfigs = {
-    pricing: {
-      title: "mức giá",
-      fields: [
-        { name: "flight", label: "Chuyến bay", required: true, value: "TEO 218 · SGN – HAN" },
-        { name: "class", label: "Hạng ghế", type: "select", options: ["Phổ thông", "Thương gia"], required: true, fromCell: 0 },
-        { name: "passenger", label: "Loại khách", type: "select", options: ["Người lớn", "Trẻ em", "Em bé"], required: true, fromCell: 1 },
-        { name: "basePrice", label: "Giá cơ bản (₫)", type: "number", required: true, min: 0, fromCell: 2 },
-        { name: "tax", label: "Thuế (₫)", type: "number", required: true, min: 0, fromCell: 3 },
-        { name: "serviceFee", label: "Phí dịch vụ (₫)", type: "number", required: true, min: 0, fromCell: 4 }
-      ]
-    },
     promotion: {
       title: "mã khuyến mãi",
       fields: [
@@ -768,6 +757,49 @@
     if (event.target === event.currentTarget) event.currentTarget.close();
   });
 
+  const pricingCreateDialog = $("#pricing-create-dialog");
+  const pricingEditDialog = $("#pricing-edit-dialog");
+  $$("[data-pricing-create]").forEach((button) => {
+    button.addEventListener("click", () => {
+      if (!button.disabled) pricingCreateDialog.showModal();
+    });
+  });
+  $$("[data-pricing-dialog-close]").forEach((button) => {
+    button.addEventListener("click", () => button.closest("dialog").close());
+  });
+  [pricingCreateDialog, pricingEditDialog].forEach((dialog) => {
+    dialog.addEventListener("click", (event) => {
+      if (event.target === event.currentTarget) dialog.close();
+    });
+  });
+  $$("[data-pricing-edit]").forEach((button) => {
+    button.addEventListener("click", () => {
+      $("#pricing-edit-dialog [name='priceId']").value = button.dataset.priceId;
+      $("#pricing-edit-dialog [name='pricingFlightId']").value = $("#pricing-flight-select").value;
+      $("#pricing-edit-title").textContent = "Sửa mức giá";
+      $("[data-pricing-edit-description]").textContent =
+        `${button.dataset.seatClass} · ${button.dataset.passengerType}`;
+      $("#FlightPricingEditInput_BasePrice").value = button.dataset.basePrice;
+      $("#FlightPricingEditInput_TaxAmount").value = button.dataset.taxAmount;
+      $("#FlightPricingEditInput_ServiceFee").value = button.dataset.serviceFee;
+      pricingEditDialog.showModal();
+      $("#FlightPricingEditInput_BasePrice").focus();
+    });
+  });
+  $$("[data-pricing-toggle]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const isExpanded = button.getAttribute("aria-expanded") === "true";
+      button.setAttribute("aria-expanded", String(!isExpanded));
+      button.setAttribute(
+        "aria-label",
+        `${isExpanded ? "Mở rộng" : "Thu gọn"} mức giá hạng ${button.querySelector("span").textContent}`
+      );
+      button.closest("tbody").querySelectorAll("[data-pricing-row]").forEach((row) => {
+        row.hidden = isExpanded;
+      });
+    });
+  });
+
   $$(".admin-dialog [data-dialog-close]").forEach((button) => {
     button.addEventListener("click", () => button.closest("dialog").close());
   });
@@ -811,7 +843,15 @@
   const shouldOpenFlightDialog = flightDialog.dataset.open === "true";
   const aircraftDialog = $("#aircraft-dialog");
   const shouldOpenAircraftDialog = aircraftDialog.dataset.open === "true";
-  setScreen(shouldOpenAircraftDialog ? "aircraft" : shouldOpenFlightDialog ? "flights" : window.location.hash.slice(1) || "overview");
+  const shouldOpenPricingCreateDialog = pricingCreateDialog.dataset.open === "true";
+  const shouldOpenPricingEditDialog = pricingEditDialog.dataset.open === "true";
+  setScreen(shouldOpenAircraftDialog
+    ? "aircraft"
+    : shouldOpenFlightDialog
+      ? "flights"
+      : shouldOpenPricingCreateDialog || shouldOpenPricingEditDialog
+        ? "pricing"
+        : window.location.hash.slice(1) || "overview");
   if (shouldOpenFlightDialog) {
     const form = $("[data-flight-form]");
     form.action = flightDialog.dataset.mode === "edit" ? form.dataset.editUrl : form.dataset.createUrl;
@@ -822,6 +862,14 @@
     configureAircraftDialog(aircraftDialog.dataset.mode, true);
     aircraftDialog.showModal();
     $("#AircraftInput_Model").focus();
+  }
+  if (shouldOpenPricingCreateDialog) {
+    pricingCreateDialog.showModal();
+    $("#FlightPricingInput_FlightId").focus();
+  }
+  if (shouldOpenPricingEditDialog) {
+    pricingEditDialog.showModal();
+    $("#FlightPricingEditInput_BasePrice").focus();
   }
   const initialAircraftNotice = $(".admin-toast").dataset.initialMessage;
   if (initialAircraftNotice) showToast(initialAircraftNotice);

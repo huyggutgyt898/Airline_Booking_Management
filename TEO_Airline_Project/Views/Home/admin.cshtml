@@ -61,7 +61,29 @@
     var selectedAircraft = Model.Aircrafts.FirstOrDefault(
         aircraft => aircraft.AircraftId == Model.SelectedAircraftId);
     var aircraftNotice = TempData["AircraftSuccess"] as string ?? TempData["AircraftError"] as string;
+    var pricingNotice = TempData["PricingSuccess"] as string ?? TempData["PricingError"] as string;
+    var adminNotice = pricingNotice ?? aircraftNotice;
     var seatColumns = new[] { "A", "B", "C", "D", "E", "F" };
+    var pricingSeatClassGroups = Model.FlightPricingRows
+        .GroupBy(price => price.SeatClass)
+        .ToList();
+    var editingPricingRow = Model.FlightPricingRows.FirstOrDefault(
+        price => price.PriceId == Model.EditingFlightPriceId);
+    var moneyCulture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+    string SeatClassLabel(string value) => value switch
+    {
+        "Economy" => "Phổ thông",
+        "Business" => "Thương gia",
+        _ => value
+    };
+    string PassengerTypeLabel(string value) => value switch
+    {
+        "Adult" => "Người lớn",
+        "Child" => "Trẻ em",
+        "Infant" => "Em bé",
+        _ => value
+    };
+    string Money(decimal value) => value.ToString(value % 1 == 0 ? "N0" : "N2", moneyCulture) + " ₫";
 }
 <!doctype html>
 <html lang="vi">
@@ -119,7 +141,7 @@
       <header class="admin-topbar">
         <button class="admin-menu-toggle" type="button" data-menu-toggle aria-label="Mở menu" aria-controls="admin-sidebar" aria-expanded="false"><i data-lucide="menu" aria-hidden="true"></i></button>
         <p class="admin-breadcrumb">TEO Airlines <span aria-hidden="true">/</span> <strong data-page-title>Tổng quan</strong></p>
-        <div class="admin-topbar-meta"><span>Trung tâm vận hành</span><span class="admin-demo-indicator">Dữ liệu minh họa</span><span class="admin-avatar admin-avatar-small" aria-label="@fullName">@initials</span></div>
+        <div class="admin-topbar-meta"><span>Trung tâm vận hành</span><span class="admin-avatar admin-avatar-small" aria-label="@fullName">@initials</span></div>
       </header>
 
       <div class="admin-content">
@@ -633,22 +655,111 @@
         <section class="admin-screen" data-screen-panel="pricing" hidden>
           <div class="admin-page-heading">
             <div><h1>Bảng giá</h1><p>Giá cơ bản, thuế và phí theo chuyến, hạng ghế và loại khách.</p></div>
-            <button class="admin-button admin-button-primary" type="button" data-record-open="pricing"><i data-lucide="plus" aria-hidden="true"></i>Thêm mức giá</button>
+            <div class="admin-heading-actions">
+              <a class="admin-button admin-button-outline" asp-controller="FlightPricings" asp-action="Export">
+                <i data-lucide="download" aria-hidden="true"></i>Xuất Excel
+              </a>
+              <button class="admin-button admin-button-primary" type="button" data-pricing-create
+                      aria-haspopup="dialog" aria-controls="pricing-create-dialog"
+                      disabled="@(Model.AvailablePricingFlights.Count == 0)">
+                <i data-lucide="plus" aria-hidden="true"></i>Thêm mức giá
+              </button>
+            </div>
           </div>
           <section class="admin-panel admin-pricing-context">
-            <div class="admin-pricing-flight"><span class="admin-metric-icon"><i data-lucide="plane" aria-hidden="true"></i></span><div><strong>TEO 218 · SGN → HAN</strong><span>21/10/2026 · Airbus A321</span></div></div>
-            <label class="admin-select-label"><span>Chuyến bay</span><select aria-label="Chọn chuyến bay"><option>TEO 218 · SGN – HAN</option><option>TEO 302 · SGN – HAN</option><option>TEO 416 · HAN – DAD</option></select></label>
+            @if (Model.SelectedPricingFlight is { } selectedPricingFlight)
+            {
+              <div class="admin-pricing-flight">
+                <span class="admin-metric-icon"><i data-lucide="plane" aria-hidden="true"></i></span>
+                <div>
+                  <strong>@selectedPricingFlight.FlightNumber · @selectedPricingFlight.DepartureAirportCode → @selectedPricingFlight.ArrivalAirportCode</strong>
+                  <span>@selectedPricingFlight.DepartureTime.ToString("dd/MM/yyyy · HH:mm") · @selectedPricingFlight.AircraftModel</span>
+                </div>
+              </div>
+            }
+            else
+            {
+              <div class="admin-pricing-flight">
+                <span class="admin-metric-icon"><i data-lucide="plane" aria-hidden="true"></i></span>
+                <div><strong>Chưa có bảng giá</strong><span>Chọn chuyến bay chưa có giá để tạo bảng giá đầu tiên.</span></div>
+              </div>
+            }
+            <form class="admin-select-label" method="get" asp-controller="Home" asp-action="Admin">
+              <input type="hidden" name="routePage" value="@Model.RoutePage">
+              <input type="hidden" name="flightPage" value="@Model.FlightPage">
+              <label for="pricing-flight-select">Chuyến bay</label>
+              <select id="pricing-flight-select" name="pricingFlightId" aria-label="Chọn chuyến bay có bảng giá"
+                      onchange="this.form.submit()" disabled="@(Model.PricingFlights.Count == 0)">
+                @if (Model.PricingFlights.Count == 0)
+                {
+                  <option value="">Chưa có chuyến bay nào được định giá</option>
+                }
+                else
+                {
+                  @foreach (var flight in Model.PricingFlights)
+                  {
+                    <option value="@flight.FlightId" selected="@(flight.FlightId == Model.SelectedPricingFlight?.FlightId)">
+                      @flight.FlightNumber · @flight.DepartureAirportCode – @flight.ArrivalAirportCode
+                    </option>
+                  }
+                }
+              </select>
+            </form>
           </section>
-          <div class="admin-table-panel admin-pricing-table"><table class="admin-table" id="pricing-table">
-            <thead><tr><th>Hạng ghế</th><th>Loại khách</th><th>Giá cơ bản</th><th>Thuế</th><th>Phí dịch vụ</th><th>Tổng giá</th><th class="admin-actions-heading">Thao tác</th></tr></thead>
-            <tbody>
-              <tr><td data-label="Hạng ghế"><strong>Phổ thông</strong></td><td data-label="Loại khách">Người lớn</td><td data-label="Giá cơ bản">1.250.000 ₫</td><td data-label="Thuế">125.000 ₫</td><td data-label="Phí dịch vụ">75.000 ₫</td><td data-label="Tổng giá"><strong>1.450.000 ₫</strong></td><td data-label="Thao tác"><button class="admin-button admin-button-small" type="button" data-record-edit="pricing">Sửa</button></td></tr>
-              <tr><td data-label="Hạng ghế"><strong>Phổ thông</strong></td><td data-label="Loại khách">Trẻ em</td><td data-label="Giá cơ bản">937.500 ₫</td><td data-label="Thuế">93.750 ₫</td><td data-label="Phí dịch vụ">75.000 ₫</td><td data-label="Tổng giá"><strong>1.106.250 ₫</strong></td><td data-label="Thao tác"><button class="admin-button admin-button-small" type="button" data-record-edit="pricing">Sửa</button></td></tr>
-              <tr><td data-label="Hạng ghế"><strong>Phổ thông</strong></td><td data-label="Loại khách">Em bé</td><td data-label="Giá cơ bản">125.000 ₫</td><td data-label="Thuế">12.500 ₫</td><td data-label="Phí dịch vụ">25.000 ₫</td><td data-label="Tổng giá"><strong>162.500 ₫</strong></td><td data-label="Thao tác"><button class="admin-button admin-button-small" type="button" data-record-edit="pricing">Sửa</button></td></tr>
-              <tr><td data-label="Hạng ghế"><strong>Thương gia</strong></td><td data-label="Loại khách">Người lớn</td><td data-label="Giá cơ bản">4.500.000 ₫</td><td data-label="Thuế">450.000 ₫</td><td data-label="Phí dịch vụ">150.000 ₫</td><td data-label="Tổng giá"><strong>5.100.000 ₫</strong></td><td data-label="Thao tác"><button class="admin-button admin-button-small" type="button" data-record-edit="pricing">Sửa</button></td></tr>
-            </tbody>
-          </table></div>
-          <p class="admin-footnote">Giá trên là dữ liệu minh họa, cần được xác nhận theo chính sách giá thực tế.</p>
+          @if (Model.FlightPricingRows.Count == 0)
+          {
+            <div class="admin-panel admin-pricing-empty" role="status">
+              <i data-lucide="badge-dollar-sign" aria-hidden="true"></i>
+              <strong>Chuyến bay này chưa có mức giá</strong>
+              <span>Thêm đủ các mức giá để chuyến bay xuất hiện trong danh sách.</span>
+            </div>
+          }
+          else
+          {
+            <div class="admin-table-panel admin-pricing-table">
+              <table class="admin-table" id="pricing-table">
+                <thead><tr><th>Hạng ghế</th><th>Loại khách</th><th>Giá cơ bản</th><th>Thuế</th><th>Phí dịch vụ</th><th>Tổng giá</th><th class="admin-actions-heading">Thao tác</th></tr></thead>
+                @foreach (var group in pricingSeatClassGroups)
+                {
+                  var categoryLabel = SeatClassLabel(group.Key);
+                  <tbody>
+                    <tr class="admin-pricing-group-row">
+                      <td colspan="7">
+                        <button class="admin-pricing-group-toggle" type="button" data-pricing-toggle
+                                aria-expanded="true" aria-label="Thu gọn mức giá hạng @categoryLabel">
+                          <span>@categoryLabel</span>
+                          <span class="admin-pricing-group-count">@group.Count() mức giá</span>
+                          <i data-lucide="chevron-down" aria-hidden="true"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    @foreach (var price in group)
+                    {
+                      <tr class="admin-pricing-row" data-pricing-row>
+                        <td data-label="Hạng ghế"><strong>@categoryLabel</strong></td>
+                        <td data-label="Loại khách">@PassengerTypeLabel(price.PassengerType)</td>
+                        <td data-label="Giá cơ bản">@Money(price.BasePrice)</td>
+                        <td data-label="Thuế">@Money(price.TaxAmount)</td>
+                        <td data-label="Phí dịch vụ">@Money(price.ServiceFee)</td>
+                        <td data-label="Tổng giá"><strong>@Money(price.TotalPrice)</strong></td>
+                        <td data-label="Thao tác">
+                          <button class="admin-button admin-button-small" type="button" data-pricing-edit
+                                  data-price-id="@price.PriceId"
+                                  data-seat-class="@categoryLabel"
+                                  data-passenger-type="@PassengerTypeLabel(price.PassengerType)"
+                                  data-base-price="@price.BasePrice.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                                  data-tax-amount="@price.TaxAmount.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                                  data-service-fee="@price.ServiceFee.ToString(System.Globalization.CultureInfo.InvariantCulture)">
+                            Sửa
+                          </button>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                }
+              </table>
+            </div>
+          }
         </section>
 
         <section class="admin-screen" data-screen-panel="promotions" hidden>
@@ -918,6 +1029,124 @@
     </form>
   </dialog>
 
+  <dialog class="admin-dialog admin-pricing-dialog" id="pricing-create-dialog"
+          aria-labelledby="pricing-create-title"
+          data-open="@Model.OpenFlightPricingDialog.ToString().ToLowerInvariant()">
+    <form class="admin-dialog-form" method="post" asp-controller="FlightPricings" asp-action="Create">
+      <header class="admin-dialog-heading">
+        <div>
+          <h2 id="pricing-create-title">Thêm bảng giá chuyến bay</h2>
+          <p>Chọn chuyến bay chưa có giá và nhập đủ sáu tổ hợp giá.</p>
+        </div>
+        <button class="admin-icon-button" type="button" data-pricing-dialog-close aria-label="Đóng cửa sổ">
+          <i data-lucide="x" aria-hidden="true"></i>
+        </button>
+      </header>
+      <div class="admin-validation-summary" asp-validation-summary="All" role="alert"></div>
+      <input type="hidden" name="selectedPricingFlightId" value="@Model.SelectedPricingFlight?.FlightId">
+      <div class="admin-pricing-create-flight admin-field">
+        <label asp-for="FlightPricingInput.FlightId">Chuyến bay</label>
+        <select asp-for="FlightPricingInput.FlightId" required>
+          <option value="">Chọn chuyến bay chưa có bảng giá</option>
+          @foreach (var flight in Model.AvailablePricingFlights)
+          {
+            <option value="@flight.FlightId">
+              @flight.FlightNumber · @flight.DepartureAirportCode – @flight.ArrivalAirportCode · @flight.DepartureTime.ToString("dd/MM/yyyy HH:mm") · @flight.AircraftModel
+            </option>
+          }
+        </select>
+        <span class="admin-validation-message" asp-validation-for="FlightPricingInput.FlightId"></span>
+        @if (Model.AvailablePricingFlights.Count == 0)
+        {
+          <span class="admin-footnote">Hiện không còn chuyến bay chưa có bảng giá.</span>
+        }
+      </div>
+      <div class="admin-pricing-input-wrap">
+        <table class="admin-pricing-input-table">
+          <thead>
+            <tr><th>Hạng ghế</th><th>Loại khách</th><th>Giá cơ bản</th><th>Thuế</th><th>Phí dịch vụ</th></tr>
+          </thead>
+          <tbody>
+            @for (var index = 0; index < Model.FlightPricingInput.Lines.Count; index++)
+            {
+              var line = Model.FlightPricingInput.Lines[index];
+              <tr>
+                <td>
+                  <input type="hidden" asp-for="FlightPricingInput.Lines[index].SeatClass">
+                  @(SeatClassLabel(line.SeatClass))
+                </td>
+                <td>
+                  <input type="hidden" asp-for="FlightPricingInput.Lines[index].PassengerType">
+                  @(PassengerTypeLabel(line.PassengerType))
+                </td>
+                <td>
+                  <input asp-for="FlightPricingInput.Lines[index].BasePrice" type="number" min="0" step="0.01" required aria-label="Giá cơ bản @SeatClassLabel(line.SeatClass) @PassengerTypeLabel(line.PassengerType)">
+                </td>
+                <td>
+                  <input asp-for="FlightPricingInput.Lines[index].TaxAmount" type="number" min="0" step="0.01" required aria-label="Thuế @SeatClassLabel(line.SeatClass) @PassengerTypeLabel(line.PassengerType)">
+                </td>
+                <td>
+                  <input asp-for="FlightPricingInput.Lines[index].ServiceFee" type="number" min="0" step="0.01" required aria-label="Phí dịch vụ @SeatClassLabel(line.SeatClass) @PassengerTypeLabel(line.PassengerType)">
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <footer class="admin-dialog-actions">
+        <button class="admin-button admin-button-outline" type="button" data-pricing-dialog-close>Hủy</button>
+        <button class="admin-button admin-button-primary" type="submit">Lưu bảng giá</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <dialog class="admin-dialog admin-pricing-edit-dialog" id="pricing-edit-dialog"
+          aria-labelledby="pricing-edit-title"
+          data-open="@Model.OpenFlightPricingEditDialog.ToString().ToLowerInvariant()"
+          data-seat-class="@editingPricingRow?.SeatClass"
+          data-passenger-type="@editingPricingRow?.PassengerType">
+    <form class="admin-dialog-form" method="post" asp-controller="FlightPricings" asp-action="Edit">
+      <header class="admin-dialog-heading">
+        <div>
+          <h2 id="pricing-edit-title">Sửa mức giá</h2>
+          <p data-pricing-edit-description>
+            @if (editingPricingRow is not null)
+            {
+              @(SeatClassLabel(editingPricingRow.SeatClass) + " · " + PassengerTypeLabel(editingPricingRow.PassengerType))
+            }
+          </p>
+        </div>
+        <button class="admin-icon-button" type="button" data-pricing-dialog-close aria-label="Đóng cửa sổ">
+          <i data-lucide="x" aria-hidden="true"></i>
+        </button>
+      </header>
+      <div class="admin-validation-summary" asp-validation-summary="All" role="alert"></div>
+      <input type="hidden" name="priceId" value="@Model.EditingFlightPriceId">
+      <input type="hidden" name="pricingFlightId" value="@Model.SelectedPricingFlight?.FlightId">
+      <div class="admin-pricing-edit-fields">
+        <div class="admin-field">
+          <label asp-for="FlightPricingEditInput.BasePrice">Giá cơ bản</label>
+          <input asp-for="FlightPricingEditInput.BasePrice" type="number" min="0" step="0.01" required>
+          <span class="admin-validation-message" asp-validation-for="FlightPricingEditInput.BasePrice"></span>
+        </div>
+        <div class="admin-field">
+          <label asp-for="FlightPricingEditInput.TaxAmount">Thuế</label>
+          <input asp-for="FlightPricingEditInput.TaxAmount" type="number" min="0" step="0.01" required>
+          <span class="admin-validation-message" asp-validation-for="FlightPricingEditInput.TaxAmount"></span>
+        </div>
+        <div class="admin-field">
+          <label asp-for="FlightPricingEditInput.ServiceFee">Phí dịch vụ</label>
+          <input asp-for="FlightPricingEditInput.ServiceFee" type="number" min="0" step="0.01" required>
+          <span class="admin-validation-message" asp-validation-for="FlightPricingEditInput.ServiceFee"></span>
+        </div>
+      </div>
+      <footer class="admin-dialog-actions">
+        <button class="admin-button admin-button-outline" type="button" data-pricing-dialog-close>Hủy</button>
+        <button class="admin-button admin-button-primary" type="submit">Lưu thay đổi</button>
+      </footer>
+    </form>
+  </dialog>
+
   <dialog class="admin-dialog" id="aircraft-dialog" aria-labelledby="aircraft-dialog-title"
           data-open="@Model.OpenAircraftDialog.ToString().ToLowerInvariant()"
           data-mode="@Model.AircraftDialogMode">
@@ -1003,7 +1232,7 @@
   </dialog>
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
   <div class="admin-toast" role="status" aria-live="polite"
-       data-initial-message="@aircraftNotice" hidden></div>
+       data-initial-message="@adminNotice" hidden></div>
   <script src="~/js/admin.js"></script>
   <script src="~/js/auth.js"></script>
 </body>

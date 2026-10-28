@@ -76,7 +76,8 @@ namespace TEO_Airline_Project.Controllers
             int flightPage = 1,
             string? flightSearch = null,
             string? flightStatus = null,
-            int? aircraftId = null)
+            int? aircraftId = null,
+            int? pricingFlightId = null)
         {
             if (string.IsNullOrWhiteSpace(HttpContext.Session.GetString("UserId")))
             {
@@ -99,7 +100,8 @@ namespace TEO_Airline_Project.Controllers
                 flightPage: flightPage,
                 flightSearch: flightSearch,
                 flightStatus: flightStatus,
-                selectedAircraftId: aircraftId);
+                selectedAircraftId: aircraftId,
+                pricingFlightId: pricingFlightId);
 
             return View("admin", model);
         }

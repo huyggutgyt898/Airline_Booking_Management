@@ -65,6 +65,24 @@ public sealed class AdminDashboardViewModel
     public string FlightDialogMode { get; init; } = "create";
 
     public bool OpenFlightDialog { get; init; }
+
+    public IReadOnlyList<AdminPricingFlightOptionViewModel> PricingFlights { get; init; } = [];
+
+    public IReadOnlyList<AdminPricingFlightOptionViewModel> AvailablePricingFlights { get; init; } = [];
+
+    public AdminPricingFlightOptionViewModel? SelectedPricingFlight { get; init; }
+
+    public IReadOnlyList<AdminFlightPricingViewModel> FlightPricingRows { get; init; } = [];
+
+    public FlightPricingInputModel FlightPricingInput { get; init; } = new();
+
+    public FlightPricingEditInputModel FlightPricingEditInput { get; init; } = new();
+
+    public int? EditingFlightPriceId { get; init; }
+
+    public bool OpenFlightPricingDialog { get; init; }
+
+    public bool OpenFlightPricingEditDialog { get; init; }
 }
 
 public sealed class AdminFlightListItemViewModel
@@ -137,4 +155,38 @@ public sealed class AdminAircraftSeatViewModel
     public string SeatClass { get; init; } = "";
 
     public string Column { get; init; } = "";
+}
+
+public sealed class AdminPricingFlightOptionViewModel
+{
+    public int FlightId { get; init; }
+
+    public string FlightNumber { get; init; } = "";
+
+    public string DepartureAirportCode { get; init; } = "";
+
+    public string ArrivalAirportCode { get; init; } = "";
+
+    public DateTime DepartureTime { get; init; }
+
+    public string AircraftModel { get; init; } = "";
+
+    public int PriceCount { get; init; }
+}
+
+public sealed class AdminFlightPricingViewModel
+{
+    public int PriceId { get; init; }
+
+    public string SeatClass { get; init; } = "";
+
+    public string PassengerType { get; init; } = "";
+
+    public decimal BasePrice { get; init; }
+
+    public decimal TaxAmount { get; init; }
+
+    public decimal ServiceFee { get; init; }
+
+    public decimal TotalPrice => BasePrice + TaxAmount + ServiceFee;
 }
