@@ -3,6 +3,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using TEO_Airline_Project.Models;
 using TEO_Airline_Project.Models.ViewModels;
+using TEO_Airline_Project.Services;
 
 namespace TEO_Airline_Project.Controllers;
 
@@ -222,16 +223,11 @@ public class AirportsController : Controller
         AirportInputModel input,
         string dialogMode)
     {
-        var model = new AdminDashboardViewModel
-        {
-            Airports = await _context.Airports
-                .AsNoTracking()
-                .OrderBy(airport => airport.AirportCode)
-                .ToListAsync(),
-            AirportInput = input,
-            AirportDialogMode = dialogMode,
-            OpenAirportDialog = true
-        };
+        var model = await AdminDashboardViewModelBuilder.BuildAsync(
+            _context,
+            airportInput: input,
+            airportDialogMode: dialogMode,
+            openAirportDialog: true);
 
         return View("~/Views/Home/admin.cshtml", model);
     }

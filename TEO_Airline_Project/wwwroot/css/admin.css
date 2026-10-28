@@ -989,6 +989,12 @@
   gap: 14px;
 }
 
+.admin-aircraft-heading .admin-page-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 8px;
+}
+
 .admin-aircraft-options {
   display: grid;
   padding: 6px;
@@ -1004,7 +1010,10 @@
   border: 0;
   border-bottom: 1px solid var(--border);
   background: transparent;
+  color: inherit;
   text-align: left;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .admin-aircraft-option:last-child {
@@ -1015,13 +1024,13 @@
   background: var(--background);
 }
 
-.admin-aircraft-option[aria-pressed="true"] {
+.admin-aircraft-option[aria-current="page"] {
   border-radius: 9px;
   background: var(--brand-soft);
   color: var(--brand);
 }
 
-.admin-aircraft-option[aria-pressed="true"] small {
+.admin-aircraft-option[aria-current="page"] small {
   color: #475467;
 }
 
@@ -1061,6 +1070,36 @@
 .admin-aircraft-icon svg {
   width: 17px;
   height: 17px;
+}
+
+.admin-aircraft-empty {
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+  padding: 22px 14px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.admin-aircraft-empty svg {
+  width: 20px;
+  height: 20px;
+}
+
+.admin-aircraft-empty strong {
+  color: var(--ink);
+  font-size: 13px;
+}
+
+.admin-aircraft-empty span {
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.admin-aircraft-empty-large {
+  min-height: 220px;
+  align-content: center;
+  padding: 28px 20px;
 }
 
 .admin-seat-heading {
@@ -1174,6 +1213,10 @@
 
 .admin-seat-aisle {
   min-height: 1px;
+}
+
+.admin-seat-placeholder {
+  min-height: 30px;
 }
 
 .admin-pricing-context {

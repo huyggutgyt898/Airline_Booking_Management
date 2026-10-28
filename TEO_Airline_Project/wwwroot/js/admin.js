@@ -263,54 +263,6 @@
     renderPromotions();
   }
 
-  function createSeatMap(aircraft, rowCount, seatCount) {
-    const map = $("[data-seat-map]");
-    map.replaceChildren();
-    map.setAttribute("aria-label", `Sơ đồ ghế ${aircraft}`);
-    for (let row = 1; row <= rowCount; row += 1) {
-      const rowNumber = String(row).padStart(2, "0");
-      const label = document.createElement("span");
-      label.className = "admin-seat-row-label";
-      label.textContent = rowNumber;
-      map.append(label);
-      ["A", "B", "C"].forEach((letter) => {
-        const seat = document.createElement("span");
-        const unavailable = row === 2 && letter === "C";
-        seat.className = `admin-seat${row <= 2 ? " admin-seat-business" : ""}${unavailable ? " admin-seat-unavailable" : ""}`;
-        seat.textContent = `${rowNumber}${letter}`;
-        seat.setAttribute("aria-label", `Ghế ${rowNumber}${letter}${unavailable ? ", không khai thác" : row <= 2 ? ", thương gia" : ", phổ thông"}`);
-        map.append(seat);
-      });
-      const aisle = document.createElement("span");
-      aisle.className = "admin-seat-aisle";
-      aisle.setAttribute("aria-hidden", "true");
-      map.append(aisle);
-      ["D", "E", "F"].forEach((letter) => {
-        const seat = document.createElement("span");
-        seat.className = `admin-seat${row <= 2 ? " admin-seat-business" : ""}`;
-        seat.textContent = `${rowNumber}${letter}`;
-        seat.setAttribute("aria-label", `Ghế ${rowNumber}${letter}${row <= 2 ? ", thương gia" : ", phổ thông"}`);
-        map.append(seat);
-      });
-    }
-  }
-
-  function setAircraft(button) {
-    $$("[data-aircraft]").forEach((option) => {
-      option.setAttribute("aria-pressed", String(option === button));
-    });
-    const aircraft = button.dataset.aircraft;
-    const counts = {
-      "Airbus A321": { rows: 30, seats: 180 },
-      "Airbus A320": { rows: 25, seats: 150 },
-      "Boeing 787-9": { rows: 49, seats: 294 }
-    };
-    const selected = counts[aircraft];
-    $("[data-aircraft-title]").textContent = aircraft;
-    $("[data-aircraft-seats]").textContent = formatMetric(selected.seats);
-    createSeatMap(aircraft, selected.rows, selected.seats);
-  }
-
   function cellValue(row, field) {
     if (typeof field.read === "function") return field.read(row) ?? "";
     if (field.fromCell === undefined) return field.value ?? "";
@@ -389,6 +341,32 @@
     dialog.showModal();
     const firstField = $("input, select", fields);
     if (firstField) firstField.focus();
+  }
+
+  function configureAircraftDialog(mode, preserveModel = false, model = "") {
+    const dialog = $("#aircraft-dialog");
+    const form = $("#aircraft-form");
+    const isCreate = mode !== "edit";
+    dialog.dataset.mode = isCreate ? "create" : "edit";
+    form.action = isCreate ? form.dataset.createUrl : form.dataset.editUrl;
+    $("#aircraft-dialog-title").textContent = isCreate ? "Thêm máy bay" : "Sửa tên model";
+    $("[data-aircraft-dialog-description]").textContent = isCreate
+      ? "Máy bay và các ghế sẽ được lưu cùng nhau."
+      : "Chỉ thay đổi tên model; sơ đồ ghế giữ nguyên.";
+    $("[data-aircraft-submit]").textContent = isCreate ? "Thêm máy bay" : "Lưu tên model";
+    $$(".aircraft-create-only").forEach((field) => {
+      field.hidden = !isCreate;
+      field.querySelectorAll("input, select").forEach((input) => {
+        input.disabled = !isCreate;
+      });
+    });
+    if (!preserveModel) $("#AircraftInput_Model").value = isCreate ? "" : model;
+  }
+
+  function openAircraftDialog(mode, model = "") {
+    configureAircraftDialog(mode, false, model);
+    $("#aircraft-dialog").showModal();
+    $("#AircraftInput_Model").focus();
   }
 
   function csvCell(value) {
@@ -751,10 +729,6 @@
     });
   });
 
-  $$("[data-aircraft]").forEach((button) => {
-    button.addEventListener("click", () => setAircraft(button));
-  });
-
   $$("[data-table-filter]").forEach((input) => {
     input.addEventListener("input", () => {
       const table = document.getElementById(input.dataset.tableFilter);
@@ -780,6 +754,18 @@
       $("[data-confirm-copy]").textContent = `Bạn có chắc muốn xóa ${pendingDeleteName}? Bản ghi liên quan có thể ảnh hưởng đến lịch sử khai thác.`;
       $("#confirm-dialog").showModal();
     });
+  });
+
+  $$("[data-aircraft-open]").forEach((button) => {
+    button.addEventListener("click", () => {
+      openAircraftDialog(button.dataset.aircraftOpen, button.dataset.aircraftModel ?? "");
+    });
+  });
+  $$("[data-aircraft-dialog-close]").forEach((button) => {
+    button.addEventListener("click", () => $("#aircraft-dialog").close());
+  });
+  $("#aircraft-dialog").addEventListener("click", (event) => {
+    if (event.target === event.currentTarget) event.currentTarget.close();
   });
 
   $$(".admin-dialog [data-dialog-close]").forEach((button) => {
@@ -823,14 +809,22 @@
 
   const flightDialog = $("#flight-dialog");
   const shouldOpenFlightDialog = flightDialog.dataset.open === "true";
-  setScreen(shouldOpenFlightDialog ? "flights" : window.location.hash.slice(1) || "overview");
+  const aircraftDialog = $("#aircraft-dialog");
+  const shouldOpenAircraftDialog = aircraftDialog.dataset.open === "true";
+  setScreen(shouldOpenAircraftDialog ? "aircraft" : shouldOpenFlightDialog ? "flights" : window.location.hash.slice(1) || "overview");
   if (shouldOpenFlightDialog) {
     const form = $("[data-flight-form]");
     form.action = flightDialog.dataset.mode === "edit" ? form.dataset.editUrl : form.dataset.createUrl;
     flightDialog.showModal();
     $("#FlightInput_FlightNumber").focus();
   }
+  if (shouldOpenAircraftDialog) {
+    configureAircraftDialog(aircraftDialog.dataset.mode, true);
+    aircraftDialog.showModal();
+    $("#AircraftInput_Model").focus();
+  }
+  const initialAircraftNotice = $(".admin-toast").dataset.initialMessage;
+  if (initialAircraftNotice) showToast(initialAircraftNotice);
   updateDashboard("month");
-  setAircraft($("[data-aircraft][aria-pressed='true']"));
   renderIcons();
 })();

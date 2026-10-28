@@ -17,7 +17,8 @@
             routeType = Model.RouteTypeFilter,
             flightPage = Model.FlightPage,
             flightSearch = Model.FlightSearch,
-            flightStatus = Model.FlightStatusFilter
+            flightStatus = Model.FlightStatusFilter,
+            aircraftId = Model.SelectedAircraftId
         }) + "#routes";
     }
     string FlightPageUrl(int flightPageNumber)
@@ -29,7 +30,8 @@
             routeType = Model.RouteTypeFilter,
             flightPage = flightPageNumber,
             flightSearch = Model.FlightSearch,
-            flightStatus = Model.FlightStatusFilter
+            flightStatus = Model.FlightStatusFilter,
+            aircraftId = Model.SelectedAircraftId
         }) + "#flights";
     }
     string ClearFlightFiltersUrl()
@@ -39,9 +41,27 @@
             routePage = Model.RoutePage,
             routeSearch = Model.RouteSearch,
             routeType = Model.RouteTypeFilter,
-            flightPage = 1
+            flightPage = 1,
+            aircraftId = Model.SelectedAircraftId
         }) + "#flights";
     }
+    string AircraftPageUrl(int aircraftId)
+    {
+        return Url.Action("Admin", "Home", new
+        {
+            routePage = Model.RoutePage,
+            routeSearch = Model.RouteSearch,
+            routeType = Model.RouteTypeFilter,
+            flightPage = Model.FlightPage,
+            flightSearch = Model.FlightSearch,
+            flightStatus = Model.FlightStatusFilter,
+            aircraftId
+        }) + "#aircraft";
+    }
+    var selectedAircraft = Model.Aircrafts.FirstOrDefault(
+        aircraft => aircraft.AircraftId == Model.SelectedAircraftId);
+    var aircraftNotice = TempData["AircraftSuccess"] as string ?? TempData["AircraftError"] as string;
+    var seatColumns = new[] { "A", "B", "C", "D", "E", "F" };
 }
 <!doctype html>
 <html lang="vi">
@@ -463,20 +483,149 @@
         </section>
 
         <section class="admin-screen" data-screen-panel="aircraft" hidden>
-          <div class="admin-page-heading"><div><h1>Máy bay &amp; sơ đồ ghế</h1><p>Xem cấu hình tàu bay và phân bố hạng ghế.</p></div></div>
+          <div class="admin-page-heading admin-aircraft-heading">
+            <div><h1>Máy bay &amp; sơ đồ ghế</h1><p>Xem cấu hình máy bay và phân bố hạng ghế.</p></div>
+            <div class="admin-page-actions">
+              <button class="admin-button admin-button-outline" type="button" data-aircraft-open="edit"
+                      data-aircraft-model="@(selectedAircraft?.Model ?? "")"
+                      aria-haspopup="dialog" aria-controls="aircraft-dialog"
+                      disabled="@(selectedAircraft is null)">Sửa model</button>
+              <button class="admin-button admin-button-primary" type="button" data-aircraft-open="create"
+                      aria-haspopup="dialog" aria-controls="aircraft-dialog">
+                <i data-lucide="plus" aria-hidden="true"></i>Thêm máy bay
+              </button>
+            </div>
+          </div>
           <div class="admin-aircraft-layout">
             <section class="admin-panel admin-aircraft-list">
-              <header class="admin-panel-heading"><div><h2>Danh sách máy bay</h2><p>3 tàu bay trong đội</p></div></header>
+              <header class="admin-panel-heading">
+                <div><h2>Danh sách máy bay</h2><p>@Model.Aircrafts.Count máy bay trong đội</p></div>
+              </header>
               <div class="admin-aircraft-options" role="group" aria-label="Chọn máy bay">
-                <button type="button" class="admin-aircraft-option" data-aircraft="Airbus A321" aria-pressed="true"><span class="admin-aircraft-icon"><i data-lucide="plane" aria-hidden="true"></i></span><span><strong>Airbus A321</strong><small>180 ghế · 12 chuyến</small></span><i data-lucide="chevron-right" aria-hidden="true"></i></button>
-                <button type="button" class="admin-aircraft-option" data-aircraft="Airbus A320" aria-pressed="false"><span class="admin-aircraft-icon"><i data-lucide="plane" aria-hidden="true"></i></span><span><strong>Airbus A320</strong><small>150 ghế · 8 chuyến</small></span><i data-lucide="chevron-right" aria-hidden="true"></i></button>
-                <button type="button" class="admin-aircraft-option" data-aircraft="Boeing 787-9" aria-pressed="false"><span class="admin-aircraft-icon"><i data-lucide="plane" aria-hidden="true"></i></span><span><strong>Boeing 787-9</strong><small>294 ghế · 4 chuyến</small></span><i data-lucide="chevron-right" aria-hidden="true"></i></button>
+                @if (Model.Aircrafts.Count == 0)
+                {
+                  <div class="admin-aircraft-empty">
+                    <i data-lucide="plane" aria-hidden="true"></i>
+                    <strong>Chưa có máy bay</strong>
+                    <span>Thêm máy bay để tạo sơ đồ ghế.</span>
+                  </div>
+                }
+                else
+                {
+                  @foreach (var aircraft in Model.Aircrafts)
+                  {
+                    <a class="admin-aircraft-option" href="@AircraftPageUrl(aircraft.AircraftId)"
+                       aria-current="@(aircraft.AircraftId == Model.SelectedAircraftId ? "page" : null)">
+                      <span class="admin-aircraft-icon"><i data-lucide="plane" aria-hidden="true"></i></span>
+                      <span><strong>@aircraft.Model</strong><small>@aircraft.TotalSeats.ToString("N0") ghế</small></span>
+                      <i data-lucide="chevron-right" aria-hidden="true"></i>
+                    </a>
+                  }
+                }
               </div>
             </section>
             <section class="admin-panel admin-seat-panel">
-              <header class="admin-panel-heading admin-seat-heading"><div><h2 data-aircraft-title>Airbus A321</h2><p><span data-aircraft-seats>180</span> ghế · sơ đồ tiêu chuẩn</p></div><span class="admin-muted-pill">Chỉ xem</span></header>
-              <div class="admin-seat-legend"><span><i class="admin-seat-dot admin-seat-dot-business"></i>Thương gia</span><span><i class="admin-seat-dot"></i>Phổ thông</span><span><i class="admin-seat-dot admin-seat-dot-unavailable"></i>Không khai thác</span></div>
-              <div class="admin-seat-map-wrap"><div class="admin-seat-map" data-seat-map aria-label="Sơ đồ ghế máy bay"></div></div>
+              @if (selectedAircraft is null)
+              {
+                <header class="admin-panel-heading admin-seat-heading">
+                  <div><h2>Sơ đồ ghế</h2><p>Chọn máy bay để xem cấu hình ghế.</p></div>
+                  <span class="admin-muted-pill">Chỉ xem</span>
+                </header>
+                <div class="admin-aircraft-empty admin-aircraft-empty-large">
+                  <i data-lucide="armchair" aria-hidden="true"></i>
+                  <strong>Chưa có sơ đồ ghế</strong>
+                  <span>Thêm máy bay để tạo các hàng ghế.</span>
+                </div>
+              }
+              else
+              {
+                <header class="admin-panel-heading admin-seat-heading">
+                  <div>
+                    <h2>@selectedAircraft.Model</h2>
+                    <p>@Model.AircraftSeatRows.Sum(row => row.Seats.Count).ToString("N0") ghế · sơ đồ theo dữ liệu</p>
+                  </div>
+                  <span class="admin-muted-pill">Ghế · Chỉ xem</span>
+                </header>
+                @if (Model.AircraftSeatRows.SelectMany(row => row.Seats)
+                    .Any(seat => seat.SeatClass.Equals("Business", StringComparison.OrdinalIgnoreCase)) ||
+                    Model.AircraftSeatRows.SelectMany(row => row.Seats)
+                    .Any(seat => seat.SeatClass.Equals("Economy", StringComparison.OrdinalIgnoreCase)))
+                {
+                  <div class="admin-seat-legend">
+                    @if (Model.AircraftSeatRows.SelectMany(row => row.Seats)
+                        .Any(seat => seat.SeatClass.Equals("Business", StringComparison.OrdinalIgnoreCase)))
+                    {
+                      <span><i class="admin-seat-dot admin-seat-dot-business"></i>Thương gia</span>
+                    }
+                    @if (Model.AircraftSeatRows.SelectMany(row => row.Seats)
+                        .Any(seat => seat.SeatClass.Equals("Economy", StringComparison.OrdinalIgnoreCase)))
+                    {
+                      <span><i class="admin-seat-dot"></i>Phổ thông</span>
+                    }
+                  </div>
+                }
+                @if (Model.AircraftSeatRows.Count == 0)
+                {
+                  <div class="admin-aircraft-empty admin-aircraft-empty-large">
+                    <i data-lucide="armchair" aria-hidden="true"></i>
+                    <strong>Máy bay chưa có ghế</strong>
+                    <span>Các ghế sẽ xuất hiện ở đây khi được thêm vào bảng Seats.</span>
+                  </div>
+                }
+                else
+                {
+                  <div class="admin-seat-map-wrap">
+                    <div class="admin-seat-map" role="group" aria-label="Sơ đồ ghế @selectedAircraft.Model">
+                      @foreach (var row in Model.AircraftSeatRows)
+                      {
+                        <span class="admin-seat-row-label">@row.RowNumber</span>
+                        @foreach (var column in seatColumns.Take(3))
+                        {
+                          var seat = row.Seats.FirstOrDefault(item =>
+                              item.Column.Equals(column, StringComparison.OrdinalIgnoreCase));
+                          if (seat is null)
+                          {
+                            <span class="admin-seat-placeholder" aria-hidden="true"></span>
+                          }
+                          else
+                          {
+                            var isBusiness = seat.SeatClass.Equals("Business", StringComparison.OrdinalIgnoreCase);
+                            var seatClassLabel = isBusiness ? "Thương gia" :
+                                seat.SeatClass.Equals("Economy", StringComparison.OrdinalIgnoreCase) ? "Phổ thông" : seat.SeatClass;
+                            <span class="admin-seat @(isBusiness ? "admin-seat-business" : "")"
+                                  role="img" aria-label="Ghế @seat.SeatNumber, @seatClassLabel">@seat.SeatNumber</span>
+                          }
+                        }
+                        <span class="admin-seat-aisle" aria-hidden="true"></span>
+                        @foreach (var column in seatColumns.Skip(3))
+                        {
+                          var seat = row.Seats.FirstOrDefault(item =>
+                              item.Column.Equals(column, StringComparison.OrdinalIgnoreCase));
+                          if (seat is null)
+                          {
+                            <span class="admin-seat-placeholder" aria-hidden="true"></span>
+                          }
+                          else
+                          {
+                            var isBusiness = seat.SeatClass.Equals("Business", StringComparison.OrdinalIgnoreCase);
+                            var seatClassLabel = isBusiness ? "Thương gia" :
+                                seat.SeatClass.Equals("Economy", StringComparison.OrdinalIgnoreCase) ? "Phổ thông" : seat.SeatClass;
+                            <span class="admin-seat @(isBusiness ? "admin-seat-business" : "")"
+                                  role="img" aria-label="Ghế @seat.SeatNumber, @seatClassLabel">@seat.SeatNumber</span>
+                          }
+                        }
+                        @foreach (var seat in row.Seats.Where(item =>
+                            !seatColumns.Contains(item.Column, StringComparer.OrdinalIgnoreCase)))
+                        {
+                          var seatClassLabel = seat.SeatClass.Equals("Business", StringComparison.OrdinalIgnoreCase) ? "Thương gia" :
+                              seat.SeatClass.Equals("Economy", StringComparison.OrdinalIgnoreCase) ? "Phổ thông" : seat.SeatClass;
+                          <span class="admin-seat" role="img" aria-label="Ghế @seat.SeatNumber, @seatClassLabel">@seat.SeatNumber</span>
+                        }
+                      }
+                    </div>
+                  </div>
+                }
+              }
             </section>
           </div>
         </section>
@@ -769,6 +918,66 @@
     </form>
   </dialog>
 
+  <dialog class="admin-dialog" id="aircraft-dialog" aria-labelledby="aircraft-dialog-title"
+          data-open="@Model.OpenAircraftDialog.ToString().ToLowerInvariant()"
+          data-mode="@Model.AircraftDialogMode">
+    <form class="admin-dialog-form" id="aircraft-form" method="post"
+          asp-controller="Aircrafts" asp-action="Create"
+          data-create-url="@Url.Action("Create", "Aircrafts")"
+          data-edit-url="@Url.Action("Edit", "Aircrafts")">
+      <header class="admin-dialog-heading">
+        <div>
+          <h2 id="aircraft-dialog-title">Thêm máy bay</h2>
+          <p data-aircraft-dialog-description>Máy bay và các ghế sẽ được lưu cùng nhau.</p>
+        </div>
+        <button class="admin-icon-button" type="button" data-aircraft-dialog-close aria-label="Đóng cửa sổ">
+          <i data-lucide="x" aria-hidden="true"></i>
+        </button>
+      </header>
+      <div class="admin-validation-summary" asp-validation-summary="All" role="alert"></div>
+      <input type="hidden" name="aircraftId" value="@Model.SelectedAircraftId">
+      <input type="hidden" name="selectedAircraftId" value="@Model.SelectedAircraftId">
+      <input type="hidden" name="routePage" value="@Model.RoutePage">
+      <input type="hidden" name="routeSearch" value="@Model.RouteSearch">
+      <input type="hidden" name="routeType" value="@Model.RouteTypeFilter">
+      <input type="hidden" name="flightPage" value="@Model.FlightPage">
+      <input type="hidden" name="flightSearch" value="@Model.FlightSearch">
+      <input type="hidden" name="flightStatus" value="@Model.FlightStatusFilter">
+      <div class="admin-dialog-fields">
+        <div class="admin-field admin-field-full">
+          <label asp-for="AircraftInput.Model"></label>
+          <input asp-for="AircraftInput.Model" maxlength="100" autocomplete="off" required>
+          <span class="admin-validation-message" asp-validation-for="AircraftInput.Model"></span>
+        </div>
+        <div class="admin-field aircraft-create-only">
+          <label asp-for="AircraftInput.RowCount"></label>
+          <input asp-for="AircraftInput.RowCount" type="number" min="1" max="99" required>
+          <span class="admin-validation-message" asp-validation-for="AircraftInput.RowCount"></span>
+        </div>
+        <div class="admin-field aircraft-create-only">
+          <label asp-for="AircraftInput.SeatsPerRow"></label>
+          <input asp-for="AircraftInput.SeatsPerRow" type="number" min="1" max="6"
+                 aria-describedby="aircraft-seat-layout-help" required>
+          <span class="admin-validation-message" asp-validation-for="AircraftInput.SeatsPerRow"></span>
+        </div>
+        <div class="admin-field aircraft-create-only">
+          <label asp-for="AircraftInput.BusinessRows"></label>
+          <input asp-for="AircraftInput.BusinessRows" type="number" min="0" max="99"
+                 aria-describedby="aircraft-business-rows-help" required>
+          <span class="admin-validation-message" asp-validation-for="AircraftInput.BusinessRows"></span>
+        </div>
+        <div class="admin-field aircraft-create-only admin-field-full">
+          <p class="admin-footnote" id="aircraft-seat-layout-help">Ghế xếp theo thứ tự A–F, lối đi sau ghế C. Số ghế mỗi hàng mặc định là 6 (3–3).</p>
+          <p class="admin-footnote" id="aircraft-business-rows-help">Các hàng đầu tiên được gán hạng thương gia; những hàng còn lại là phổ thông.</p>
+        </div>
+      </div>
+      <footer class="admin-dialog-actions">
+        <button class="admin-button admin-button-outline" type="button" data-aircraft-dialog-close>Hủy</button>
+        <button class="admin-button admin-button-primary" type="submit" data-aircraft-submit>Thêm máy bay</button>
+      </footer>
+    </form>
+  </dialog>
+
   <dialog class="admin-dialog admin-confirm-dialog" id="confirm-dialog" aria-labelledby="confirm-dialog-title">
     <form method="dialog">
       <div class="admin-dialog-heading"><div><h2 id="confirm-dialog-title">Xác nhận xóa</h2><p data-confirm-copy></p></div></div>
@@ -793,7 +1002,8 @@
     </form>
   </dialog>
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
-  <div class="admin-toast" role="status" aria-live="polite" hidden></div>
+  <div class="admin-toast" role="status" aria-live="polite"
+       data-initial-message="@aircraftNotice" hidden></div>
   <script src="~/js/admin.js"></script>
   <script src="~/js/auth.js"></script>
 </body>

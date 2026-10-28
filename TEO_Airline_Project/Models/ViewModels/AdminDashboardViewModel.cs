@@ -4,6 +4,18 @@ public sealed class AdminDashboardViewModel
 {
     public IReadOnlyList<Airport> Airports { get; init; } = [];
 
+    public IReadOnlyList<AdminAircraftListItemViewModel> Aircrafts { get; init; } = [];
+
+    public int? SelectedAircraftId { get; init; }
+
+    public IReadOnlyList<AdminAircraftSeatRowViewModel> AircraftSeatRows { get; init; } = [];
+
+    public AircraftInputModel AircraftInput { get; init; } = new();
+
+    public string AircraftDialogMode { get; init; } = "create";
+
+    public bool OpenAircraftDialog { get; init; }
+
     public IReadOnlyList<AdminRouteListItemViewModel> Routes { get; init; } = [];
 
     public int TotalRouteCount { get; init; }
@@ -100,4 +112,29 @@ public sealed class AdminAircraftOptionViewModel
     public int AircraftId { get; init; }
 
     public string Model { get; init; } = "";
+}
+
+public sealed class AdminAircraftListItemViewModel
+{
+    public int AircraftId { get; init; }
+
+    public string Model { get; init; } = "";
+
+    public int TotalSeats { get; init; }
+}
+
+public sealed class AdminAircraftSeatRowViewModel
+{
+    public string RowNumber { get; init; } = "";
+
+    public IReadOnlyList<AdminAircraftSeatViewModel> Seats { get; init; } = [];
+}
+
+public sealed class AdminAircraftSeatViewModel
+{
+    public string SeatNumber { get; init; } = "";
+
+    public string SeatClass { get; init; } = "";
+
+    public string Column { get; init; } = "";
 }

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 using TEO_Airline_Project.Models;
 using TEO_Airline_Project.Models.ViewModels;
 
@@ -22,7 +23,14 @@ public static class AdminDashboardViewModelBuilder
         string? flightStatus = null,
         FlightInputModel? flightInput = null,
         string flightDialogMode = "create",
-        bool openFlightDialog = false)
+        bool openFlightDialog = false,
+        int? selectedAircraftId = null,
+        AircraftInputModel? aircraftInput = null,
+        string aircraftDialogMode = "create",
+        bool openAircraftDialog = false,
+        AirportInputModel? airportInput = null,
+        string airportDialogMode = "create",
+        bool openAirportDialog = false)
     {
         var airports = await context.Airports
             .AsNoTracking()
@@ -100,6 +108,36 @@ public static class AdminDashboardViewModelBuilder
             })
             .ToListAsync();
 
+        var aircrafts = await context.Aircrafts
+            .AsNoTracking()
+            .OrderBy(aircraft => aircraft.Model)
+            .ThenBy(aircraft => aircraft.AircraftId)
+            .Select(aircraft => new AdminAircraftListItemViewModel
+            {
+                AircraftId = aircraft.AircraftId,
+                Model = aircraft.Model,
+                TotalSeats = context.Seats.Count(seat => seat.AircraftId == aircraft.AircraftId)
+            })
+            .ToListAsync();
+
+        selectedAircraftId = aircrafts.Any(aircraft => aircraft.AircraftId == selectedAircraftId)
+            ? selectedAircraftId
+            : aircrafts.FirstOrDefault()?.AircraftId;
+
+        var aircraftSeats = selectedAircraftId is int aircraftId
+            ? await context.Seats
+                .AsNoTracking()
+                .Where(seat => seat.AircraftId == aircraftId)
+                .OrderBy(seat => seat.SeatNumber)
+                .Select(seat => new AdminAircraftSeatViewModel
+                {
+                    SeatNumber = seat.SeatNumber,
+                    SeatClass = seat.SeatClass
+                })
+                .ToListAsync()
+            : [];
+        var aircraftSeatRows = BuildAircraftSeatRows(aircraftSeats);
+
         var flightsQuery = context.Flights.AsNoTracking();
         flightSearch = flightSearch?.Trim();
         flightStatus = AdminFlightStatus.Options.Any(option => option.Value == flightStatus)
@@ -152,6 +190,15 @@ public static class AdminDashboardViewModelBuilder
         return new AdminDashboardViewModel
         {
             Airports = airports,
+            Aircrafts = aircrafts,
+            SelectedAircraftId = selectedAircraftId,
+            AircraftSeatRows = aircraftSeatRows,
+            AircraftInput = aircraftInput ?? new AircraftInputModel(),
+            AircraftDialogMode = aircraftDialogMode,
+            OpenAircraftDialog = openAircraftDialog,
+            AirportInput = airportInput ?? new AirportInputModel(),
+            AirportDialogMode = airportDialogMode,
+            OpenAirportDialog = openAirportDialog,
             Routes = routes,
             TotalRouteCount = totalRouteCount,
             TotalFlightCount = totalFlightCount,
@@ -175,5 +222,46 @@ public static class AdminDashboardViewModelBuilder
             FlightDialogMode = flightDialogMode,
             OpenFlightDialog = openFlightDialog
         };
+    }
+
+    private static IReadOnlyList<AdminAircraftSeatRowViewModel> BuildAircraftSeatRows(
+        IReadOnlyList<AdminAircraftSeatViewModel> seats)
+    {
+        return seats
+            .Select(seat =>
+            {
+                var prefixLength = seat.SeatNumber.TakeWhile(char.IsDigit).Count();
+                var rowText = seat.SeatNumber[..prefixLength];
+                var rowNumber = int.TryParse(
+                    rowText,
+                    NumberStyles.None,
+                    CultureInfo.InvariantCulture,
+                    out var parsedRow)
+                    ? parsedRow
+                    : 0;
+
+                return new
+                {
+                    Seat = new AdminAircraftSeatViewModel
+                    {
+                        SeatNumber = seat.SeatNumber,
+                        SeatClass = seat.SeatClass,
+                        Column = seat.SeatNumber[prefixLength..]
+                    },
+                    RowNumber = rowNumber,
+                    RowLabel = rowText
+                };
+            })
+            .GroupBy(item => item.RowNumber)
+            .OrderBy(group => group.Key)
+            .Select(group => new AdminAircraftSeatRowViewModel
+            {
+                RowNumber = group.Key == 0 ? "—" : group.First().RowLabel,
+                Seats = group
+                    .OrderBy(item => item.Seat.Column, StringComparer.OrdinalIgnoreCase)
+                    .Select(item => item.Seat)
+                    .ToList()
+            })
+            .ToList();
     }
 }
