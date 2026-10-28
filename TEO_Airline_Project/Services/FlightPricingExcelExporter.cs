@@ -28,6 +28,29 @@ public sealed class FlightPricingExportRow
     public decimal ServiceFee { get; init; }
 }
 
+public sealed class PromotionExportRow
+{
+    public string Code { get; init; } = "";
+
+    public string DiscountType { get; init; } = "";
+
+    public decimal DiscountValue { get; init; }
+
+    public decimal? MinOrderValue { get; init; }
+
+    public int? PointsRequired { get; init; }
+
+    public DateTime StartDate { get; init; }
+
+    public DateTime EndDate { get; init; }
+
+    public int UsedCount { get; init; }
+
+    public int UsageLimit { get; init; }
+
+    public string Status { get; init; } = "";
+}
+
 public static class FlightPricingExcelExporter
 {
     private const string SpreadsheetNamespace = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
@@ -37,15 +60,29 @@ public static class FlightPricingExcelExporter
 
     public static byte[] Create(IReadOnlyList<FlightPricingExportRow> rows)
     {
+        return CreateWorkbook(
+            "Bảng giá",
+            writer => WriteWorksheet(writer, rows));
+    }
+
+    public static byte[] CreatePromotions(IReadOnlyList<PromotionExportRow> rows)
+    {
+        return CreateWorkbook(
+            "Khuyến mãi",
+            writer => WritePromotionWorksheet(writer, rows));
+    }
+
+    private static byte[] CreateWorkbook(string sheetName, Action<XmlWriter> writeWorksheet)
+    {
         using var stream = new MemoryStream();
         using (var archive = new ZipArchive(stream, ZipArchiveMode.Create, leaveOpen: true))
         {
             WriteEntry(archive, "[Content_Types].xml", WriteContentTypes);
             WriteEntry(archive, "_rels/.rels", WritePackageRelationships);
-            WriteEntry(archive, "xl/workbook.xml", WriteWorkbook);
+            WriteEntry(archive, "xl/workbook.xml", writer => WriteWorkbook(writer, sheetName));
             WriteEntry(archive, "xl/_rels/workbook.xml.rels", WriteWorkbookRelationships);
             WriteEntry(archive, "xl/styles.xml", WriteStyles);
-            WriteEntry(archive, "xl/worksheets/sheet1.xml", writer => WriteWorksheet(writer, rows));
+            WriteEntry(archive, "xl/worksheets/sheet1.xml", writeWorksheet);
         }
 
         return stream.ToArray();
@@ -88,14 +125,14 @@ public static class FlightPricingExcelExporter
         writer.WriteEndDocument();
     }
 
-    private static void WriteWorkbook(XmlWriter writer)
+    private static void WriteWorkbook(XmlWriter writer, string sheetName)
     {
         writer.WriteStartDocument();
         writer.WriteStartElement("workbook", SpreadsheetNamespace);
         writer.WriteAttributeString("xmlns", "r", null, RelationshipsNamespace);
         writer.WriteStartElement("sheets", SpreadsheetNamespace);
         writer.WriteStartElement("sheet", SpreadsheetNamespace);
-        writer.WriteAttributeString("name", "Bảng giá");
+        writer.WriteAttributeString("name", sheetName);
         writer.WriteAttributeString("sheetId", "1");
         writer.WriteAttributeString("r", "id", RelationshipsNamespace, "rId1");
         writer.WriteEndElement();
@@ -225,6 +262,66 @@ public static class FlightPricingExcelExporter
         writer.WriteEndDocument();
     }
 
+    private static void WritePromotionWorksheet(
+        XmlWriter writer,
+        IReadOnlyList<PromotionExportRow> rows)
+    {
+        writer.WriteStartDocument();
+        writer.WriteStartElement("worksheet", SpreadsheetNamespace);
+        writer.WriteStartElement("cols", SpreadsheetNamespace);
+        WriteColumn(writer, 1, 1, 22);
+        WriteColumn(writer, 2, 3, 18);
+        WriteColumn(writer, 4, 4, 18);
+        WriteColumn(writer, 5, 5, 14);
+        WriteColumn(writer, 6, 7, 16);
+        WriteColumn(writer, 8, 10, 16);
+        writer.WriteEndElement();
+        writer.WriteStartElement("sheetData", SpreadsheetNamespace);
+
+        var headers = new[]
+        {
+            "Mã khuyến mãi", "Hình thức giảm", "Mức giảm", "Đơn tối thiểu",
+            "Điểm đổi", "Ngày bắt đầu", "Ngày kết thúc", "Đã sử dụng",
+            "Giới hạn lượt", "Trạng thái"
+        };
+        writer.WriteStartElement("row", SpreadsheetNamespace);
+        writer.WriteAttributeString("r", "1");
+        for (var index = 0; index < headers.Length; index++)
+        {
+            WriteTextCell(writer, $"{ColumnName(index + 1)}1", headers[index]);
+        }
+        writer.WriteEndElement();
+
+        for (var index = 0; index < rows.Count; index++)
+        {
+            var rowNumber = index + 2;
+            var row = rows[index];
+            writer.WriteStartElement("row", SpreadsheetNamespace);
+            writer.WriteAttributeString("r", rowNumber.ToString(CultureInfo.InvariantCulture));
+            WriteTextCell(writer, $"A{rowNumber}", row.Code);
+            WriteTextCell(writer, $"B{rowNumber}", row.DiscountType);
+            WriteNumberCell(writer, $"C{rowNumber}", row.DiscountValue);
+            if (row.MinOrderValue is decimal minimum)
+            {
+                WriteNumberCell(writer, $"D{rowNumber}", minimum);
+            }
+            if (row.PointsRequired is int points)
+            {
+                WriteIntegerCell(writer, $"E{rowNumber}", points);
+            }
+            WriteTextCell(writer, $"F{rowNumber}", row.StartDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture));
+            WriteTextCell(writer, $"G{rowNumber}", row.EndDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture));
+            WriteIntegerCell(writer, $"H{rowNumber}", row.UsedCount);
+            WriteIntegerCell(writer, $"I{rowNumber}", row.UsageLimit);
+            WriteTextCell(writer, $"J{rowNumber}", row.Status);
+            writer.WriteEndElement();
+        }
+
+        writer.WriteEndElement();
+        writer.WriteEndElement();
+        writer.WriteEndDocument();
+    }
+
     private static void WriteColumn(XmlWriter writer, int min, int max, int width)
     {
         writer.WriteStartElement("col", SpreadsheetNamespace);
@@ -254,6 +351,14 @@ public static class FlightPricingExcelExporter
         writer.WriteStartElement("c", SpreadsheetNamespace);
         writer.WriteAttributeString("r", reference);
         writer.WriteAttributeString("s", "1");
+        writer.WriteElementString("v", SpreadsheetNamespace, value.ToString(CultureInfo.InvariantCulture));
+        writer.WriteEndElement();
+    }
+
+    private static void WriteIntegerCell(XmlWriter writer, string reference, int value)
+    {
+        writer.WriteStartElement("c", SpreadsheetNamespace);
+        writer.WriteAttributeString("r", reference);
         writer.WriteElementString("v", SpreadsheetNamespace, value.ToString(CultureInfo.InvariantCulture));
         writer.WriteEndElement();
     }

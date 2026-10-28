@@ -92,18 +92,6 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "AuthController.cs",
-              "DocumentMoniker": "D:\\Subject\\Requirements analysis and design\\Project\\TEO_Airline_Project\\Controllers\\AuthController.cs",
-              "RelativeDocumentMoniker": "Controllers\\AuthController.cs",
-              "ToolTip": "D:\\Subject\\Requirements analysis and design\\Project\\TEO_Airline_Project\\Controllers\\AuthController.cs",
-              "RelativeToolTip": "Controllers\\AuthController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAADUBAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-22T14:37:32.856Z"
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 7,
               "Title": "AirlineDbContext.cs",
               "DocumentMoniker": "D:\\Subject\\Requirements analysis and design\\Project\\TEO_Airline_Project\\Models\\EF\\AirlineDbContext.cs",
@@ -139,10 +127,6 @@
               "WhenOpened": "2026-10-22T14:45:45.867Z"
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
-            },
-            {
               "$type": "Document",
               "DocumentIndex": 6,
               "Title": "Program.cs",
@@ -153,6 +137,22 @@
               "ViewState": "AgIAABkAAAAAAAAAAAAkwC0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-10-22T14:11:36.031Z"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "D:\\Subject\\Requirements analysis and design\\Project\\TEO_Airline_Project\\Controllers\\AuthController.cs",
+              "RelativeDocumentMoniker": "Controllers\\AuthController.cs",
+              "ToolTip": "D:\\Subject\\Requirements analysis and design\\Project\\TEO_Airline_Project\\Controllers\\AuthController.cs",
+              "RelativeToolTip": "Controllers\\AuthController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADUBAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-22T14:37:32.856Z"
             },
             {
               "$type": "Document",

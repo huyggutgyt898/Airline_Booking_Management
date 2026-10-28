@@ -486,6 +486,26 @@
   background: var(--surface);
 }
 
+.admin-inline-notice {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  font-size: 13px;
+}
+
+.admin-inline-notice-success {
+  border-color: color-mix(in srgb, var(--success) 30%, var(--border));
+  background: color-mix(in srgb, var(--success) 9%, white);
+  color: var(--success);
+}
+
+.admin-inline-notice-error {
+  border-color: color-mix(in srgb, var(--danger) 30%, var(--border));
+  background: color-mix(in srgb, var(--danger) 9%, white);
+  color: var(--danger);
+}
+
 .admin-metric {
   min-width: 0;
   min-height: 132px;
@@ -702,6 +722,13 @@
 .admin-promo-row b {
   flex: 0 0 auto;
   font-variant-numeric: tabular-nums;
+}
+
+.admin-promo-empty {
+  margin: 0;
+  padding: 18px 0;
+  color: var(--muted);
+  font-size: 12px;
 }
 
 .admin-promo-summary {

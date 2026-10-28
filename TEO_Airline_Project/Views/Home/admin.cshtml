@@ -206,16 +206,26 @@
 
             <section class="admin-panel admin-promos-panel">
               <header class="admin-panel-heading">
-                <div><h2>Khuyến mãi nổi bật</h2><p>Lượt dùng trong kỳ</p></div>
+                <div><h2>Khuyến mãi nổi bật</h2><p>Lượt dùng lũy kế</p></div>
                 <a class="admin-text-link" href="#promotions" data-admin-screen="promotions">Danh sách</a>
               </header>
               <div class="admin-promo-list" data-promo-summary>
-                <div class="admin-promo-row"><div><strong>TEOAUTUMN26</strong><span>Giảm 10%</span></div><b>58 lượt</b></div>
-                <div class="admin-promo-row"><div><strong>FREESHIP50K</strong><span>Giảm 50.000 ₫</span></div><b>42 lượt</b></div>
-                <div class="admin-promo-row"><div><strong>VIPREDEEM100</strong><span>Đổi 100 điểm · 15%</span></div><b>17 lượt</b></div>
-                <div class="admin-promo-row"><div><strong>WELCOME25</strong><span>Giảm 25%</span></div><b>9 lượt</b></div>
+                @if (Model.PromotionHighlights.Count == 0)
+                {
+                  <p class="admin-promo-empty">Chưa có mã khuyến mãi.</p>
+                }
+                @foreach (var promotion in Model.PromotionHighlights)
+                {
+                  var discountLabel = promotion.DiscountPercent is decimal percent
+                      ? $"{percent.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)}%"
+                      : $"{promotion.DiscountAmount?.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN")) ?? "0"} ₫";
+                  <div class="admin-promo-row">
+                    <div><strong>@promotion.Code</strong><span>@discountLabel@if (promotion.PointsRequired is int points){<text> · @points điểm</text>}</span></div>
+                    <b>@promotion.UsedCount lượt</b>
+                  </div>
+                }
               </div>
-              <p class="admin-promo-summary">Tổng lượt dùng: <strong data-promo-total>126</strong> · 4 mã đang theo dõi</p>
+              <p class="admin-promo-summary">Tổng lượt dùng: <strong>@Model.TotalPromotionUsageCount</strong> · @Model.PromotionHighlights.Count mã đang theo dõi</p>
             </section>
 
           </div>
@@ -765,18 +775,77 @@
         <section class="admin-screen" data-screen-panel="promotions" hidden>
           <div class="admin-page-heading">
             <div><h1>Khuyến mãi</h1><p>Quản lý mã giảm giá, điều kiện áp dụng và lượt sử dụng.</p></div>
-            <div class="admin-heading-actions"><button class="admin-button admin-button-outline" type="button" data-export="promotions"><i data-lucide="download" aria-hidden="true"></i>Xuất Excel</button><button class="admin-button admin-button-primary" type="button" data-record-open="promotion"><i data-lucide="plus" aria-hidden="true"></i>Thêm mã</button></div>
+            <div class="admin-heading-actions"><a class="admin-button admin-button-outline" asp-controller="Promotions" asp-action="Export"><i data-lucide="download" aria-hidden="true"></i>Xuất Excel</a><button class="admin-button admin-button-primary" type="button" data-promotion-create><i data-lucide="plus" aria-hidden="true"></i>Thêm mã</button></div>
           </div>
-          <div class="admin-list-tools"><label class="admin-search"><i data-lucide="search" aria-hidden="true"></i><span class="admin-sr-only">Tìm mã khuyến mãi</span><input type="search" placeholder="Tìm mã khuyến mãi" data-table-filter="promotions-table"></label><label class="admin-select-label"><span class="admin-sr-only">Lọc trạng thái khuyến mãi</span><select data-table-select="promotions-table"><option value="">Tất cả trạng thái</option><option>Đang áp dụng</option><option>Sắp diễn ra</option><option>Đã kết thúc</option></select></label><span class="admin-result-count">4 mã khuyến mãi</span></div>
+          @if (TempData["PromotionSuccess"] is string promotionSuccess)
+          {
+            <p class="admin-inline-notice admin-inline-notice-success" role="status">@promotionSuccess</p>
+          }
+          @if (TempData["PromotionError"] is string promotionError)
+          {
+            <p class="admin-inline-notice admin-inline-notice-error" role="alert">@promotionError</p>
+          }
+          <form class="admin-list-tools" method="get" action="@Url.Action("Admin", "Home")#promotions" data-promotion-filter>
+            <label class="admin-search"><i data-lucide="search" aria-hidden="true"></i><span class="admin-sr-only">Tìm mã khuyến mãi</span><input type="search" name="promotionSearch" value="@Model.PromotionSearch" placeholder="Tìm mã khuyến mãi"></label>
+            <label class="admin-select-label"><span class="admin-sr-only">Lọc trạng thái khuyến mãi</span><select name="promotionStatus" data-promotion-status>
+              <option value="">Tất cả trạng thái</option>
+              <option value="active" selected="@(Model.PromotionStatusFilter == "active")">Đang áp dụng</option>
+              <option value="upcoming" selected="@(Model.PromotionStatusFilter == "upcoming")">Sắp diễn ra</option>
+              <option value="exhausted" selected="@(Model.PromotionStatusFilter == "exhausted")">Hết lượt</option>
+              <option value="expired" selected="@(Model.PromotionStatusFilter == "expired")">Đã kết thúc</option>
+            </select></label>
+            <span class="admin-result-count">@Model.FilteredPromotionCount mã khuyến mãi</span>
+          </form>
           <div class="admin-table-panel"><table class="admin-table admin-promo-table" id="promotions-table">
             <thead><tr><th>Mã</th><th>Hình thức</th><th>Đơn tối thiểu</th><th>Thời hạn</th><th>Lượt dùng</th><th>Trạng thái</th><th class="admin-actions-heading">Thao tác</th></tr></thead>
             <tbody>
-              <tr><td data-label="Mã"><strong class="admin-code">TEOAUTUMN26</strong><span class="admin-cell-meta">Giảm cho mùa thu</span></td><td data-label="Hình thức">10%</td><td data-label="Đơn tối thiểu">500.000 ₫</td><td data-label="Thời hạn">01/09–31/10/2026</td><td data-label="Lượt dùng">58 / 200</td><td data-label="Trạng thái"><span class="admin-badge admin-badge-success">Đang áp dụng</span></td><td data-label="Thao tác"><button class="admin-button admin-button-small" type="button" data-record-edit="promotion">Sửa</button></td></tr>
-              <tr><td data-label="Mã"><strong class="admin-code">FREESHIP50K</strong><span class="admin-cell-meta">Giảm trực tiếp</span></td><td data-label="Hình thức">50.000 ₫</td><td data-label="Đơn tối thiểu">200.000 ₫</td><td data-label="Thời hạn">01/10–30/11/2026</td><td data-label="Lượt dùng">42 / 500</td><td data-label="Trạng thái"><span class="admin-badge admin-badge-success">Đang áp dụng</span></td><td data-label="Thao tác"><button class="admin-button admin-button-small" type="button" data-record-edit="promotion">Sửa</button></td></tr>
-              <tr><td data-label="Mã"><strong class="admin-code">VIPREDEEM100</strong><span class="admin-cell-meta">Đổi bằng điểm</span></td><td data-label="Hình thức">15% · 100 điểm</td><td data-label="Đơn tối thiểu">Không yêu cầu</td><td data-label="Thời hạn">01/10–31/12/2026</td><td data-label="Lượt dùng">17 / 100</td><td data-label="Trạng thái"><span class="admin-badge admin-badge-success">Đang áp dụng</span></td><td data-label="Thao tác"><button class="admin-button admin-button-small" type="button" data-record-edit="promotion">Sửa</button></td></tr>
-              <tr><td data-label="Mã"><strong class="admin-code">WELCOME25</strong><span class="admin-cell-meta">Ưu đãi khách mới</span></td><td data-label="Hình thức">25%</td><td data-label="Đơn tối thiểu">800.000 ₫</td><td data-label="Thời hạn">01/11–31/12/2026</td><td data-label="Lượt dùng">9 / 300</td><td data-label="Trạng thái"><span class="admin-badge admin-badge-info">Sắp diễn ra</span></td><td data-label="Thao tác"><button class="admin-button admin-button-small" type="button" data-record-edit="promotion">Sửa</button></td></tr>
+              @if (Model.Promotions.Count == 0)
+              {
+                <tr><td class="admin-empty-row" colspan="7">@(Model.FilteredPromotionCount == 0 && string.IsNullOrEmpty(Model.PromotionSearch) && string.IsNullOrEmpty(Model.PromotionStatusFilter) ? "Chưa có mã khuyến mãi." : "Không tìm thấy mã khuyến mãi phù hợp.")</td></tr>
+              }
+              @foreach (var promotion in Model.Promotions)
+              {
+                var discountLabel = promotion.DiscountPercent is decimal percent
+                    ? $"{percent.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)}%"
+                    : $"{promotion.DiscountAmount?.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN")) ?? "0"} ₫";
+                var statusLabel = promotion.Status switch
+                {
+                    "active" => "Đang áp dụng",
+                    "upcoming" => "Sắp diễn ra",
+                    "exhausted" => "Hết lượt",
+                    _ => "Đã kết thúc"
+                };
+                var statusClass = promotion.Status switch
+                {
+                    "active" => "admin-badge-success",
+                    "upcoming" => "admin-badge-info",
+                    "exhausted" => "admin-badge-warning",
+                    _ => "admin-badge-warning"
+                };
+                <tr>
+                  <td data-label="Mã"><strong class="admin-code">@promotion.Code</strong></td>
+                  <td data-label="Hình thức">@discountLabel@if (promotion.PointsRequired is int requiredPoints){<span> · @requiredPoints điểm</span>}</td>
+                  <td data-label="Đơn tối thiểu">@(promotion.MinOrderValue is > 0 ? $"{promotion.MinOrderValue.Value.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))} ₫" : "Không yêu cầu")</td>
+                  <td data-label="Thời hạn">@promotion.StartDate.ToString("dd/MM/yyyy") – @promotion.EndDate.ToString("dd/MM/yyyy")</td>
+                  <td data-label="Lượt dùng">@promotion.UsedCount / @promotion.UsageLimit</td>
+                  <td data-label="Trạng thái"><span class="admin-badge @statusClass">@statusLabel</span></td>
+                  <td data-label="Thao tác">
+                    <button class="admin-button admin-button-small" type="button"
+                            data-promotion-edit
+                            data-promo-id="@promotion.PromoId"
+                            data-code="@promotion.Code"
+                            data-discount-percent="@promotion.DiscountPercent?.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                            data-discount-amount="@promotion.DiscountAmount?.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                            data-min-order-value="@promotion.MinOrderValue?.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                            data-points-required="@promotion.PointsRequired"
+                            data-start-date="@promotion.StartDate.ToString("yyyy-MM-dd")"
+                            data-end-date="@promotion.EndDate.ToString("yyyy-MM-dd")"
+                            data-usage-limit="@promotion.UsageLimit">Sửa</button>
+                  </td>
+                </tr>
+              }
             </tbody>
-          </table><div class="admin-table-footer"><span>Hiển thị 1–4 trên 4 mã</span><div class="admin-pagination"><button type="button" aria-label="Trang trước" disabled>‹</button><button type="button" aria-current="page">1</button><button type="button" aria-label="Trang sau" disabled>›</button></div></div></div>
+          </table></div>
           <p class="admin-footnote">Mã khuyến mãi chỉ có thao tác thêm và sửa; không có chức năng xóa.</p>
         </section>
       </div>
@@ -1021,11 +1090,69 @@
     </form>
   </dialog>
 
-  <dialog class="admin-dialog" id="record-dialog" aria-labelledby="record-dialog-title">
-    <form class="admin-dialog-form" data-record-form>
-      <header class="admin-dialog-heading"><div><h2 id="record-dialog-title">Thêm bản ghi</h2><p data-dialog-description>Nhập thông tin để tiếp tục.</p></div><button class="admin-icon-button" type="button" data-dialog-close aria-label="Đóng cửa sổ"><i data-lucide="x" aria-hidden="true"></i></button></header>
-      <div class="admin-dialog-fields" data-dialog-fields></div>
-      <footer class="admin-dialog-actions"><button class="admin-button admin-button-outline" type="button" data-dialog-close>Hủy</button><button class="admin-button admin-button-primary" type="submit">Lưu thay đổi</button></footer>
+  <dialog class="admin-dialog" id="promotion-dialog" aria-labelledby="promotion-dialog-title"
+          data-open="@Model.OpenPromotionDialog.ToString().ToLowerInvariant()"
+          data-mode="@Model.PromotionDialogMode"
+          data-promo-id="@Model.EditingPromotionId">
+    <form class="admin-dialog-form" method="post" asp-controller="Promotions" asp-action="Create"
+          data-promotion-form
+          data-create-url="@Url.Action("Create", "Promotions")"
+          data-edit-url="@Url.Action("Edit", "Promotions")">
+      <header class="admin-dialog-heading">
+        <div><h2 id="promotion-dialog-title">Thêm mã khuyến mãi</h2><p>Thông tin được lưu trực tiếp vào bảng Promotions.</p></div>
+        <button class="admin-icon-button" type="button" data-promotion-dialog-close aria-label="Đóng cửa sổ"><i data-lucide="x" aria-hidden="true"></i></button>
+      </header>
+      <div class="admin-validation-summary" asp-validation-summary="All" role="alert"></div>
+      <div class="admin-dialog-fields">
+        <div class="admin-field admin-field-full">
+          <label asp-for="PromotionInput.Code">Mã khuyến mãi</label>
+          <input asp-for="PromotionInput.Code" maxlength="50" required autocomplete="off" autocapitalize="characters">
+          <span class="admin-validation-message" asp-validation-for="PromotionInput.Code"></span>
+        </div>
+        <div class="admin-field">
+          <label asp-for="PromotionInput.DiscountPercent">Giảm theo phần trăm (%)</label>
+          <input asp-for="PromotionInput.DiscountPercent" type="number" min="0.01" max="100" step="0.01">
+          <span class="admin-validation-message" asp-validation-for="PromotionInput.DiscountPercent"></span>
+        </div>
+        <div class="admin-field">
+          <label asp-for="PromotionInput.DiscountAmount">Giảm theo số tiền (₫)</label>
+          <input asp-for="PromotionInput.DiscountAmount" type="number" min="0.01" step="0.01">
+          <span class="admin-validation-message" asp-validation-for="PromotionInput.DiscountAmount"></span>
+        </div>
+        <div class="admin-field">
+          <label asp-for="PromotionInput.MinOrderValue">Giá trị đơn tối thiểu (₫)</label>
+          <input asp-for="PromotionInput.MinOrderValue" type="number" min="0" step="0.01">
+          <span class="admin-validation-message" asp-validation-for="PromotionInput.MinOrderValue"></span>
+        </div>
+        <div class="admin-field">
+          <label asp-for="PromotionInput.PointsRequired">Điểm yêu cầu (để trống nếu không yêu cầu)</label>
+          <input asp-for="PromotionInput.PointsRequired" type="number" min="0" step="1">
+          <span class="admin-validation-message" asp-validation-for="PromotionInput.PointsRequired"></span>
+        </div>
+        <div class="admin-field">
+          <label asp-for="PromotionInput.StartDate">Ngày bắt đầu</label>
+          <input asp-for="PromotionInput.StartDate" type="date" required>
+          <span class="admin-validation-message" asp-validation-for="PromotionInput.StartDate"></span>
+        </div>
+        <div class="admin-field">
+          <label asp-for="PromotionInput.EndDate">Ngày kết thúc</label>
+          <input asp-for="PromotionInput.EndDate" type="date" required>
+          <span class="admin-validation-message" asp-validation-for="PromotionInput.EndDate"></span>
+        </div>
+        <div class="admin-field admin-field-full">
+          <label asp-for="PromotionInput.UsageLimit">Giới hạn lượt dùng</label>
+          <input asp-for="PromotionInput.UsageLimit" type="number" min="1" step="1" required>
+          <span class="admin-validation-message" asp-validation-for="PromotionInput.UsageLimit"></span>
+          <span class="admin-footnote">Lượt đã dùng được giữ nguyên khi sửa mã.</span>
+        </div>
+      </div>
+      <input type="hidden" name="promoId" value="@Model.EditingPromotionId" data-promotion-id>
+      <input type="hidden" name="promotionSearch" value="@Model.PromotionSearch">
+      <input type="hidden" name="promotionStatus" value="@Model.PromotionStatusFilter">
+      <footer class="admin-dialog-actions">
+        <button class="admin-button admin-button-outline" type="button" data-promotion-dialog-close>Hủy</button>
+        <button class="admin-button admin-button-primary" type="submit">Lưu thay đổi</button>
+      </footer>
     </form>
   </dialog>
 
@@ -1204,13 +1331,6 @@
         <button class="admin-button admin-button-outline" type="button" data-aircraft-dialog-close>Hủy</button>
         <button class="admin-button admin-button-primary" type="submit" data-aircraft-submit>Thêm máy bay</button>
       </footer>
-    </form>
-  </dialog>
-
-  <dialog class="admin-dialog admin-confirm-dialog" id="confirm-dialog" aria-labelledby="confirm-dialog-title">
-    <form method="dialog">
-      <div class="admin-dialog-heading"><div><h2 id="confirm-dialog-title">Xác nhận xóa</h2><p data-confirm-copy></p></div></div>
-      <footer class="admin-dialog-actions"><button class="admin-button admin-button-outline" value="cancel">Hủy</button><button class="admin-button admin-button-danger" value="confirm">Xác nhận xóa</button></footer>
     </form>
   </dialog>
 

@@ -100,29 +100,11 @@
       ticketBars: [13000, 14000, 15500, 16000, 18500, 19940]
     }
   };
-  const formConfigs = {
-    promotion: {
-      title: "mã khuyến mãi",
-      fields: [
-        { name: "code", label: "Mã khuyến mãi", required: true, fromCell: 0, read: (row) => row.querySelector(".admin-code")?.textContent.trim() },
-        { name: "discountPercent", label: "Giảm theo phần trăm (%)", type: "number", min: 0, max: 100, value: "10", read: (row) => row.cells[1]?.textContent.match(/(\d+(?:,\d+)?)%/)?.[1].replace(",", ".") ?? "0" },
-        { name: "discountAmount", label: "Giảm theo số tiền (₫)", type: "number", min: 0, value: "0", read: (row) => row.cells[1]?.textContent.includes("%") ? "0" : parseMoney(row.cells[1]?.textContent) },
-        { name: "minimum", label: "Giá trị đơn tối thiểu (₫)", type: "number", min: 0, value: "0", read: (row) => parseMoney(row.cells[2]?.textContent) },
-        { name: "points", label: "Điểm cần để đổi", type: "number", min: 0, value: "0", read: (row) => row.querySelector(".admin-code")?.textContent === "VIPREDEEM100" ? "100" : "0" },
-        { name: "startDate", label: "Ngày bắt đầu", type: "date", required: true, value: "2026-10-01", read: (row) => dateRangeValue(row.cells[3]?.textContent, "start") },
-        { name: "endDate", label: "Ngày kết thúc", type: "date", required: true, value: "2026-12-31", read: (row) => dateRangeValue(row.cells[3]?.textContent, "end") },
-        { name: "usageLimit", label: "Giới hạn lượt dùng", type: "number", min: 1, required: true, value: "200", read: (row) => row.cells[4]?.textContent.split("/")[1].trim() }
-      ]
-    }
-  };
-  const promoCodes = ["TEOAUTUMN26", "FREESHIP50K", "VIPREDEEM100", "WELCOME25"];
-  const promoDescriptions = ["Giảm 10%", "Giảm 50.000 ₫", "Đổi 100 điểm · 15%", "Giảm 25%"];
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
   let toastTimer;
   let activePeriod = "month";
   let activeChartMode = "revenue";
-  let pendingDeleteName = "";
   let airportPage = 1;
   const airportPageSize = 5;
 
@@ -211,27 +193,6 @@
       : `Số vé đã đặt theo ${activePeriod === "day" ? "giờ" : activePeriod === "week" ? "ngày trong tuần" : activePeriod === "month" ? "ngày trong tháng" : "kỳ"}`;
   }
 
-  function renderPromotions() {
-    const counts = periodData[activePeriod].promo;
-    const list = $("[data-promo-summary]");
-    list.replaceChildren();
-    promoCodes.forEach((code, index) => {
-      const row = document.createElement("div");
-      row.className = "admin-promo-row";
-      const details = document.createElement("div");
-      const name = document.createElement("strong");
-      name.textContent = code;
-      const description = document.createElement("span");
-      description.textContent = promoDescriptions[index];
-      details.append(name, description);
-      const count = document.createElement("b");
-      count.textContent = `${formatMetric(counts[index])} lượt`;
-      row.append(details, count);
-      list.append(row);
-    });
-    $("[data-promo-total]").textContent = formatMetric(counts.reduce((sum, count) => sum + count, 0));
-  }
-
   function updateDashboard(period) {
     activePeriod = Object.hasOwn(periodData, period) ? period : "month";
     const data = periodData[activePeriod];
@@ -249,36 +210,11 @@
     $("[data-metric='visits']").textContent = data.visits;
     $("[data-ticket-caption]").textContent = `Trong kỳ đã chọn`;
     renderChart();
-    renderPromotions();
-  }
-
-  function cellValue(row, field) {
-    if (typeof field.read === "function") return field.read(row) ?? "";
-    if (field.fromCell === undefined) return field.value ?? "";
-    const cell = row.cells[field.fromCell];
-    if (!cell) return "";
-    let value = cell.textContent.trim();
-    if (field.type === "number") value = value.replace(/[^\d,.-]/g, "").replace(/\./g, "").replace(",", ".");
-    if (field.type === "select" && field.name === "type") {
-      value = value.includes("Quốc tế") ? "Quốc tế" : "Nội địa";
-    }
-    return value;
-  }
-
-  function parseMoney(value = "") {
-    return value.replace(/[^\d]/g, "");
   }
 
   function dateValue(value = "") {
     const match = value.trim().match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
     return match ? `${match[3]}-${match[2]}-${match[1]}` : "";
-  }
-
-  function dateRangeValue(value = "", part) {
-    const [start = "", end = ""] = value.split("–");
-    if (part === "end") return dateValue(end.trim());
-    const year = end.trim().match(/(\d{4})$/)?.[1];
-    return year ? dateValue(`${start.trim()}/${year}`) : "";
   }
 
   function dateTimeValue(cell) {
@@ -287,49 +223,6 @@
     const date = dateValue(parts[0] ?? "");
     const time = parts[1] ?? "";
     return date && /^\d{2}:\d{2}$/.test(time) ? `${date}T${time}` : "";
-  }
-
-  function openRecordDialog(type, mode, row = null) {
-    const config = formConfigs[type];
-    if (!config) return;
-    const dialog = $("#record-dialog");
-    const fields = $("[data-dialog-fields]");
-    fields.replaceChildren();
-    $("#record-dialog-title").textContent = `${mode === "edit" ? "Sửa" : "Thêm"} ${config.title}`;
-    $("[data-dialog-description]").textContent = "Giao diện minh họa — thông tin chưa được lưu vào cơ sở dữ liệu.";
-    $("[data-record-form]").dataset.recordType = type;
-    config.fields.forEach((field, index) => {
-      const wrapper = document.createElement("div");
-      wrapper.className = `admin-field${config.fields.length === 1 || index === config.fields.length - 1 && config.fields.length % 2 === 1 ? " admin-field-full" : ""}`;
-      const label = document.createElement("label");
-      const input = document.createElement(field.type === "select" ? "select" : "input");
-      const id = `record-${type}-${field.name}`;
-      label.htmlFor = id;
-      label.textContent = field.label;
-      input.id = id;
-      input.name = field.name;
-      input.required = Boolean(field.required);
-      if (field.type === "select") {
-        field.options.forEach((optionText) => {
-          const option = document.createElement("option");
-          option.value = optionText;
-          option.textContent = optionText;
-          input.append(option);
-        });
-      } else {
-        input.type = field.type ?? "text";
-        if (field.min !== undefined) input.min = String(field.min);
-        if (field.max !== undefined) input.max = String(field.max);
-      }
-      const value = mode === "edit" && row ? cellValue(row, field) : field.value ?? "";
-      if (value) input.value = value;
-      input.addEventListener("input", () => input.setCustomValidity(""));
-      wrapper.append(label, input);
-      fields.append(wrapper);
-    });
-    dialog.showModal();
-    const firstField = $("input, select", fields);
-    if (firstField) firstField.focus();
   }
 
   function configureAircraftDialog(mode, preserveModel = false, model = "") {
@@ -350,6 +243,46 @@
       });
     });
     if (!preserveModel) $("#AircraftInput_Model").value = isCreate ? "" : model;
+  }
+
+  function configurePromotionDialog(mode, button = null, preserveInput = false) {
+    const dialog = $("#promotion-dialog");
+    const form = $("[data-promotion-form]");
+    const isEdit = mode === "edit";
+    form.action = isEdit ? form.dataset.editUrl : form.dataset.createUrl;
+    $("#promotion-dialog-title").textContent = isEdit
+      ? "Sửa mã khuyến mãi"
+      : "Thêm mã khuyến mãi";
+    $("[data-promotion-id]").value = isEdit
+      ? button?.dataset.promoId ?? dialog.dataset.promoId ?? ""
+      : "";
+
+    if (button) {
+      $("#PromotionInput_Code").value = button.dataset.code ?? "";
+      $("#PromotionInput_DiscountPercent").value = button.dataset.discountPercent ?? "";
+      $("#PromotionInput_DiscountAmount").value = button.dataset.discountAmount ?? "";
+      $("#PromotionInput_MinOrderValue").value = button.dataset.minOrderValue ?? "";
+      $("#PromotionInput_PointsRequired").value = button.dataset.pointsRequired ?? "";
+      $("#PromotionInput_StartDate").value = button.dataset.startDate ?? "";
+      $("#PromotionInput_EndDate").value = button.dataset.endDate ?? "";
+      $("#PromotionInput_UsageLimit").value = button.dataset.usageLimit ?? "";
+    } else if (!preserveInput) {
+      form.reset();
+      if (!isEdit) {
+        $("#PromotionInput_Code").value = "";
+        $("#PromotionInput_DiscountPercent").value = "";
+        $("#PromotionInput_DiscountAmount").value = "";
+        $("#PromotionInput_MinOrderValue").value = "";
+        $("#PromotionInput_PointsRequired").value = "";
+        $("#PromotionInput_StartDate").value = "";
+        $("#PromotionInput_EndDate").value = "";
+        $("#PromotionInput_UsageLimit").value = "1";
+      }
+    }
+
+    dialog.dataset.mode = mode;
+    dialog.showModal();
+    $("#PromotionInput_Code").focus();
   }
 
   function openAircraftDialog(mode, model = "") {
@@ -374,12 +307,6 @@
     link.remove();
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
     showToast("Đã tải CSV UTF-8 tương thích Excel.");
-  }
-
-  function exportPromotions() {
-    const table = $("#promotions-table");
-    const rows = $$("tr", table).map((row) => $$("th, td", row).filter((cell) => !cell.matches('[data-label="Thao tác"]')).map((cell) => cell.innerText.replace(/\s+/g, " ").trim()));
-    downloadCsv("teo-airlines-khuyen-mai.csv", rows);
   }
 
   function exportReport() {
@@ -731,20 +658,6 @@
     });
   });
 
-  $$("[data-record-open]").forEach((button) => {
-    button.addEventListener("click", () => openRecordDialog(button.dataset.recordOpen, "add"));
-  });
-  $$("[data-record-edit]").forEach((button) => {
-    button.addEventListener("click", () => openRecordDialog(button.dataset.recordEdit, "edit", button.closest("tr")));
-  });
-  $$("[data-record-delete]").forEach((button) => {
-    button.addEventListener("click", () => {
-      pendingDeleteName = button.dataset.recordDelete;
-      $("[data-confirm-copy]").textContent = `Bạn có chắc muốn xóa ${pendingDeleteName}? Bản ghi liên quan có thể ảnh hưởng đến lịch sử khai thác.`;
-      $("#confirm-dialog").showModal();
-    });
-  });
-
   $$("[data-aircraft-open]").forEach((button) => {
     button.addEventListener("click", () => {
       openAircraftDialog(button.dataset.aircraftOpen, button.dataset.aircraftModel ?? "");
@@ -759,6 +672,23 @@
 
   const pricingCreateDialog = $("#pricing-create-dialog");
   const pricingEditDialog = $("#pricing-edit-dialog");
+  const promotionDialog = $("#promotion-dialog");
+  $$("[data-promotion-create]").forEach((button) => {
+    button.addEventListener("click", () => configurePromotionDialog("create"));
+  });
+  $$("[data-promotion-edit]").forEach((button) => {
+    button.addEventListener("click", () => configurePromotionDialog("edit", button));
+  });
+  $$("[data-promotion-dialog-close]").forEach((button) => {
+    button.addEventListener("click", () => promotionDialog.close());
+  });
+  promotionDialog.addEventListener("click", (event) => {
+    if (event.target === event.currentTarget) promotionDialog.close();
+  });
+  $("[data-promotion-status]").addEventListener("change", (event) => {
+    event.currentTarget.form.requestSubmit();
+  });
+
   $$("[data-pricing-create]").forEach((button) => {
     button.addEventListener("click", () => {
       if (!button.disabled) pricingCreateDialog.showModal();
@@ -800,38 +730,9 @@
     });
   });
 
-  $$(".admin-dialog [data-dialog-close]").forEach((button) => {
-    button.addEventListener("click", () => button.closest("dialog").close());
-  });
-  $("[data-record-form]").addEventListener("submit", (event) => {
-    event.preventDefault();
-    const form = event.currentTarget;
-    form.querySelectorAll("input, select").forEach((field) => field.setCustomValidity(""));
-    if (!form.reportValidity()) return;
-    if (form.dataset.recordType === "promotion") {
-      const percent = form.elements.namedItem("discountPercent");
-      const amount = form.elements.namedItem("discountAmount");
-      if (!percent.value && !amount.value) {
-        percent.setCustomValidity("Nhập mức giảm theo phần trăm hoặc số tiền.");
-        percent.reportValidity();
-        percent.focus();
-        return;
-      }
-    }
-    $("#record-dialog").close();
-    showToast("Giao diện minh họa — thay đổi chưa được lưu vào cơ sở dữ liệu.");
-  });
-  $("#confirm-dialog").addEventListener("close", (event) => {
-    if (event.currentTarget.returnValue === "confirm") {
-      showToast(`Giao diện minh họa — không xóa ${pendingDeleteName}.`);
-    }
-    pendingDeleteName = "";
-  });
-
   $$("[data-export]").forEach((button) => {
     button.addEventListener("click", () => {
-      if (button.dataset.export === "promotions") exportPromotions();
-      else exportReport();
+      exportReport();
     });
   });
 
@@ -845,13 +746,16 @@
   const shouldOpenAircraftDialog = aircraftDialog.dataset.open === "true";
   const shouldOpenPricingCreateDialog = pricingCreateDialog.dataset.open === "true";
   const shouldOpenPricingEditDialog = pricingEditDialog.dataset.open === "true";
+  const shouldOpenPromotionDialog = promotionDialog.dataset.open === "true";
   setScreen(shouldOpenAircraftDialog
     ? "aircraft"
     : shouldOpenFlightDialog
       ? "flights"
       : shouldOpenPricingCreateDialog || shouldOpenPricingEditDialog
         ? "pricing"
-        : window.location.hash.slice(1) || "overview");
+        : shouldOpenPromotionDialog
+          ? "promotions"
+          : window.location.hash.slice(1) || "overview");
   if (shouldOpenFlightDialog) {
     const form = $("[data-flight-form]");
     form.action = flightDialog.dataset.mode === "edit" ? form.dataset.editUrl : form.dataset.createUrl;
@@ -870,6 +774,9 @@
   if (shouldOpenPricingEditDialog) {
     pricingEditDialog.showModal();
     $("#FlightPricingEditInput_BasePrice").focus();
+  }
+  if (shouldOpenPromotionDialog) {
+    configurePromotionDialog(promotionDialog.dataset.mode, null, true);
   }
   const initialAircraftNotice = $(".admin-toast").dataset.initialMessage;
   if (initialAircraftNotice) showToast(initialAircraftNotice);

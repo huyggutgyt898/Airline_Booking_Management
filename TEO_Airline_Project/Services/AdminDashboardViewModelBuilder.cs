@@ -36,7 +36,13 @@ public static class AdminDashboardViewModelBuilder
         bool openFlightPricingDialog = false,
         int? editingFlightPriceId = null,
         FlightPricingEditInputModel? flightPricingEditInput = null,
-        bool openFlightPricingEditDialog = false)
+        bool openFlightPricingEditDialog = false,
+        string? promotionSearch = null,
+        string? promotionStatus = null,
+        PromotionInputModel? promotionInput = null,
+        int? editingPromotionId = null,
+        string promotionDialogMode = "create",
+        bool openPromotionDialog = false)
     {
         var airports = await context.Airports
             .AsNoTracking()
@@ -254,6 +260,82 @@ public static class AdminDashboardViewModelBuilder
                 .ToListAsync()
             : [];
 
+        promotionSearch = promotionSearch?.Trim();
+        promotionStatus = promotionStatus is "active" or "upcoming" or "expired" or "exhausted"
+            ? promotionStatus
+            : "";
+        var now = DateTime.Now;
+        var promotionsQuery = context.Promotions.AsNoTracking();
+        if (!string.IsNullOrEmpty(promotionSearch))
+        {
+            promotionsQuery = promotionsQuery.Where(
+                promotion => promotion.Code.Contains(promotionSearch));
+        }
+
+        promotionsQuery = promotionStatus switch
+        {
+            "active" => promotionsQuery.Where(promotion =>
+                promotion.StartDate <= now &&
+                promotion.EndDate >= now &&
+                (promotion.UsedCount ?? 0) < promotion.UsageLimit),
+            "upcoming" => promotionsQuery.Where(promotion =>
+                promotion.StartDate > now &&
+                promotion.EndDate >= now),
+            "expired" => promotionsQuery.Where(promotion => promotion.EndDate < now),
+            "exhausted" => promotionsQuery.Where(promotion =>
+                promotion.StartDate <= now &&
+                promotion.EndDate >= now &&
+                (promotion.UsedCount ?? 0) >= promotion.UsageLimit),
+            _ => promotionsQuery
+        };
+
+        var filteredPromotionCount = await promotionsQuery.CountAsync();
+        var promotions = await promotionsQuery
+            .OrderBy(promotion => promotion.StartDate)
+            .ThenBy(promotion => promotion.Code)
+            .Select(promotion => new AdminPromotionListItemViewModel
+            {
+                PromoId = promotion.PromoId,
+                Code = promotion.Code,
+                DiscountPercent = promotion.DiscountPercent,
+                DiscountAmount = promotion.DiscountAmount,
+                MinOrderValue = promotion.MinOrderValue,
+                PointsRequired = promotion.PointsRequired,
+                StartDate = promotion.StartDate,
+                EndDate = promotion.EndDate,
+                UsageLimit = promotion.UsageLimit,
+                UsedCount = promotion.UsedCount ?? 0,
+                Status = promotion.EndDate < now
+                    ? "expired"
+                    : promotion.StartDate > now
+                        ? "upcoming"
+                        : (promotion.UsedCount ?? 0) >= promotion.UsageLimit
+                            ? "exhausted"
+                            : "active"
+            })
+            .ToListAsync();
+        var promotionHighlights = await context.Promotions
+            .AsNoTracking()
+            .OrderByDescending(promotion => promotion.UsedCount ?? 0)
+            .ThenBy(promotion => promotion.Code)
+            .Take(4)
+            .Select(promotion => new AdminPromotionListItemViewModel
+            {
+                PromoId = promotion.PromoId,
+                Code = promotion.Code,
+                DiscountPercent = promotion.DiscountPercent,
+                DiscountAmount = promotion.DiscountAmount,
+                MinOrderValue = promotion.MinOrderValue,
+                PointsRequired = promotion.PointsRequired,
+                StartDate = promotion.StartDate,
+                EndDate = promotion.EndDate,
+                UsageLimit = promotion.UsageLimit,
+                UsedCount = promotion.UsedCount ?? 0
+            })
+            .ToListAsync();
+        var totalPromotionUsageCount = await context.Promotions
+            .SumAsync(promotion => (int?)(promotion.UsedCount ?? 0)) ?? 0;
+
         return new AdminDashboardViewModel
         {
             Airports = airports,
@@ -296,7 +378,17 @@ public static class AdminDashboardViewModelBuilder
             FlightPricingEditInput = flightPricingEditInput ?? new FlightPricingEditInputModel(),
             EditingFlightPriceId = editingFlightPriceId,
             OpenFlightPricingDialog = openFlightPricingDialog,
-            OpenFlightPricingEditDialog = openFlightPricingEditDialog
+            OpenFlightPricingEditDialog = openFlightPricingEditDialog,
+            Promotions = promotions,
+            FilteredPromotionCount = filteredPromotionCount,
+            PromotionSearch = promotionSearch ?? "",
+            PromotionStatusFilter = promotionStatus ?? "",
+            PromotionInput = promotionInput ?? new PromotionInputModel(),
+            EditingPromotionId = editingPromotionId,
+            PromotionDialogMode = promotionDialogMode,
+            OpenPromotionDialog = openPromotionDialog,
+            PromotionHighlights = promotionHighlights,
+            TotalPromotionUsageCount = totalPromotionUsageCount
         };
     }
 

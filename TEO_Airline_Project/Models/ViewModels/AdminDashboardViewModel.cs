@@ -83,6 +83,26 @@ public sealed class AdminDashboardViewModel
     public bool OpenFlightPricingDialog { get; init; }
 
     public bool OpenFlightPricingEditDialog { get; init; }
+
+    public IReadOnlyList<AdminPromotionListItemViewModel> Promotions { get; init; } = [];
+
+    public int FilteredPromotionCount { get; init; }
+
+    public string PromotionSearch { get; init; } = "";
+
+    public string PromotionStatusFilter { get; init; } = "";
+
+    public PromotionInputModel PromotionInput { get; init; } = new();
+
+    public int? EditingPromotionId { get; init; }
+
+    public string PromotionDialogMode { get; init; } = "create";
+
+    public bool OpenPromotionDialog { get; init; }
+
+    public IReadOnlyList<AdminPromotionListItemViewModel> PromotionHighlights { get; init; } = [];
+
+    public int TotalPromotionUsageCount { get; init; }
 }
 
 public sealed class AdminFlightListItemViewModel
@@ -189,4 +209,29 @@ public sealed class AdminFlightPricingViewModel
     public decimal ServiceFee { get; init; }
 
     public decimal TotalPrice => BasePrice + TaxAmount + ServiceFee;
+}
+
+public sealed class AdminPromotionListItemViewModel
+{
+    public int PromoId { get; init; }
+
+    public string Code { get; init; } = "";
+
+    public decimal? DiscountPercent { get; init; }
+
+    public decimal? DiscountAmount { get; init; }
+
+    public decimal? MinOrderValue { get; init; }
+
+    public int? PointsRequired { get; init; }
+
+    public DateTime StartDate { get; init; }
+
+    public DateTime EndDate { get; init; }
+
+    public int UsageLimit { get; init; }
+
+    public int UsedCount { get; init; }
+
+    public string Status { get; init; } = "";
 }
