@@ -1046,6 +1046,23 @@
   gap: 14px;
 }
 
+.counter-profile-feedback {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+  grid-column: 1 / -1;
+}
+
+.counter-profile-feedback-success {
+  color: #067647;
+}
+
+.counter-profile-feedback-error {
+  color: var(--danger);
+}
+
 .counter-field-full {
   grid-column: 1 / -1;
 }

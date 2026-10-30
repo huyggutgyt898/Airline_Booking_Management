@@ -166,7 +166,6 @@ D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\obj\Debu
 D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\obj\Debug\net10.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
 D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\obj\Debug\net10.0\scopedcss\bundle\TEO_Airline_Project.styles.css
 D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\obj\Debug\net10.0\scopedcss\projectbundle\TEO_Airline_Project.bundle.scp.css
-D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\obj\Debug\net10.0\compressed\slxk6pb1nu-{0}-ym43v5avpw-ym43v5avpw.gz
 D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\obj\Debug\net10.0\compressed\5egb99qyi9-{0}-b9sayid5wm-b9sayid5wm.gz
 D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\obj\Debug\net10.0\compressed\pdzcotmm9p-{0}-61n19gt1b8-61n19gt1b8.gz
 D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\obj\Debug\net10.0\compressed\gqo8fs25lw-{0}-nhugw2vyle-nhugw2vyle.gz
@@ -443,4 +442,5 @@ C:\Users\ASUS\AppData\Local\Temp\TEO_Airline_Project-build\TEO_Airline_Project.d
 C:\Users\ASUS\AppData\Local\Temp\TEO_Airline_Project-build\TEO_Airline_Project.pdb
 D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\obj\Debug\net10.0\compressed\shuyr5d83b-{0}-815mmif7z2-815mmif7z2.gz
 D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\obj\Debug\net10.0\compressed\m66i2i0usu-{0}-spkncynt24-spkncynt24.gz
+D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\obj\Debug\net10.0\compressed\slxk6pb1nu-{0}-0utp9gv1ua-0utp9gv1ua.gz
 D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt

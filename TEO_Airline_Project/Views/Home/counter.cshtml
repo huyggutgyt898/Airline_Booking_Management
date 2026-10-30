@@ -1,6 +1,8 @@
-﻿@{
+﻿@model TEO_Airline_Project.Models.ViewModels.StaffProfileViewModel
+@{
     Layout = null;
-    var fullName = Context.Session.GetString("FullName") ?? "Nhân viên quầy";
+    var fullName = Model.FullName;
+    var staffCode = $"NV-{Model.UserId:D4}";
     var initials = string.Concat(
         fullName.Split(' ', StringSplitOptions.RemoveEmptyEntries)
             .TakeLast(2)
@@ -277,21 +279,39 @@
         <div class="counter-profile-grid">
           <section class="counter-panel">
             <div class="counter-panel-head"><h2>Thông tin cá nhân</h2></div>
-            <div class="counter-panel-body"><form class="counter-form-grid" data-demo-form>
-              <div class="counter-field"><label for="staff-name">Họ và tên</label><input id="staff-name" value="@fullName"></div>
-              <div class="counter-field"><label for="staff-id">Mã nhân viên</label><input id="staff-id" value="NV-0208" disabled></div>
-              <div class="counter-field"><label for="staff-email">Email công việc</label><input id="staff-email" value="linh.nguyen@teoairlines.vn"></div>
-              <div class="counter-field"><label for="staff-phone">Số điện thoại</label><input id="staff-phone" value="0901 223 344"></div>
-              <div class="counter-field counter-field-full"><label for="staff-role">Vai trò</label><input id="staff-role" value="Nhân viên quầy" disabled></div>
+            <div class="counter-panel-body"><form class="counter-form-grid" asp-controller="Home" asp-action="SaveStaffProfile" asp-route-screen="profile" method="post">
+              @Html.AntiForgeryToken()
+              @if (!string.IsNullOrWhiteSpace(Model.ProfileMessage))
+              {
+                <p class="counter-profile-feedback counter-profile-feedback-success" role="status">@Model.ProfileMessage</p>
+              }
+              @if (!string.IsNullOrWhiteSpace(Model.ProfileError))
+              {
+                <p class="counter-profile-feedback counter-profile-feedback-error" role="alert">@Model.ProfileError</p>
+              }
+              <div class="counter-field"><label for="staff-name">Họ và tên</label><input id="staff-name" name="fullName" value="@Model.FullName" required maxlength="100" autocomplete="name"></div>
+              <div class="counter-field"><label for="staff-id">Mã nhân viên</label><input id="staff-id" value="@staffCode" disabled></div>
+              <div class="counter-field"><label for="staff-email">Email công việc</label><input id="staff-email" name="email" type="email" value="@Model.Email" required maxlength="100" autocomplete="email"></div>
+              <div class="counter-field"><label for="staff-phone">Số điện thoại</label><input id="staff-phone" name="phone" type="tel" value="@Model.Phone" required maxlength="20" autocomplete="tel"></div>
+              <div class="counter-field counter-field-full"><label for="staff-role">Vai trò</label><input id="staff-role" value="@Model.RoleLabel" disabled></div>
               <div class="counter-form-actions"><button class="counter-button" type="reset">Hủy</button><button class="counter-button counter-button-primary" type="submit">Lưu thông tin</button></div>
             </form></div>
           </section>
           <section class="counter-panel">
             <div class="counter-panel-head"><h2>Đổi mật khẩu</h2></div>
-            <div class="counter-panel-body"><form class="counter-form-stack" data-demo-form>
-              <div class="counter-field"><label for="current-password">Mật khẩu hiện tại</label><input id="current-password" type="password" autocomplete="current-password"></div>
-              <div class="counter-field"><label for="new-password">Mật khẩu mới</label><input id="new-password" type="password" autocomplete="new-password"></div>
-              <div class="counter-field"><label for="confirm-password">Xác nhận mật khẩu mới</label><input id="confirm-password" type="password" autocomplete="new-password"></div>
+            <div class="counter-panel-body"><form class="counter-form-stack" asp-controller="Home" asp-action="ChangeStaffPassword" asp-route-screen="profile" method="post">
+              @Html.AntiForgeryToken()
+              @if (!string.IsNullOrWhiteSpace(Model.PasswordMessage))
+              {
+                <p class="counter-profile-feedback counter-profile-feedback-success" role="status">@Model.PasswordMessage</p>
+              }
+              @if (!string.IsNullOrWhiteSpace(Model.PasswordError))
+              {
+                <p class="counter-profile-feedback counter-profile-feedback-error" role="alert">@Model.PasswordError</p>
+              }
+              <div class="counter-field"><label for="current-password">Mật khẩu hiện tại</label><input id="current-password" name="currentPassword" type="password" autocomplete="current-password" required></div>
+              <div class="counter-field"><label for="new-password">Mật khẩu mới</label><input id="new-password" name="newPassword" type="password" autocomplete="new-password" minlength="8" required></div>
+              <div class="counter-field"><label for="confirm-password">Xác nhận mật khẩu mới</label><input id="confirm-password" name="confirmPassword" type="password" autocomplete="new-password" minlength="8" required></div>
               <div class="counter-form-actions"><button class="counter-button counter-button-primary" type="submit">Cập nhật mật khẩu</button></div>
             </form></div>
           </section>
