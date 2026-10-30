@@ -1,0 +1,30 @@
+@baseUrl = http://localhost:5199
+@ticketId = 1
+@antiforgeryToken = replace-with-token-from-counter-page
+
+### Search tickets using a real booking code and passenger verification field
+GET {{baseUrl}}/api/counter/tickets/search?bookingCode=TEO123&passengerName=Nguyen
+
+### Load eligible same-route flights and suggested seats
+GET {{baseUrl}}/api/counter/tickets/{{ticketId}}/flight-options
+
+### Exchange an eligible ticket
+POST {{baseUrl}}/api/counter/tickets/{{ticketId}}/exchange
+Content-Type: application/json
+RequestVerificationToken: {{antiforgeryToken}}
+
+{
+  "newFlightId": 2,
+  "reason": "Khách đề nghị đổi sang chuyến phù hợp hơn",
+  "paymentConfirmed": true
+}
+
+### Cancel an eligible ticket
+POST {{baseUrl}}/api/counter/tickets/{{ticketId}}/cancel
+Content-Type: application/json
+RequestVerificationToken: {{antiforgeryToken}}
+
+{
+  "reason": "Khách yêu cầu hủy vé",
+  "refundConfirmed": true
+}

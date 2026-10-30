@@ -989,6 +989,76 @@
   text-wrap: pretty;
 }
 
+.counter-ticket-history-list {
+  display: grid;
+  gap: 10px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.counter-ticket-history-list li {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.counter-ticket-history-list li > span {
+  color: var(--muted);
+}
+
+.counter-ticket-action {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.counter-ticket-action h3 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.counter-ticket-action p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.counter-ticket-action .counter-button {
+  width: 100%;
+}
+
+.counter-confirm-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.counter-confirm-check input {
+  margin: 2px 0 0;
+}
+
+.ticket-result-button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ticket-result-button:hover {
+  text-decoration: underline;
+}
+
 .counter-notice {
   display: flex;
   align-items: flex-start;

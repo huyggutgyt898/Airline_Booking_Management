@@ -140,62 +140,99 @@
       </section>
 
       <section class="counter-view" data-screen="exchange" hidden>
-        <div class="counter-page-heading"><div><h1>Đổi / hủy vé</h1><p>Tra cứu đặt chỗ, kiểm tra thông tin rồi xác nhận thao tác.</p></div></div>
-        <section class="counter-panel">
-          <div class="counter-panel-head"><h2>Tra cứu đặt chỗ</h2><span class="counter-small counter-muted">Có tài khoản hoặc khách vãng lai</span></div>
+        <div class="counter-page-heading"><div><h1>Đổi / hủy vé</h1><p>Tra cứu vé thật, kiểm tra điều kiện và ghi nhận xử lý tại quầy.</p></div></div>
+        <form class="counter-panel" id="ticket-search-form">
+          <div class="counter-panel-head"><h2>Tra cứu vé</h2><span class="counter-small counter-muted">Cần mã đặt chỗ và tên hoặc thông tin liên hệ</span></div>
           <div class="counter-panel-body">
             <div class="counter-field-grid">
-              <div class="counter-field"><label for="booking-code">Mã đặt chỗ</label><input id="booking-code" value="TEO-240918"></div>
-              <div class="counter-field"><label for="lookup-name">Tên hành khách</label><input id="lookup-name" value="Trần Quốc Bảo"></div>
-              <div class="counter-field"><label for="lookup-contact">Số điện thoại / email</label><input id="lookup-contact" value="0912 345 678"></div>
-              <div class="counter-field"><label for="lookup-date">Ngày bay</label><input id="lookup-date" value="24/10/2026"></div>
+              <div class="counter-field"><label for="booking-code">Mã đặt chỗ</label><input id="booking-code" name="bookingCode" autocomplete="off" required maxlength="10"></div>
+              <div class="counter-field"><label for="lookup-name">Tên hành khách</label><input id="lookup-name" name="passengerName" autocomplete="off" maxlength="100"></div>
+              <div class="counter-field"><label for="lookup-contact">Số điện thoại / email</label><input id="lookup-contact" name="contact" autocomplete="off" maxlength="100"></div>
+              <div class="counter-field"><label for="lookup-date">Ngày bay (không bắt buộc)</label><input id="lookup-date" name="flightDate" type="date"></div>
             </div>
-            <div class="counter-actions"><button class="counter-button" type="button" data-demo-action>Xóa điều kiện</button><button class="counter-button counter-button-primary" type="button" data-demo-action><i data-lucide="search" aria-hidden="true"></i>Tra cứu</button></div>
+            <p class="counter-booking-feedback" id="ticket-search-feedback" role="status" aria-live="polite" hidden></p>
+            <div class="counter-actions">
+              <button class="counter-button" type="reset">Xóa điều kiện</button>
+              <button class="counter-button counter-button-primary" type="submit" id="ticket-search-submit"><i data-lucide="search" aria-hidden="true"></i>Tra cứu</button>
+            </div>
           </div>
-        </section>
+        </form>
+
         <div class="counter-lookup-grid">
-          <section class="counter-panel">
-            <div class="counter-panel-head"><h2>Kết quả đặt chỗ</h2><span class="counter-small counter-muted">2 kết quả</span></div>
+          <section class="counter-panel" aria-labelledby="ticket-results-title">
+            <div class="counter-panel-head"><h2 id="ticket-results-title">Vé tìm thấy</h2><span class="counter-small counter-muted" id="ticket-result-count">Chưa tra cứu</span></div>
             <div class="counter-table-wrap">
               <table class="counter-table">
-                <thead><tr><th>Mã đặt chỗ</th><th>Hành khách</th><th>Hành trình</th><th>Trạng thái</th><th>Đặt bởi</th></tr></thead>
-                <tbody>
-                  <tr class="is-selected"><td><a class="counter-link" href="#booking-detail">TEO-240918</a></td><td><strong>Trần Quốc Bảo</strong><span class="counter-record-meta">0912 345 678</span></td><td>SGN → HAN<span class="counter-record-meta">24/10/2026 · TEO 218</span></td><td><span class="counter-badge counter-badge-success">Đã xác nhận</span></td><td><span class="counter-badge counter-badge-warning">Khách vãng lai</span></td></tr>
-                  <tr><td><a class="counter-link" href="#booking-detail">TEO-240862</a></td><td><strong>Lê Ngọc Hà</strong><span class="counter-record-meta">ha.le@example.vn</span></td><td>HAN → DAD<span class="counter-record-meta">02/11/2026 · TEO 511</span></td><td><span class="counter-badge counter-badge-success">Đã xác nhận</span></td><td><span class="counter-badge counter-badge-brand">Có tài khoản</span></td></tr>
-                </tbody>
+                <thead><tr><th>Mã vé</th><th>Hành khách</th><th>Hành trình</th><th>Khởi hành</th><th>Trạng thái</th></tr></thead>
+                <tbody id="ticket-results"><tr><td colspan="5" class="counter-empty-cell">Nhập mã đặt chỗ và thông tin xác minh để bắt đầu.</td></tr></tbody>
               </table>
             </div>
-            <div class="counter-booking-cards">
-              <article class="counter-booking-card is-selected"><div><a class="counter-link" href="#booking-detail">TEO-240918</a><span class="counter-badge counter-badge-warning">Khách vãng lai</span></div><strong>Trần Quốc Bảo</strong><span>0912 345 678</span><span>SGN → HAN · 24/10/2026 · TEO 218</span><span class="counter-badge counter-badge-success">Đã xác nhận</span></article>
-              <article class="counter-booking-card"><div><a class="counter-link" href="#booking-detail">TEO-240862</a><span class="counter-badge counter-badge-brand">Có tài khoản</span></div><strong>Lê Ngọc Hà</strong><span>ha.le@example.vn</span><span>HAN → DAD · 02/11/2026 · TEO 511</span><span class="counter-badge counter-badge-success">Đã xác nhận</span></article>
-            </div>
+            <div class="counter-booking-cards" id="ticket-result-cards"></div>
           </section>
 
-          <aside class="counter-panel" id="booking-detail">
-            <div class="counter-panel-head"><h2>Chi tiết đặt chỗ</h2><span class="counter-badge counter-badge-success">Đã xác nhận</span></div>
+          <aside class="counter-panel" id="ticket-detail" hidden aria-labelledby="ticket-detail-title">
+            <div class="counter-panel-head"><h2 id="ticket-detail-title">Chi tiết vé</h2><span class="counter-badge" id="ticket-status"></span></div>
             <div class="counter-panel-body">
-              <strong class="counter-link">TEO-240918</strong><p class="counter-record-meta">Đặt ngày 18/09/2026 · Khách vãng lai</p>
-              <div class="counter-route counter-route-detail"><div><strong>SGN</strong><span>08:10</span></div><span class="counter-route-line"></span><div><strong>HAN</strong><span>10:20</span></div></div>
-              <dl class="counter-detail-list"><dt>Hành khách</dt><dd>Trần Quốc Bảo</dd><dt>Ghế</dt><dd>18C</dd><dt>Thanh toán</dt><dd>Tiền mặt · Đã thu</dd><dt>Tổng tiền</dt><dd>2.450.000 ₫</dd><dt>Yêu cầu xử lý</dt><dd><span class="counter-badge">Chưa gửi</span></dd></dl>
-              <div class="counter-adjustment-summary" aria-label="Ước tính đổi và hủy vé">
-                <div><span>Phụ phí đổi chuyến</span><strong>Theo điều kiện vé</strong></div>
-                <div><span>Tiền hoàn dự kiến</span><strong>2.450.000 ₫</strong></div>
+              <strong class="counter-link" id="ticket-number"></strong>
+              <p class="counter-record-meta" id="ticket-booking"></p>
+              <div class="counter-route counter-route-detail">
+                <div><strong id="ticket-origin"></strong><span id="ticket-departure"></span></div>
+                <span class="counter-route-line"></span>
+                <div><strong id="ticket-destination"></strong><span id="ticket-arrival"></span></div>
               </div>
-              <p class="counter-estimate-note">Minh họa hoàn toàn bộ nếu hủy trước hơn 3 ngày khởi hành. Khoản thực tế cần được hệ thống tính lại.</p>
-              <section class="counter-policy" aria-labelledby="counter-policy-title">
-                <h3 id="counter-policy-title">Điều kiện áp dụng</h3>
+              <dl class="counter-detail-list">
+                <dt>Hành khách</dt><dd id="ticket-passenger"></dd>
+                <dt>Liên hệ</dt><dd id="ticket-contact"></dd>
+                <dt>Chuyến bay</dt><dd id="ticket-flight"></dd>
+                <dt>Ghế / hạng</dt><dd id="ticket-seat"></dd>
+                <dt>Giá vé gốc</dt><dd id="ticket-fare"></dd>
+                <dt>Thuế / phí dịch vụ</dt><dd id="ticket-taxes"></dd>
+                <dt>Đã thanh toán phân bổ</dt><dd id="ticket-paid"></dd>
+              </dl>
+              <section class="counter-policy" aria-labelledby="ticket-policy-title">
+                <h3 id="ticket-policy-title">Điều kiện áp dụng</h3>
                 <ul>
-                  <li>Đổi vé trước giờ khởi hành ít nhất 5 ngày; phụ phí tùy điều kiện vé.</li>
-                  <li>Hủy vé trước giờ khởi hành ít nhất 12 tiếng.</li>
-                  <li>Hủy trước hơn 3 ngày: hoàn toàn bộ; trường hợp khác, hoàn một phần theo quy định.</li>
+                  <li>Đổi trước giờ khởi hành ít nhất 5 ngày; thu phụ phí 10% giá vé gốc và phần chênh lệch (nếu có).</li>
+                  <li>Hủy trước giờ khởi hành ít nhất 12 tiếng.</li>
+                  <li>Hủy trước hơn 3 ngày: hoàn đủ phần tiền đã thanh toán phân bổ cho vé; còn lại hoàn 5% giá vé gốc.</li>
                 </ul>
               </section>
-              <section class="counter-history" aria-labelledby="counter-history-title">
-                <h3 id="counter-history-title">Lịch sử xử lý</h3>
-                <p>Chưa có bản ghi. Khi xử lý sẽ lưu nhân viên, thời gian và lý do.</p>
+              <div class="counter-adjustment-summary" aria-label="Ước tính đổi và hủy vé">
+                <div><span>Phụ phí đổi</span><strong id="ticket-exchange-surcharge">—</strong></div>
+                <div><span>Tiền hoàn dự kiến</span><strong id="ticket-refund-estimate">—</strong></div>
+              </div>
+              <p class="counter-booking-feedback" id="ticket-operation-feedback" role="status" aria-live="polite" hidden></p>
+              <section class="counter-history" aria-labelledby="ticket-history-title">
+                <h3 id="ticket-history-title">Lịch sử xử lý</h3>
+                <div id="ticket-history"><p>Chưa có bản ghi.</p></div>
               </section>
-              <div class="counter-notice"><i data-lucide="info" aria-hidden="true"></i><span>Khoản phí và tiền hoàn chỉ là minh họa; hệ thống cần xác nhận lại.</span></div>
-              <div class="counter-actions counter-detail-actions"><button class="counter-button counter-button-danger" type="button" data-open-confirm="cancel">Hủy vé</button><button class="counter-button counter-button-primary" type="button" data-open-confirm="exchange">Đổi chuyến</button></div>
+
+              <form class="counter-ticket-action" id="ticket-exchange-form">
+                <h3>Đổi chuyến</h3>
+                <p class="counter-small counter-muted" id="exchange-eligibility"></p>
+                <div class="counter-field">
+                  <label for="exchange-flight">Chuyến mới · ghế gợi ý</label>
+                  <select id="exchange-flight" name="newFlightId" required disabled><option value="">Chọn vé đủ điều kiện để tải chuyến</option></select>
+                </div>
+                <p class="counter-small counter-muted" id="exchange-amount"></p>
+                <div class="counter-field">
+                  <label for="exchange-reason">Lý do đổi</label>
+                  <input id="exchange-reason" name="reason" required minlength="3" maxlength="500">
+                </div>
+                <label class="counter-confirm-check"><input id="exchange-payment-confirmed" type="checkbox" required><span>Tôi đã thu khoản tiền hiển thị tại quầy.</span></label>
+                <button class="counter-button counter-button-primary" type="submit" id="ticket-exchange-submit" disabled>Đổi vé và ghi nhận thanh toán</button>
+              </form>
+
+              <form class="counter-ticket-action" id="ticket-cancel-form">
+                <h3>Hủy vé</h3>
+                <p class="counter-small counter-muted" id="cancel-eligibility"></p>
+                <div class="counter-field">
+                  <label for="cancel-reason">Lý do hủy</label>
+                  <input id="cancel-reason" name="reason" required minlength="3" maxlength="500">
+                </div>
+                <label class="counter-confirm-check"><input id="cancel-refund-confirmed" type="checkbox" required><span>Tôi đã hoàn khoản tiền hiển thị cho khách.</span></label>
+                <button class="counter-button counter-button-danger" type="submit" id="ticket-cancel-submit" disabled>Hủy vé và ghi nhận hoàn tiền</button>
+              </form>
             </div>
           </aside>
         </div>

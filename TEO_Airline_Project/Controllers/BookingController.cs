@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TEO_Airline_Project.Models;
 using TEO_Airline_Project.Models.BookingModels;
+using TEO_Airline_Project.Services;
 
 namespace TEO_Airline_Project.Controllers
 {
@@ -14,7 +15,6 @@ namespace TEO_Airline_Project.Controllers
     {
         private const int MomoHoldMinutes = BookingMaintenance.MomoHoldMinutes;
         private const int CounterHoldMinutes = BookingMaintenance.CounterHoldMinutes;
-        private const decimal ExtraSeatFee = 150000m;
         private const string DraftSessionKey = "Booking.Draft";
         private const string CounterDraftSessionKey = "Booking.CounterDraft";
         private const string PnrAlphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -309,8 +309,8 @@ namespace TEO_Airline_Project.Controllers
                             number = seat.SeatNumber,
                             column,
                             occupied = occupied.Contains(seat.SeatId),
-                            extra = IsExtraSeat(normalizedClass, g.Key),
-                            extraFee = IsExtraSeat(normalizedClass, g.Key) ? ExtraSeatFee : 0m
+                            extra = SeatPricingRules.IsExtraSeat(normalizedClass, g.Key),
+                            extraFee = SeatPricingRules.GetExtraFee(normalizedClass, g.Key)
                         };
                     }).ToArray();
 
@@ -1163,7 +1163,7 @@ namespace TEO_Airline_Project.Controllers
                 {
                     SeatId = s.SeatId,
                     Number = s.SeatNumber,
-                    ExtraFee = IsExtraSeat(seatClass, row) ? ExtraSeatFee : 0m
+                    ExtraFee = SeatPricingRules.GetExtraFee(seatClass, row)
                 };
             }).ToList(), null);
         }
@@ -1418,9 +1418,6 @@ namespace TEO_Airline_Project.Controllers
                 "OTHER" => "Other",
                 _ => "Male"
             };
-
-        private static bool IsExtraSeat(string seatClass, int row) =>
-            seatClass == "Economy" && row is >= 5 and <= 6;
 
         private static string TypeLabel(string type) => type switch
         {

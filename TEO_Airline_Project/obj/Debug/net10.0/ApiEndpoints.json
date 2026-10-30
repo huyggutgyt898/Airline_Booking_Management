@@ -135,6 +135,260 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "TEO_Airline_Project.Controllers.CounterTicketsController",
+    "Method": "Cancel",
+    "RelativePath": "api/counter/tickets/{ticketId}/cancel",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ticketId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "TEO_Airline_Project.Models.CounterTickets.CancelCounterTicketRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "TEO_Airline_Project.Models.CounterTickets.CounterTicketOperationResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 401
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 409
+      }
+    ],
+    "Description": "H\u1EE7y v\u00E9 \u0111\u1EE7 \u0111i\u1EC1u ki\u1EC7n, l\u01B0u BookingRequest v\u00E0 ghi nh\u1EADn s\u1ED1 ti\u1EC1n ho\u00E0n v\u00E0o s\u1ED5 thanh to\u00E1n.",
+    "Summary": "H\u1EE7y v\u00E9"
+  },
+  {
+    "ContainingType": "TEO_Airline_Project.Controllers.CounterTicketsController",
+    "Method": "Exchange",
+    "RelativePath": "api/counter/tickets/{ticketId}/exchange",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ticketId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "TEO_Airline_Project.Models.CounterTickets.ExchangeCounterTicketRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "TEO_Airline_Project.Models.CounterTickets.CounterTicketOperationResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 401
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 409
+      }
+    ],
+    "Description": "\u0110\u1ED5i v\u00E9 \u0111\u1EE7 \u0111i\u1EC1u ki\u1EC7n, c\u1EADp nh\u1EADt chuy\u1EBFn v\u00E0 gh\u1EBF, l\u01B0u BookingRequest v\u00E0 ghi nh\u1EADn kho\u1EA3n thu.",
+    "Summary": "\u0110\u1ED5i v\u00E9"
+  },
+  {
+    "ContainingType": "TEO_Airline_Project.Controllers.CounterTicketsController",
+    "Method": "FlightOptions",
+    "RelativePath": "api/counter/tickets/{ticketId}/flight-options",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ticketId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IReadOnlyList\u00601[[TEO_Airline_Project.Models.CounterTickets.CounterTicketFlightOptionResponse, TEO_Airline_Project, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 401
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 409
+      }
+    ],
+    "Description": "Tr\u1EA3 v\u1EC1 c\u00E1c chuy\u1EBFn c\u00F9ng h\u00E0nh tr\u00ECnh c\u00F2n gh\u1EBF v\u00E0 s\u1ED1 ti\u1EC1n ch\u00EAnh l\u1EC7ch c\u00F9ng ph\u1EE5 ph\u00ED \u0111\u1ED5i.",
+    "Summary": "T\u1EA3i chuy\u1EBFn bay \u0111\u1ED5i v\u00E9"
+  },
+  {
+    "ContainingType": "TEO_Airline_Project.Controllers.CounterTicketsController",
+    "Method": "Search",
+    "RelativePath": "api/counter/tickets/search",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "BookingCode",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "PassengerName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Contact",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "FlightDate",
+        "Type": "System.Nullable\u00601[[System.DateOnly, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IReadOnlyList\u00601[[TEO_Airline_Project.Models.CounterTickets.CounterTicketResponse, TEO_Airline_Project, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 401
+      }
+    ],
+    "Description": "T\u00ECm v\u00E9 theo m\u00E3 \u0111\u1EB7t ch\u1ED7, t\u00EAn h\u00E0nh kh\u00E1ch ho\u1EB7c th\u00F4ng tin li\u00EAn h\u1EC7; ch\u1EC9 d\u00E0nh cho nh\u00E2n vi\u00EAn qu\u1EA7y \u0111\u00E3 \u0111\u0103ng nh\u1EADp.",
+    "Summary": "Tra c\u1EE9u v\u00E9 t\u1EA1i qu\u1EA7y"
+  },
+  {
     "ContainingType": "TEO_Airline_Project.Controllers.LookupController",
     "Method": "Find",
     "RelativePath": "api/lookup",

@@ -20,7 +20,13 @@
     quoteRequestVersion: 0,
     completed: false
   };
+  const ticketState = {
+    results: [],
+    selected: null,
+    flightOptions: []
+  };
   const bookingApi = "/api/booking";
+  const counterTicketApi = "/api/counter/tickets";
   let bookingQuoteTimer;
   const money = (value) => `${new Intl.NumberFormat("vi-VN").format(Math.round(Number(value) || 0))} ₫`;
   const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (character) => ({
@@ -56,6 +62,36 @@
 
     if (!response.ok) {
       throw new Error(data?.message || "Không thể xử lý yêu cầu. Vui lòng thử lại.");
+    }
+
+    return data;
+  }
+
+  async function counterTicketFetch(path, { method = "GET", body, antiforgery = false } = {}) {
+    const headers = {};
+    if (body !== undefined) headers["Content-Type"] = "application/json";
+    if (antiforgery) {
+      const token = $("input[name='__RequestVerificationToken']", $("#counter-antiforgery"))?.value;
+      if (!token) throw new Error("Không lấy được mã bảo vệ phiên. Vui lòng tải lại trang.");
+      headers.RequestVerificationToken = token;
+    }
+
+    const response = await fetch(`${counterTicketApi}/${path}`, {
+      method,
+      credentials: "same-origin",
+      headers,
+      body: body === undefined ? undefined : JSON.stringify(body)
+    });
+
+    let data = null;
+    try {
+      data = await response.json();
+    } catch {
+      data = null;
+    }
+
+    if (!response.ok) {
+      throw new Error(data?.detail || data?.message || "Không thể xử lý yêu cầu. Vui lòng thử lại.");
     }
 
     return data;
@@ -474,6 +510,264 @@
     }, 3200);
   }
 
+  function formatDateTime(value) {
+    if (!value) return "—";
+    return new Intl.DateTimeFormat("vi-VN", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    }).format(new Date(value));
+  }
+
+  function ticketStatusLabel(status) {
+    return ({
+      Issued: "Đã phát hành",
+      Changed: "Đã đổi",
+      Cancelled: "Đã hủy",
+      CheckedIn: "Đã làm thủ tục",
+      PendingPayment: "Chờ thanh toán"
+    })[status] || status || "Không rõ";
+  }
+
+  function renderTicketResults(tickets) {
+    const body = $("#ticket-results");
+    const cards = $("#ticket-result-cards");
+    if (!tickets.length) {
+      body.innerHTML = '<tr><td colspan="5" class="counter-empty-cell">Không tìm thấy vé phù hợp với thông tin xác minh.</td></tr>';
+      cards.replaceChildren();
+      $("#ticket-result-count").textContent = "0 vé";
+      return;
+    }
+
+    const rows = tickets.map((ticket) => {
+      const selected = ticket.ticketId === ticketState.selected?.ticketId;
+      const statusClass = ticket.ticketStatus === "Cancelled"
+        ? "counter-badge-danger"
+        : ticket.ticketStatus === "Issued" || ticket.ticketStatus === "Changed"
+          ? "counter-badge-success"
+          : "counter-badge-warning";
+      return `<tr class="${selected ? "is-selected" : ""}">
+        <td><button class="counter-link ticket-result-button" type="button" data-ticket-id="${ticket.ticketId}">${escapeHtml(ticket.ticketNumber)}</button><span class="counter-record-meta">${escapeHtml(ticket.bookingCode)}</span></td>
+        <td><strong>${escapeHtml(ticket.passengerName)}</strong></td>
+        <td>${escapeHtml(ticket.originCode)} → ${escapeHtml(ticket.destinationCode)}<span class="counter-record-meta">${escapeHtml(ticket.flightNumber)}</span></td>
+        <td>${escapeHtml(formatDateTime(ticket.departureTime))}</td>
+        <td><span class="counter-badge ${statusClass}">${escapeHtml(ticketStatusLabel(ticket.ticketStatus))}</span></td>
+      </tr>`;
+    }).join("");
+    body.innerHTML = rows;
+
+    cards.innerHTML = tickets.map((ticket) => {
+      const selected = ticket.ticketId === ticketState.selected?.ticketId;
+      const statusClass = ticket.ticketStatus === "Cancelled"
+        ? "counter-badge-danger"
+        : ticket.ticketStatus === "Issued" || ticket.ticketStatus === "Changed"
+          ? "counter-badge-success"
+          : "counter-badge-warning";
+      return `<article class="counter-booking-card ${selected ? "is-selected" : ""}">
+        <div><button class="counter-link ticket-result-button" type="button" data-ticket-id="${ticket.ticketId}">${escapeHtml(ticket.ticketNumber)}</button><span class="counter-badge ${statusClass}">${escapeHtml(ticketStatusLabel(ticket.ticketStatus))}</span></div>
+        <strong>${escapeHtml(ticket.passengerName)}</strong>
+        <span>${escapeHtml(ticket.bookingCode)} · ${escapeHtml(ticket.flightNumber)}</span>
+        <span>${escapeHtml(ticket.originCode)} → ${escapeHtml(ticket.destinationCode)} · ${escapeHtml(formatDateTime(ticket.departureTime))}</span>
+      </article>`;
+    }).join("");
+    $("#ticket-result-count").textContent = `${tickets.length} vé`;
+  }
+
+  function clearTicketDetail() {
+    ticketState.selected = null;
+    ticketState.flightOptions = [];
+    $("#ticket-detail").hidden = true;
+    $("#exchange-flight").replaceChildren(new Option("Chọn vé đủ điều kiện để tải chuyến", ""));
+    $("#exchange-flight").disabled = true;
+    $("#exchange-amount").textContent = "";
+    $("#ticket-operation-feedback").hidden = true;
+    $("#ticket-exchange-submit").disabled = true;
+    $("#ticket-cancel-submit").disabled = true;
+    $("#exchange-payment-confirmed").checked = false;
+    $("#cancel-refund-confirmed").checked = false;
+  }
+
+  function renderTicketHistory(history) {
+    const element = $("#ticket-history");
+    if (!history.length) {
+      element.innerHTML = "<p>Chưa có bản ghi.</p>";
+      return;
+    }
+
+    element.innerHTML = `<ul class="counter-ticket-history-list">${history.map((item) => `
+      <li>
+        <strong>${escapeHtml(item.requestType === "Change" ? "Đổi vé" : "Hủy vé")} · ${escapeHtml(item.status)}</strong>
+        <span>${escapeHtml(formatDateTime(item.createdAt))}${item.processedBy ? ` · ${escapeHtml(item.processedBy)}` : ""}</span>
+        <span>${escapeHtml(item.reason)}</span>
+        ${item.surcharge ? `<span>Phụ phí: ${escapeHtml(money(item.surcharge))}</span>` : ""}
+        ${item.priceDifference ? `<span>Chênh lệch: ${escapeHtml(money(item.priceDifference))}</span>` : ""}
+        ${item.refundAmount ? `<span>Hoàn tiền: ${escapeHtml(money(item.refundAmount))}</span>` : ""}
+      </li>`).join("")}</ul>`;
+  }
+
+  function updateExchangeAmount() {
+    const flightId = Number($("#exchange-flight").value);
+    const option = ticketState.flightOptions.find(item => item.flightId === flightId);
+    if (!option) {
+      $("#exchange-amount").textContent = "";
+      $("#ticket-exchange-submit").disabled = true;
+      return;
+    }
+
+    $("#exchange-amount").textContent =
+      `Ghế ${option.seatNumber} · Chênh lệch ${money(option.priceDifference)} · Phụ phí ${money(option.surcharge)} · Thu tại quầy ${money(option.amountDue)}`;
+    $("#ticket-exchange-submit").disabled =
+      !ticketState.selected?.canExchange || !$("#exchange-payment-confirmed").checked;
+  }
+
+  async function loadTicketFlightOptions(ticket) {
+    const select = $("#exchange-flight");
+    select.replaceChildren(new Option("Đang tải chuyến bay...", ""));
+    select.disabled = true;
+    if (!ticket.canExchange) {
+      select.replaceChildren(new Option("Vé không đủ điều kiện đổi", ""));
+      return;
+    }
+
+    try {
+      const options = await counterTicketFetch(`${ticket.ticketId}/flight-options`);
+      ticketState.flightOptions = options;
+      select.replaceChildren(new Option(
+        options.length ? "Chọn chuyến mới" : "Không có chuyến phù hợp còn ghế hoặc cần hoàn chênh lệch",
+        ""
+      ));
+      for (const option of options) {
+        const label = `${option.flightNumber} · ${formatDateTime(option.departureTime)} · ghế ${option.seatNumber} · thu ${money(option.amountDue)}`;
+        select.add(new Option(label, String(option.flightId)));
+      }
+      select.disabled = options.length === 0;
+      updateExchangeAmount();
+    } catch (error) {
+      select.replaceChildren(new Option("Không tải được chuyến bay", ""));
+      setBookingFeedback("ticket-operation-feedback", error.message, "error");
+    }
+  }
+
+  async function selectTicket(ticketId) {
+    const ticket = ticketState.results.find(item => item.ticketId === ticketId);
+    if (!ticket) return;
+
+    ticketState.selected = ticket;
+    ticketState.flightOptions = [];
+    $("#ticket-exchange-form").reset();
+    $("#ticket-cancel-form").reset();
+    renderTicketResults(ticketState.results);
+    $("#ticket-detail").hidden = false;
+    const status = $("#ticket-status");
+    status.textContent = ticketStatusLabel(ticket.ticketStatus);
+    status.className = `counter-badge ${ticket.ticketStatus === "Cancelled" ? "counter-badge-danger" : "counter-badge-success"}`;
+    $("#ticket-number").textContent = ticket.ticketNumber;
+    $("#ticket-booking").textContent = `Đặt chỗ ${ticket.bookingCode} · ${ticket.bookingStatus}`;
+    $("#ticket-origin").textContent = ticket.originCode;
+    $("#ticket-departure").textContent = formatDateTime(ticket.departureTime);
+    $("#ticket-destination").textContent = ticket.destinationCode;
+    $("#ticket-arrival").textContent = formatDateTime(ticket.arrivalTime);
+    $("#ticket-passenger").textContent = ticket.passengerName;
+    $("#ticket-contact").textContent = ticket.contact;
+    $("#ticket-flight").textContent = ticket.flightNumber;
+    $("#ticket-seat").textContent = `${ticket.seatNumber || "Chưa xếp ghế"} · ${ticket.seatClass}`;
+    $("#ticket-fare").textContent = money(ticket.ticketFare);
+    $("#ticket-taxes").textContent = money(ticket.taxAmount + ticket.serviceFee);
+    $("#ticket-paid").textContent = money(ticket.allocatedPaidAmount);
+    $("#ticket-exchange-surcharge").textContent = money(ticket.exchangeSurcharge);
+    $("#ticket-refund-estimate").textContent = ticket.canCancel
+      ? money(ticket.cancellationRefundAmount)
+      : "Không đủ điều kiện";
+    $("#exchange-eligibility").textContent = ticket.exchangeMessage;
+    $("#cancel-eligibility").textContent = ticket.cancellationMessage;
+    $("#ticket-operation-feedback").hidden = true;
+    $("#ticket-exchange-form").querySelectorAll("input, select, button").forEach((input) => {
+      input.disabled = !ticket.canExchange;
+    });
+    $("#ticket-cancel-form").querySelectorAll("input, button").forEach((input) => {
+      input.disabled = !ticket.canCancel;
+    });
+    $("#ticket-exchange-submit").disabled = true;
+    $("#ticket-cancel-submit").disabled = !ticket.canCancel || !$("#cancel-refund-confirmed").checked;
+    renderTicketHistory(ticket.history || []);
+    await loadTicketFlightOptions(ticket);
+    renderIcons();
+  }
+
+  async function performTicketSearch() {
+    const form = $("#ticket-search-form");
+    const values = new FormData(form);
+    const bookingCode = String(values.get("bookingCode") || "").trim();
+    const passengerName = String(values.get("passengerName") || "").trim();
+    const contact = String(values.get("contact") || "").trim();
+    if (!bookingCode || (!passengerName && !contact)) {
+      setBookingFeedback("ticket-search-feedback", "Nhập mã đặt chỗ và tên hành khách hoặc email/số điện thoại.", "error");
+      return;
+    }
+
+    const query = new URLSearchParams();
+    query.set("bookingCode", bookingCode);
+    if (passengerName) query.set("passengerName", passengerName);
+    if (contact) query.set("contact", contact);
+    const flightDate = String(values.get("flightDate") || "");
+    if (flightDate) query.set("flightDate", flightDate);
+
+    const submit = $("#ticket-search-submit");
+    submit.disabled = true;
+    clearTicketDetail();
+    ticketState.results = [];
+    renderTicketResults([]);
+    setBookingFeedback("ticket-search-feedback", "Đang tra cứu vé trong hệ thống...");
+    try {
+      const tickets = await counterTicketFetch(`search?${query.toString()}`);
+      ticketState.results = tickets;
+      renderTicketResults(tickets);
+      setBookingFeedback(
+        "ticket-search-feedback",
+        tickets.length ? `Đã tìm thấy ${tickets.length} vé.` : "Không có vé khớp với thông tin đã nhập.",
+        tickets.length ? "success" : "error"
+      );
+    } catch (error) {
+      setBookingFeedback("ticket-search-feedback", error.message, "error");
+      renderTicketResults([]);
+    } finally {
+      submit.disabled = false;
+    }
+  }
+
+  async function submitTicketOperation(form, operation) {
+    if (!ticketState.selected) return;
+    const ticketId = ticketState.selected.ticketId;
+    const formData = new FormData(form);
+    const reason = String(formData.get("reason") || "").trim();
+    const body = operation === "exchange"
+      ? {
+          newFlightId: Number(formData.get("newFlightId")),
+          reason,
+          paymentConfirmed: $("#exchange-payment-confirmed").checked
+        }
+      : { reason, refundConfirmed: $("#cancel-refund-confirmed").checked };
+    const button = operation === "exchange" ? $("#ticket-exchange-submit") : $("#ticket-cancel-submit");
+    button.disabled = true;
+    setBookingFeedback("ticket-operation-feedback", "Đang ghi nhận giao dịch trong CSDL...");
+    try {
+      const result = await counterTicketFetch(
+        `${ticketId}/${operation}`,
+        { method: "POST", body, antiforgery: true }
+      );
+      await performTicketSearch();
+      const updated = ticketState.results.find(item => item.ticketId === ticketId);
+      if (updated) await selectTicket(updated.ticketId);
+      setBookingFeedback("ticket-operation-feedback", result.message, "success");
+      showToast(result.message);
+    } catch (error) {
+      setBookingFeedback("ticket-operation-feedback", error.message, "error");
+      button.disabled = false;
+    }
+  }
+
   function setMenuOpen(isOpen) {
     document.body.dataset.menu = isOpen ? "open" : "closed";
     $("[data-menu-toggle]").setAttribute("aria-expanded", String(isOpen));
@@ -594,6 +888,42 @@
   $("#search-flights").addEventListener("click", searchFlights);
   $("#reset-booking").addEventListener("click", resetBooking);
   $("#confirm-counter-booking").addEventListener("click", confirmCounterBooking);
+  $("#ticket-search-form").addEventListener("submit", (event) => {
+    event.preventDefault();
+    performTicketSearch();
+  });
+  $("#ticket-search-form").addEventListener("reset", () => {
+    window.setTimeout(() => {
+      clearTicketDetail();
+      ticketState.results = [];
+      renderTicketResults([]);
+      setBookingFeedback("ticket-search-feedback");
+    });
+  });
+  $("#ticket-results").addEventListener("click", (event) => {
+    const button = event.target.closest("[data-ticket-id]");
+    if (button) selectTicket(Number(button.dataset.ticketId));
+  });
+  $("#ticket-result-cards").addEventListener("click", (event) => {
+    const button = event.target.closest("[data-ticket-id]");
+    if (button) selectTicket(Number(button.dataset.ticketId));
+  });
+  $("#exchange-flight").addEventListener("change", updateExchangeAmount);
+  $("#exchange-payment-confirmed").addEventListener("change", updateExchangeAmount);
+  $("#cancel-refund-confirmed").addEventListener("change", () => {
+    $("#ticket-cancel-submit").disabled =
+      !ticketState.selected?.canCancel || !$("#cancel-refund-confirmed").checked;
+  });
+  $("#ticket-exchange-form").addEventListener("submit", (event) => {
+    event.preventDefault();
+    if (!event.currentTarget.reportValidity()) return;
+    submitTicketOperation(event.currentTarget, "exchange");
+  });
+  $("#ticket-cancel-form").addEventListener("submit", (event) => {
+    event.preventDefault();
+    if (!event.currentTarget.reportValidity()) return;
+    submitTicketOperation(event.currentTarget, "cancel");
+  });
   for (const field of [$("#origin"), $("#destination"), $("#departure"), $("#cabin")]) {
     field.addEventListener("change", () => {
       if (!bookingState.flights.length) return;
