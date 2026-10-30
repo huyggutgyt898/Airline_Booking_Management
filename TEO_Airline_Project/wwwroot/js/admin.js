@@ -8,102 +8,9 @@
     pricing: "Bảng giá",
     promotions: "Khuyến mãi"
   };
-  const periodData = {
-    day: {
-      caption: "21/10/2026",
-      revenue: "42,8 tr ₫",
-      bookings: "128",
-      occupancy: "78,4%",
-      seats: "164",
-      sold: "118",
-      cancelled: "5",
-      changed: "5",
-      visits: "12.840",
-      promo: [8, 6, 3, 1],
-      labels: ["08h", "10h", "12h", "14h", "16h", "18h"],
-      revenueBars: [4, 6, 9, 5, 8, 10.8],
-      ticketBars: [12, 16, 24, 18, 27, 31]
-    },
-    week: {
-      caption: "19–25/10/2026",
-      revenue: "286 tr ₫",
-      bookings: "812",
-      occupancy: "79,2%",
-      seats: "1.025",
-      sold: "764",
-      cancelled: "22",
-      changed: "26",
-      visits: "86.420",
-      promo: [18, 12, 5, 3],
-      labels: ["T2", "T3", "T4", "T5", "T6", "T7"],
-      revenueBars: [35, 44, 51, 42, 55, 59],
-      ticketBars: [110, 130, 144, 126, 148, 154]
-    },
-    month: {
-      caption: "01–31 tháng 10, 2026",
-      revenue: "1,28 tỷ ₫",
-      bookings: "3.842",
-      occupancy: "82,6%",
-      seats: "4.650",
-      sold: "3.610",
-      cancelled: "106",
-      changed: "126",
-      visits: "326.480",
-      promo: [58, 42, 17, 9],
-      labels: ["01–05", "06–10", "11–15", "16–20", "21–25", "26–31"],
-      revenueBars: [160, 190, 215, 185, 250, 280],
-      ticketBars: [520, 610, 720, 590, 690, 712]
-    },
-    quarter: {
-      caption: "Quý 4, 2026",
-      revenue: "3,64 tỷ ₫",
-      bookings: "10.945",
-      occupancy: "81,8%",
-      seats: "13.380",
-      sold: "10.310",
-      cancelled: "301",
-      changed: "334",
-      visits: "984.620",
-      promo: [168, 120, 62, 40],
-      labels: ["Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"],
-      revenueBars: [540, 580, 630, 570, 650, 670],
-      ticketBars: [1700, 1800, 1900, 1750, 1800, 1995]
-    },
-    year: {
-      caption: "Năm 2026",
-      revenue: "14,2 tỷ ₫",
-      bookings: "42.820",
-      occupancy: "84,1%",
-      seats: "50.915",
-      sold: "40.521",
-      cancelled: "1.021",
-      changed: "1.278",
-      visits: "3.842.160",
-      promo: [760, 610, 280, 170],
-      labels: ["T1–T2", "T3–T4", "T5–T6", "T7–T8", "T9–T10", "T11–T12"],
-      revenueBars: [1800, 1950, 2100, 2200, 2400, 3750],
-      ticketBars: [6000, 6500, 6800, 7000, 8000, 8520]
-    },
-    all: {
-      caption: "Toàn bộ lịch sử",
-      revenue: "31,8 tỷ ₫",
-      bookings: "96.940",
-      occupancy: "82,1%",
-      seats: "118.100",
-      sold: "91.620",
-      cancelled: "2.380",
-      changed: "2.940",
-      visits: "8.426.510",
-      promo: [1800, 1400, 620, 390],
-      labels: ["2021", "2022", "2023", "2024", "2025", "2026"],
-      revenueBars: [3500, 4200, 4800, 5100, 5600, 8600],
-      ticketBars: [13000, 14000, 15500, 16000, 18500, 19940]
-    }
-  };
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
   let toastTimer;
-  let activePeriod = "month";
   let activeChartMode = "revenue";
   let airportPage = 1;
   const airportPageSize = 5;
@@ -152,21 +59,24 @@
     setMenuOpen(false);
   }
 
-  function formatMetric(value) {
-    return Number(value).toLocaleString("vi-VN");
-  }
-
   function chartValue(value, mode) {
-    if (mode === "tickets") return formatMetric(value);
-    if (value >= 1000) return `${(value / 1000).toLocaleString("vi-VN", { maximumFractionDigits: 1 })} tỷ`;
-    return `${value.toLocaleString("vi-VN", { maximumFractionDigits: 1 })} tr`;
+    if (mode === "tickets") return Number(value).toLocaleString("vi-VN");
+    if (value >= 1_000_000_000) {
+      return `${(value / 1_000_000_000).toLocaleString("vi-VN", { maximumFractionDigits: 1 })} tỷ`;
+    }
+    if (value >= 1_000_000) {
+      return `${(value / 1_000_000).toLocaleString("vi-VN", { maximumFractionDigits: 1 })} tr`;
+    }
+    return `${Number(value).toLocaleString("vi-VN")} ₫`;
   }
 
   function renderChart() {
-    const data = periodData[activePeriod];
-    const values = activeChartMode === "revenue" ? data.revenueBars : data.ticketBars;
-    const maxValue = Math.max(...values);
     const chart = $("[data-chart]");
+    const points = JSON.parse(chart.dataset.chartPoints);
+    const values = points.map((point) =>
+      activeChartMode === "revenue" ? point.Revenue : point.SoldTicketCount
+    );
+    const maxValue = Math.max(...values, 0);
     chart.replaceChildren();
     chart.setAttribute("aria-label", `Biểu đồ cột ${activeChartMode === "revenue" ? "doanh thu" : "số vé"}`);
     values.forEach((value, index) => {
@@ -179,37 +89,27 @@
       area.className = "admin-chart-bar-area";
       const bar = document.createElement("span");
       bar.className = "admin-chart-bar";
-      bar.style.height = `${Math.max(5, (value / maxValue) * 100)}%`;
+      bar.style.height = maxValue > 0 ? `${Math.max(5, (value / maxValue) * 100)}%` : "0";
       bar.setAttribute("aria-hidden", "true");
       area.append(bar);
       const label = document.createElement("span");
       label.className = "admin-chart-label";
-      label.textContent = data.labels[index];
+      label.textContent = points[index].Label;
       column.append(valueLabel, area, label);
       chart.append(column);
     });
+    const period = $("[data-period][aria-pressed='true']").dataset.period;
+    const periodUnit = {
+      day: "giờ trong ngày",
+      week: "ngày trong tuần",
+      month: "ngày trong tháng",
+      quarter: "tháng trong quý",
+      year: "tháng trong năm",
+      all: "giai đoạn lịch sử"
+    }[period];
     $("[data-chart-caption]").textContent = activeChartMode === "revenue"
-      ? `Doanh thu thuần theo ${activePeriod === "day" ? "giờ" : activePeriod === "week" ? "ngày trong tuần" : activePeriod === "month" ? "ngày trong tháng" : "kỳ"}`
-      : `Số vé đã đặt theo ${activePeriod === "day" ? "giờ" : activePeriod === "week" ? "ngày trong tuần" : activePeriod === "month" ? "ngày trong tháng" : "kỳ"}`;
-  }
-
-  function updateDashboard(period) {
-    activePeriod = Object.hasOwn(periodData, period) ? period : "month";
-    const data = periodData[activePeriod];
-    $$("[data-period]").forEach((button) => {
-      button.setAttribute("aria-pressed", String(button.dataset.period === activePeriod));
-    });
-    $("[data-period-caption]").textContent = data.caption;
-    $("[data-metric='revenue']").textContent = data.revenue;
-    $("[data-metric='bookings']").textContent = data.bookings;
-    $("[data-metric='occupancy']").textContent = data.occupancy;
-    $("[data-metric='seat-count']").textContent = data.seats;
-    $("[data-metric='sold']").textContent = data.sold;
-    $("[data-metric='cancelled']").textContent = data.cancelled;
-    $("[data-metric='changed']").textContent = data.changed;
-    $("[data-metric='visits']").textContent = data.visits;
-    $("[data-ticket-caption]").textContent = `Trong kỳ đã chọn`;
-    renderChart();
+      ? `Doanh thu thanh toán thành công theo ${periodUnit}`
+      : `Vé đã bán theo ${periodUnit}`;
   }
 
   function dateValue(value = "") {
@@ -310,17 +210,18 @@
   }
 
   function exportReport() {
-    const data = periodData[activePeriod];
+    const caption = $("[data-period-caption]").textContent.trim();
+    const metric = (name) => $(`[data-metric="${name}"]`).textContent.trim();
     const rows = [
       ["Chỉ số", "Giá trị", "Kỳ báo cáo"],
-      ["Doanh thu", data.revenue, data.caption],
-      ["Vé đã đặt", data.bookings, data.caption],
-      ["Tỉ lệ lấp đầy ghế", data.occupancy, data.caption],
-      ["Vé bán", data.sold, data.caption],
-      ["Vé hủy", data.cancelled, data.caption],
-      ["Vé đổi", data.changed, data.caption],
-      ["Lượt truy cập website", data.visits, data.caption],
-      ["Lượt dùng khuyến mãi", formatMetric(data.promo.reduce((sum, count) => sum + count, 0)), data.caption]
+      ["Doanh thu", metric("revenue"), caption],
+      ["Vé đã đặt", metric("bookings"), caption],
+      ["Tỉ lệ lấp đầy ghế", metric("occupancy"), caption],
+      ["Vé bán", metric("sold"), caption],
+      ["Vé hủy", metric("cancelled"), caption],
+      ["Yêu cầu đổi vé đã duyệt", metric("changed"), caption],
+      ["Lượt truy cập website", metric("website-visits"), caption],
+      ["Lượt dùng khuyến mãi", $(".admin-promo-summary strong").textContent.trim(), "Toàn bộ lịch sử"]
     ];
     downloadCsv("teo-airlines-bao-cao.csv", rows);
   }
@@ -633,7 +534,12 @@
   });
 
   $$("[data-period]").forEach((button) => {
-    button.addEventListener("click", () => updateDashboard(button.dataset.period));
+    button.addEventListener("click", () => {
+      const url = new URL(window.location.href);
+      url.searchParams.set("dashboardPeriod", button.dataset.period);
+      url.hash = "overview";
+      window.location.assign(url.href);
+    });
   });
   $$("[data-chart-mode]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -780,6 +686,6 @@
   }
   const initialAircraftNotice = $(".admin-toast").dataset.initialMessage;
   if (initialAircraftNotice) showToast(initialAircraftNotice);
-  updateDashboard("month");
+  renderChart();
   renderIcons();
 })();

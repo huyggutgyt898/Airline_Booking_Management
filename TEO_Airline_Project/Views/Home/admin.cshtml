@@ -153,55 +153,59 @@
 
           <div class="admin-dashboard-toolbar">
             <div class="admin-period-tabs" role="group" aria-label="Khoảng thời gian báo cáo">
-              <button type="button" data-period="day">Ngày</button>
-              <button type="button" data-period="week">Tuần</button>
-              <button type="button" data-period="month" aria-pressed="true">Tháng</button>
-              <button type="button" data-period="quarter">Quý</button>
-              <button type="button" data-period="year">Năm</button>
-              <button type="button" data-period="all">Toàn bộ lịch sử</button>
+              <button type="button" data-period="day" aria-pressed="@(Model.OverviewSummary.Period == "day" ? "true" : "false")">Ngày</button>
+              <button type="button" data-period="week" aria-pressed="@(Model.OverviewSummary.Period == "week" ? "true" : "false")">Tuần</button>
+              <button type="button" data-period="month" aria-pressed="@(Model.OverviewSummary.Period == "month" ? "true" : "false")">Tháng</button>
+              <button type="button" data-period="quarter" aria-pressed="@(Model.OverviewSummary.Period == "quarter" ? "true" : "false")">Quý</button>
+              <button type="button" data-period="year" aria-pressed="@(Model.OverviewSummary.Period == "year" ? "true" : "false")">Năm</button>
+              <button type="button" data-period="all" aria-pressed="@(Model.OverviewSummary.Period == "all" ? "true" : "false")">Toàn bộ lịch sử</button>
             </div>
-            <span class="admin-period-date" data-period-caption>01–31 tháng 10, 2026</span>
+            <span class="admin-period-date" data-period-caption>@Model.OverviewSummary.PeriodCaption</span>
           </div>
 
           <div class="admin-metrics" aria-label="Chỉ số trong kỳ">
             <article class="admin-metric">
               <div class="admin-metric-top"><span>Doanh thu</span><span class="admin-metric-icon"><i data-lucide="badge-dollar-sign" aria-hidden="true"></i></span></div>
-              <strong data-metric="revenue">1,28 tỷ ₫</strong><small class="admin-positive"><i data-lucide="trending-up" aria-hidden="true"></i><span data-metric-change>12,8%</span> so với kỳ trước</small>
+              <strong data-metric="revenue">@Model.OverviewSummary.Revenue.ToString("N0", moneyCulture) ₫</strong><small>Thanh toán thành công, đã trừ hoàn tiền</small>
             </article>
             <article class="admin-metric">
               <div class="admin-metric-top"><span>Vé đã đặt</span><span class="admin-metric-icon"><i data-lucide="ticket" aria-hidden="true"></i></span></div>
-              <strong data-metric="bookings">3.842</strong><small class="admin-positive"><i data-lucide="trending-up" aria-hidden="true"></i>8,4% so với kỳ trước</small>
+              <strong data-metric="bookings">@Model.OverviewSummary.BookingCount.ToString("N0", moneyCulture)</strong><small>Đơn đặt trong kỳ</small>
             </article>
             <article class="admin-metric">
               <div class="admin-metric-top"><span>Tỉ lệ lấp đầy ghế</span><span class="admin-metric-icon"><i data-lucide="armchair" aria-hidden="true"></i></span></div>
-              <strong data-metric="occupancy">82,6%</strong><small>Trên <span data-metric="seat-count">4.650</span> ghế khai thác</small>
+              <strong data-metric="occupancy">@(Model.OverviewSummary.SeatOccupancyRate is decimal occupancyRate ? $"{occupancyRate.ToString("N1", moneyCulture)}%" : "—")</strong><small>Trên <span data-metric="seat-count">@Model.OverviewSummary.SeatCapacity.ToString("N0", moneyCulture)</span> ghế khai thác</small>
             </article>
             <article class="admin-metric admin-ticket-metric">
               <div class="admin-metric-top"><span>Vé bán / hủy / đổi</span><span class="admin-metric-icon"><i data-lucide="chart-no-axes-column" aria-hidden="true"></i></span></div>
               <div class="admin-ticket-counts">
-                <div><strong data-metric="sold">3.610</strong><span>Bán</span></div>
-                <div><strong data-metric="cancelled">106</strong><span>Hủy</span></div>
-                <div><strong data-metric="changed">126</strong><span>Đổi</span></div>
+                <div><strong data-metric="sold">@Model.OverviewSummary.SoldTicketCount.ToString("N0", moneyCulture)</strong><span>Bán</span></div>
+                <div><strong data-metric="cancelled">@Model.OverviewSummary.CancelledTicketCount.ToString("N0", moneyCulture)</strong><span>Hủy</span></div>
+                <div><strong data-metric="changed">@Model.OverviewSummary.ChangedRequestCount.ToString("N0", moneyCulture)</strong><span>Đổi</span></div>
               </div>
-              <small data-ticket-caption>Trong kỳ đã chọn</small>
+              <small data-ticket-caption>Vé theo ngày đặt; yêu cầu đổi đã duyệt, tính theo ngày gửi</small>
             </article>
             <article class="admin-metric">
               <div class="admin-metric-top"><span>Lượt truy cập website</span><span class="admin-metric-icon"><i data-lucide="mouse-pointer-click" aria-hidden="true"></i></span></div>
-              <strong data-metric="visits">326.480</strong>
-              <small>Trong kỳ đã chọn</small>
+              <strong data-metric="website-visits">@(Model.OverviewSummary.WebsiteVisits?.ToString("N0", moneyCulture) ?? "—")</strong>
+              <small>@(Model.OverviewSummary.WebsiteVisits.HasValue ? "Trong kỳ đã chọn" : "CSDL chưa lưu lượt truy cập")</small>
             </article>
           </div>
 
           <div class="admin-dashboard-grid">
             <section class="admin-panel admin-revenue-panel">
               <header class="admin-panel-heading">
-                <div><h2>Xu hướng doanh thu</h2><p data-chart-caption>Doanh thu thuần theo ngày trong tháng</p></div>
+                <div><h2>Xu hướng doanh thu</h2><p data-chart-caption>Doanh thu thanh toán thành công theo kỳ</p></div>
                 <div class="admin-segmented" role="group" aria-label="Chỉ số biểu đồ">
                   <button type="button" data-chart-mode="revenue" aria-pressed="true">Doanh thu</button>
                   <button type="button" data-chart-mode="tickets">Số vé</button>
                 </div>
               </header>
-              <div class="admin-chart" data-chart aria-label="Biểu đồ cột doanh thu"></div>
+              <div class="admin-chart"
+                   data-chart
+                   data-chart-points="@System.Text.Json.JsonSerializer.Serialize(Model.OverviewSummary.ChartPoints)"
+                   style="--admin-chart-count: @Model.OverviewSummary.ChartPoints.Count"
+                   aria-label="Biểu đồ cột doanh thu"></div>
             </section>
 
             <section class="admin-panel admin-promos-panel">

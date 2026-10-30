@@ -42,8 +42,10 @@ public static class AdminDashboardViewModelBuilder
         PromotionInputModel? promotionInput = null,
         int? editingPromotionId = null,
         string promotionDialogMode = "create",
-        bool openPromotionDialog = false)
+        bool openPromotionDialog = false,
+        string? dashboardPeriod = "month")
     {
+        var overviewSummary = await AdminOverviewSummaryBuilder.BuildAsync(context, dashboardPeriod);
         var airports = await context.Airports
             .AsNoTracking()
             .OrderBy(airport => airport.AirportCode)
@@ -338,6 +340,7 @@ public static class AdminDashboardViewModelBuilder
 
         return new AdminDashboardViewModel
         {
+            OverviewSummary = overviewSummary,
             Airports = airports,
             Aircrafts = aircrafts,
             SelectedAircraftId = selectedAircraftId,

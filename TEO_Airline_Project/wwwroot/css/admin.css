@@ -642,7 +642,7 @@
 .admin-chart {
   display: grid;
   height: 205px;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--admin-chart-count, 6), minmax(0, 1fr));
   align-items: end;
   gap: 12px;
   padding: 24px 16px 14px;
@@ -678,7 +678,6 @@
 
 .admin-chart-bar {
   width: min(34px, 65%);
-  min-height: 4px;
   border-radius: 5px 5px 0 0;
   background: var(--brand);
 }

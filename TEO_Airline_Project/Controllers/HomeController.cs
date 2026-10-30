@@ -79,7 +79,8 @@ namespace TEO_Airline_Project.Controllers
             int? aircraftId = null,
             int? pricingFlightId = null,
             string? promotionSearch = null,
-            string? promotionStatus = null)
+            string? promotionStatus = null,
+            string? dashboardPeriod = "month")
         {
             if (string.IsNullOrWhiteSpace(HttpContext.Session.GetString("UserId")))
             {
@@ -105,7 +106,8 @@ namespace TEO_Airline_Project.Controllers
                 selectedAircraftId: aircraftId,
                 pricingFlightId: pricingFlightId,
                 promotionSearch: promotionSearch,
-                promotionStatus: promotionStatus);
+                promotionStatus: promotionStatus,
+                dashboardPeriod: dashboardPeriod);
 
             return View("admin", model);
         }

@@ -2,6 +2,8 @@ namespace TEO_Airline_Project.Models.ViewModels;
 
 public sealed class AdminDashboardViewModel
 {
+    public AdminOverviewSummaryViewModel OverviewSummary { get; init; } = new();
+
     public IReadOnlyList<Airport> Airports { get; init; } = [];
 
     public IReadOnlyList<AdminAircraftListItemViewModel> Aircrafts { get; init; } = [];
@@ -103,6 +105,42 @@ public sealed class AdminDashboardViewModel
     public IReadOnlyList<AdminPromotionListItemViewModel> PromotionHighlights { get; init; } = [];
 
     public int TotalPromotionUsageCount { get; init; }
+}
+
+public sealed class AdminOverviewSummaryViewModel
+{
+    public string Period { get; init; } = "month";
+
+    public string PeriodCaption { get; init; } = "";
+
+    public decimal Revenue { get; init; }
+
+    public int BookingCount { get; init; }
+
+    public int SeatCapacity { get; init; }
+
+    public int OccupiedSeatCount { get; init; }
+
+    public decimal? SeatOccupancyRate { get; init; }
+
+    public int SoldTicketCount { get; init; }
+
+    public int CancelledTicketCount { get; init; }
+
+    public int ChangedRequestCount { get; init; }
+
+    public int? WebsiteVisits { get; init; }
+
+    public IReadOnlyList<AdminOverviewChartPointViewModel> ChartPoints { get; init; } = [];
+}
+
+public sealed class AdminOverviewChartPointViewModel
+{
+    public string Label { get; init; } = "";
+
+    public decimal Revenue { get; init; }
+
+    public int SoldTicketCount { get; init; }
 }
 
 public sealed class AdminFlightListItemViewModel
