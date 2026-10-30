@@ -135,6 +135,288 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "TEO_Airline_Project.Controllers.CustomerAccountsController",
+    "Method": "Search",
+    "RelativePath": "api/counter/customers",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "Search",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Status",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "PageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "TEO_Airline_Project.Models.CustomerAccounts.CustomerAccountPageResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 401
+      }
+    ],
+    "Description": "T\u00ECm ki\u1EBFm v\u00E0 l\u1ECDc t\u00E0i kho\u1EA3n c\u00F3 role Customer; ch\u1EC9 d\u00E0nh cho nh\u00E2n vi\u00EAn qu\u1EA7y \u0111\u00E3 \u0111\u0103ng nh\u1EADp.",
+    "Summary": "Danh s\u00E1ch t\u00E0i kho\u1EA3n kh\u00E1ch h\u00E0ng"
+  },
+  {
+    "ContainingType": "TEO_Airline_Project.Controllers.CustomerAccountsController",
+    "Method": "GetById",
+    "RelativePath": "api/counter/customers/{customerId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "customerId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "TEO_Airline_Project.Models.CustomerAccounts.CustomerAccountResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 401
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "Description": "Tr\u1EA3 v\u1EC1 th\u00F4ng tin h\u1ED3 s\u01A1 v\u00E0 s\u1ED1 \u0111\u1EB7t ch\u1ED7, kh\u00F4ng bao g\u1ED3m m\u1EADt kh\u1EA9u ho\u1EB7c m\u00E3 b\u0103m.",
+    "Summary": "Th\u00F4ng tin t\u00E0i kho\u1EA3n kh\u00E1ch h\u00E0ng"
+  },
+  {
+    "ContainingType": "TEO_Airline_Project.Controllers.CustomerAccountsController",
+    "Method": "Update",
+    "RelativePath": "api/counter/customers/{customerId}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "customerId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "TEO_Airline_Project.Models.CustomerAccounts.UpdateCustomerAccountRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "TEO_Airline_Project.Models.CustomerAccounts.CustomerAccountResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ValidationProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 401
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 409
+      }
+    ],
+    "Description": "C\u1EADp nh\u1EADt t\u00EAn, email v\u00E0 s\u1ED1 \u0111i\u1EC7n tho\u1EA1i; email v\u00E0 \u0111i\u1EC7n tho\u1EA1i ph\u1EA3i ch\u01B0a \u0111\u01B0\u1EE3c t\u00E0i kho\u1EA3n kh\u00E1c s\u1EED d\u1EE5ng.",
+    "Summary": "C\u1EADp nh\u1EADt th\u00F4ng tin kh\u00E1ch h\u00E0ng"
+  },
+  {
+    "ContainingType": "TEO_Airline_Project.Controllers.CustomerAccountsController",
+    "Method": "Lock",
+    "RelativePath": "api/counter/customers/{customerId}/lock",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "customerId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "TEO_Airline_Project.Models.CustomerAccounts.CustomerAccountResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 401
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "Description": "\u0110\u1EB7t IsActive th\u00E0nh false; l\u1ECBch s\u1EED v\u00E0 d\u1EEF li\u1EC7u \u0111\u1EB7t ch\u1ED7 \u0111\u01B0\u1EE3c gi\u1EEF nguy\u00EAn.",
+    "Summary": "Kh\u00F3a t\u00E0i kho\u1EA3n kh\u00E1ch h\u00E0ng"
+  },
+  {
+    "ContainingType": "TEO_Airline_Project.Controllers.CustomerAccountsController",
+    "Method": "ResetPassword",
+    "RelativePath": "api/counter/customers/{customerId}/password",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "customerId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "TEO_Airline_Project.Models.CustomerAccounts.ResetCustomerPasswordRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "TEO_Airline_Project.Models.CustomerAccounts.CustomerAccountResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ValidationProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 401
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "Description": "Kh\u00F4ng \u0111\u1ECDc ho\u1EB7c tr\u1EA3 v\u1EC1 m\u1EADt kh\u1EA9u hi\u1EC7n t\u1EA1i; l\u01B0u m\u1EADt kh\u1EA9u m\u1EDBi b\u1EB1ng ASP.NET Core PasswordHasher.",
+    "Summary": "\u0110\u1EB7t m\u1EADt kh\u1EA9u m\u1EDBi cho kh\u00E1ch h\u00E0ng"
+  },
+  {
     "ContainingType": "TEO_Airline_Project.Controllers.CounterTicketsController",
     "Method": "Cancel",
     "RelativePath": "api/counter/tickets/{ticketId}/cancel",

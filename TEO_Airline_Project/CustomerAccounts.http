@@ -1,0 +1,44 @@
+@baseUrl = http://localhost:5199
+@customerId = 1
+@antiforgeryToken = replace-with-token-from-counter-page
+@staffSessionCookie = replace-with-authenticated-session-cookie
+
+### Search and filter customer accounts
+GET {{baseUrl}}/api/counter/customers?page=1&pageSize=10&status=all&search=
+Cookie: {{staffSessionCookie}}
+
+### Load one customer account
+GET {{baseUrl}}/api/counter/customers/{{customerId}}
+Cookie: {{staffSessionCookie}}
+
+### Example not-found response
+GET {{baseUrl}}/api/counter/customers/2147483647
+Cookie: {{staffSessionCookie}}
+
+### Update a customer's profile
+PUT {{baseUrl}}/api/counter/customers/{{customerId}}
+Content-Type: application/json
+Cookie: {{staffSessionCookie}}
+RequestVerificationToken: {{antiforgeryToken}}
+
+{
+  "fullName": "Nguyen Thi Minh Anh",
+  "email": "minh.anh@example.vn",
+  "phone": "0912345678"
+}
+
+### Set a new customer password
+POST {{baseUrl}}/api/counter/customers/{{customerId}}/password
+Content-Type: application/json
+Cookie: {{staffSessionCookie}}
+RequestVerificationToken: {{antiforgeryToken}}
+
+{
+  "newPassword": "NewPass!2026",
+  "confirmPassword": "NewPass!2026"
+}
+
+### Lock a customer account
+PATCH {{baseUrl}}/api/counter/customers/{{customerId}}/lock
+Cookie: {{staffSessionCookie}}
+RequestVerificationToken: {{antiforgeryToken}}

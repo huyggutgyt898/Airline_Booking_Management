@@ -1,12 +1,16 @@
 wwwroot\css\admin.css
-wwwroot\js\counter.js
+wwwroot\css\counter.css
 wwwroot\css\site.css
 wwwroot\css\style.css
 wwwroot\favicon.ico
 wwwroot\js\admin.js
-wwwroot\js\auth.js
 wwwroot\js\app.js
-wwwroot\css\counter.css
+wwwroot\js\auth.js
+wwwroot\js\counter.js
+wwwroot\js\customer-accounts.js
+wwwroot\js\lookup.js
+wwwroot\js\register.js
+wwwroot\js\rewards.js
 wwwroot\js\site.js
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
@@ -59,18 +63,15 @@ wwwroot\lib\jquery-validation-unobtrusive\LICENSE.txt
 wwwroot\lib\jquery-validation\dist\additional-methods.js
 wwwroot\lib\jquery-validation\dist\additional-methods.min.js
 wwwroot\lib\jquery-validation\dist\jquery.validate.js
-wwwroot\lib\jquery\dist\jquery.slim.min.map
-wwwroot\lib\jquery-validation\LICENSE.md
-wwwroot\lib\jquery\dist\jquery.slim.js
-wwwroot\lib\jquery\LICENSE.txt
-wwwroot\lib\jquery\dist\jquery.min.map
-wwwroot\lib\jquery\dist\jquery.js
-wwwroot\lib\jquery\dist\jquery.slim.min.js
 wwwroot\lib\jquery-validation\dist\jquery.validate.min.js
+wwwroot\lib\jquery-validation\LICENSE.md
+wwwroot\lib\jquery\dist\jquery.js
 wwwroot\lib\jquery\dist\jquery.min.js
-wwwroot\js\register.js
-wwwroot\js\rewards.js
-wwwroot\js\lookup.js
+wwwroot\lib\jquery\dist\jquery.min.map
+wwwroot\lib\jquery\dist\jquery.slim.js
+wwwroot\lib\jquery\dist\jquery.slim.min.js
+wwwroot\lib\jquery\dist\jquery.slim.min.map
+wwwroot\lib\jquery\LICENSE.txt
 D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\wwwroot\css\counter.css
 D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\wwwroot\js\auth.js
 D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\wwwroot\js\app.js
@@ -143,3 +144,4 @@ D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\wwwroot\
 D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\wwwroot\js\register.js
 D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\wwwroot\js\lookup.js
 D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\wwwroot\js\rewards.js
+D:\Subject\Requirements analysis and design\Project\TEO_Airline_Project\wwwroot\js\customer-accounts.js

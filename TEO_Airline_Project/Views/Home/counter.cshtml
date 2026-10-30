@@ -241,42 +241,50 @@
       <section class="counter-view" data-screen="customers" hidden>
         <div class="counter-page-heading"><div><h1>Tài khoản khách hàng</h1><p>Tra cứu và quản lý tài khoản hành khách / khách hàng.</p></div></div>
         <div class="counter-account-grid">
-          <section class="counter-panel">
-            <div class="counter-panel-head"><h2>Danh sách tài khoản</h2><span class="counter-small counter-muted">1.284 tài khoản</span></div>
-            <div class="counter-panel-body">
-              <div class="counter-filters">
-                <div class="counter-field"><label for="customer-search">Tìm khách hàng</label><input id="customer-search" value="Ngọc Hà, email hoặc số điện thoại"></div>
-                <div class="counter-field counter-status-field"><label id="customer-status-label">Trạng thái</label><div class="counter-select">
-                  <button class="counter-select-trigger" id="customer-status-trigger" type="button" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="customer-status-listbox" aria-labelledby="customer-status-label customer-status-value" data-select-trigger><span id="customer-status-value">Tất cả</span><i data-lucide="chevron-down" aria-hidden="true"></i></button>
-                  <div class="counter-select-menu" id="customer-status-listbox" role="listbox" aria-labelledby="customer-status-label" aria-hidden="true" inert><button class="counter-select-option" type="button" role="option" aria-selected="true">Tất cả<i data-lucide="check" aria-hidden="true"></i></button><button class="counter-select-option" type="button" role="option" aria-selected="false">Đang hoạt động</button><button class="counter-select-option" type="button" role="option" aria-selected="false">Đã khóa</button></div>
-                </div></div>
-                <button class="counter-button counter-button-primary" type="button" data-demo-action>Tìm kiếm</button>
+          <section class="counter-panel counter-customer-list-panel">
+            <div class="counter-panel-head"><h2>Danh sách tài khoản</h2><span class="counter-small counter-muted" id="customer-total-count">Đang tải…</span></div>
+            <div class="counter-customer-toolbar">
+              <div class="counter-customer-status" role="group" aria-label="Lọc trạng thái tài khoản">
+                <button class="counter-customer-status-button is-active" type="button" data-customer-status="all" aria-pressed="true">Tất cả <span data-customer-count="all">—</span></button>
+                <button class="counter-customer-status-button" type="button" data-customer-status="active" aria-pressed="false">Đang hoạt động <span data-customer-count="active">—</span></button>
+                <button class="counter-customer-status-button" type="button" data-customer-status="locked" aria-pressed="false">Đã khóa <span data-customer-count="locked">—</span></button>
+              </div>
+              <div class="counter-field counter-customer-search">
+                <label for="customer-search">Tìm khách hàng</label>
+                <input id="customer-search" type="search" maxlength="100" placeholder="Tên, email, tên đăng nhập hoặc điện thoại" autocomplete="off">
               </div>
             </div>
-            <div class="counter-table-wrap">
+            <p class="counter-small counter-muted counter-customer-results-summary" id="customer-results-summary" role="status" aria-live="polite">Đang tải danh sách khách hàng…</p>
+            <div class="counter-table-wrap" id="customer-table-wrap">
               <table class="counter-table">
-                <thead><tr><th>Khách hàng</th><th>Liên hệ</th><th>Vai trò</th><th>Trạng thái</th><th></th></tr></thead>
-                <tbody>
-                  <tr class="is-selected"><td><div class="counter-account-cell"><span class="counter-customer-avatar">LH</span><span><strong>Lê Ngọc Hà</strong><span class="counter-record-meta">Tạo 12/06/2025</span></span></div></td><td>ha.le@example.vn<span class="counter-record-meta">0987 654 321</span></td><td>Hành khách</td><td><span class="counter-badge counter-badge-success">Hoạt động</span></td><td><button class="counter-button counter-button-sm" type="button" data-demo-action>Chi tiết</button></td></tr>
-                  <tr><td><div class="counter-account-cell"><span class="counter-customer-avatar">PN</span><span><strong>Phạm Gia Nhi</strong><span class="counter-record-meta">Tạo 03/02/2026</span></span></div></td><td>nhi.pham@example.vn<span class="counter-record-meta">0908 112 233</span></td><td>Hành khách</td><td><span class="counter-badge counter-badge-danger">Đã khóa</span></td><td><button class="counter-button counter-button-sm" type="button" data-demo-action>Chi tiết</button></td></tr>
-                  <tr><td><div class="counter-account-cell"><span class="counter-customer-avatar">TD</span><span><strong>Tên hành khách hiển thị dài để kiểm tra xuống dòng</strong><span class="counter-record-meta">Tài khoản tạo 18/10/2026</span></span></div></td><td>—<span class="counter-record-meta">000 000 000</span></td><td>Hành khách</td><td><span class="counter-badge counter-badge-success">Hoạt động</span></td><td><button class="counter-button counter-button-sm" type="button" data-demo-action>Chi tiết</button></td></tr>
-                </tbody>
+                <thead><tr><th scope="col">Khách hàng</th><th scope="col">Liên hệ</th><th scope="col">Ngày tạo</th><th scope="col">Đặt chỗ</th><th scope="col">Trạng thái</th></tr></thead>
+                <tbody id="customer-results"><tr><td colspan="5" class="counter-empty-cell">Đang tải danh sách khách hàng…</td></tr></tbody>
               </table>
             </div>
-            <div class="counter-customer-cards">
-              <article class="counter-customer-card is-selected"><div class="counter-customer-card-head"><div class="counter-account-cell"><span class="counter-customer-avatar">LH</span><strong>Lê Ngọc Hà</strong></div><span class="counter-badge counter-badge-success">Hoạt động</span></div><span>ha.le@example.vn · 0987 654 321</span><button class="counter-button counter-button-sm" type="button" data-demo-action>Chi tiết</button></article>
-              <article class="counter-customer-card"><div class="counter-customer-card-head"><div class="counter-account-cell"><span class="counter-customer-avatar">PN</span><strong>Phạm Gia Nhi</strong></div><span class="counter-badge counter-badge-danger">Đã khóa</span></div><span>nhi.pham@example.vn · 0908 112 233</span><button class="counter-button counter-button-sm" type="button" data-demo-action>Chi tiết</button></article>
-              <article class="counter-customer-card"><div class="counter-customer-card-head"><div class="counter-account-cell"><span class="counter-customer-avatar">TD</span><strong>Tên hành khách hiển thị dài để kiểm tra xuống dòng</strong></div><span class="counter-badge counter-badge-success">Hoạt động</span></div><span>— · 000 000 000</span><button class="counter-button counter-button-sm" type="button" data-demo-action>Chi tiết</button></article>
-            </div>
+            <div class="counter-customer-cards" id="customer-cards" aria-label="Danh sách tài khoản khách hàng"></div>
+            <div class="counter-customer-pagination" id="customer-pagination"></div>
           </section>
 
-          <aside class="counter-panel">
-            <div class="counter-panel-head"><h2>Thông tin tài khoản</h2><span class="counter-badge counter-badge-success">Hoạt động</span></div>
-            <div class="counter-panel-body">
-              <div class="counter-account-cell counter-account-detail"><span class="counter-customer-avatar">LH</span><span><strong>Lê Ngọc Hà</strong><span class="counter-record-meta">Vai trò hành khách</span></span></div>
-              <dl class="counter-detail-list"><dt>Email</dt><dd>ha.le@example.vn</dd><dt>Điện thoại</dt><dd>0987 654 321</dd><dt>Ngày tạo</dt><dd>12/06/2025</dd><dt>Đặt chỗ</dt><dd>6 đặt chỗ</dd></dl>
-              <div class="counter-notice"><i data-lucide="triangle-alert" aria-hidden="true"></i><span>Khóa tài khoản sẽ ngăn khách đăng nhập. Không ảnh hưởng dữ liệu đặt chỗ.</span></div>
-              <button class="counter-button counter-button-danger counter-lock-button" type="button" data-open-confirm="lock"><i data-lucide="lock-keyhole" aria-hidden="true"></i>Khóa tài khoản</button>
+          <aside class="counter-panel counter-customer-detail-panel" aria-live="polite">
+            <div class="counter-panel-head"><h2>Thông tin tài khoản</h2><span class="counter-badge" id="customer-detail-status" hidden></span></div>
+            <div class="counter-panel-body" id="customer-detail-empty">Chọn một tài khoản để xem hồ sơ.</div>
+            <div class="counter-panel-body" id="customer-detail" hidden>
+              <div class="counter-account-cell counter-account-detail">
+                <span class="counter-customer-avatar" id="customer-detail-avatar" aria-hidden="true"></span>
+                <span><strong id="customer-detail-name"></strong><span class="counter-record-meta" id="customer-detail-username"></span></span>
+              </div>
+              <dl class="counter-detail-list">
+                <dt>Email</dt><dd id="customer-detail-email"></dd>
+                <dt>Điện thoại</dt><dd id="customer-detail-phone"></dd>
+                <dt>Ngày tạo</dt><dd id="customer-detail-created"></dd>
+                <dt>Đặt chỗ</dt><dd id="customer-detail-bookings"></dd>
+              </dl>
+              <div class="counter-notice"><i data-lucide="info" aria-hidden="true"></i><span>Mật khẩu hiện tại được lưu dạng hash nên không thể xem. Nhân viên có thể đặt mật khẩu mới.</span></div>
+              <div class="counter-customer-actions">
+                <button class="counter-button" id="customer-edit" type="button"><i data-lucide="pencil" aria-hidden="true"></i>Sửa thông tin</button>
+                <button class="counter-button" id="customer-password" type="button"><i data-lucide="key-round" aria-hidden="true"></i>Đặt mật khẩu mới</button>
+                <button class="counter-button counter-button-danger" id="customer-lock" type="button"><i data-lucide="lock-keyhole" aria-hidden="true"></i>Khóa tài khoản</button>
+              </div>
             </div>
           </aside>
         </div>
@@ -334,6 +342,17 @@
     <div class="counter-field counter-dialog-reason" data-dialog-reason hidden><label for="action-reason">Lý do xử lý</label><input id="action-reason" required placeholder="Nhập lý do xử lý"></div>
     <div class="counter-dialog-actions"><button class="counter-button" type="button" data-dialog-close>Quay lại</button><button class="counter-button counter-button-primary" type="button" data-dialog-confirm>Xác nhận</button></div>
   </dialog>
+  <dialog class="counter-dialog counter-customer-dialog" id="customer-dialog" aria-labelledby="customer-dialog-title">
+    <h2 id="customer-dialog-title"></h2>
+    <form id="customer-action-form">
+      <div id="customer-dialog-fields"></div>
+      <p class="counter-profile-feedback counter-profile-feedback-error" id="customer-dialog-error" role="alert" hidden></p>
+      <div class="counter-dialog-actions">
+        <button class="counter-button" type="button" data-customer-dialog-close>Hủy</button>
+        <button class="counter-button counter-button-primary" type="submit" id="customer-dialog-submit"></button>
+      </div>
+    </form>
+  </dialog>
   <dialog class="logout-dialog" id="logout-dialog" aria-labelledby="logout-title" aria-describedby="logout-description">
     <div class="logout-heading">
       <span class="logout-icon"><i data-lucide="log-out" aria-hidden="true"></i></span>
@@ -353,6 +372,7 @@
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
   <div class="counter-toast" role="status" aria-live="polite" hidden></div>
   <script src="~/js/counter.js"></script>
+  <script src="~/js/customer-accounts.js"></script>
   <script src="~/js/auth.js"></script>
 </body>
 </html>
