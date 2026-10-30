@@ -16,6 +16,7 @@ namespace TEO_Airline_Project.Controllers
         private const int CounterHoldMinutes = BookingMaintenance.CounterHoldMinutes;
         private const decimal ExtraSeatFee = 150000m;
         private const string DraftSessionKey = "Booking.Draft";
+        private const string CounterDraftSessionKey = "Booking.CounterDraft";
         private const string PnrAlphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
         private static readonly string[] CabinColumns = { "A", "B", "C", "D", "E", "F" };
 
@@ -345,12 +346,56 @@ namespace TEO_Airline_Project.Controllers
             return Ok(computed.Response);
         }
 
+        [HttpPost("counter/quote")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CounterQuote([FromBody] QuoteRequest request)
+        {
+            if (await GetCurrentStaffIdAsync() is null)
+            {
+                return Unauthorized(new QuoteResponse { Ok = false, Message = "Phiên nhân viên không hợp lệ. Vui lòng đăng nhập lại." });
+            }
+
+            if (NormalizePaymentMethod(request.PaymentMethod) is not ("Cash" or "Transfer"))
+            {
+                return BadRequest(new QuoteResponse { Ok = false, Message = "Vui lòng chọn tiền mặt hoặc chuyển khoản tại quầy." });
+            }
+
+            request.PromoCode = null;
+            var computed = await BuildQuoteAsync(request);
+            if (computed.Response is null)
+            {
+                return BadRequest(new QuoteResponse { Ok = false, Message = computed.Error });
+            }
+
+            HttpContext.Session.SetString(CounterDraftSessionKey, JsonSerializer.Serialize(request));
+            return Ok(computed.Response);
+        }
+
         /* ---------- Xác nhận đặt chỗ ---------- */
 
         [HttpPost("confirm")]
         public async Task<IActionResult> Confirm()
         {
-            var draft = HttpContext.Session.GetString(DraftSessionKey);
+            return await ConfirmDraftAsync(isCounterBooking: false, staffId: null);
+        }
+
+        [HttpPost("counter/confirm")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmAtCounter()
+        {
+            var staffId = await GetCurrentStaffIdAsync();
+            if (staffId is null)
+            {
+                return Unauthorized(new ConfirmResponse { Ok = false, Message = "Phiên nhân viên không hợp lệ. Vui lòng đăng nhập lại." });
+            }
+
+            return await ConfirmDraftAsync(isCounterBooking: true, staffId.Value);
+        }
+
+        private async Task<IActionResult> ConfirmDraftAsync(bool isCounterBooking, int? staffId)
+        {
+            var draftKey = isCounterBooking ? CounterDraftSessionKey : DraftSessionKey;
+            var draft = HttpContext.Session.GetString(draftKey);
             if (string.IsNullOrWhiteSpace(draft))
             {
                 return BadRequest(new ConfirmResponse { Ok = false, Message = "Phiên đặt vé đã hết. Vui lòng tìm lại chuyến bay." });
@@ -371,6 +416,15 @@ namespace TEO_Airline_Project.Controllers
                 return BadRequest(new ConfirmResponse { Ok = false, Message = "Phiên đặt vé không hợp lệ. Vui lòng tìm lại chuyến bay." });
             }
 
+            if (isCounterBooking)
+            {
+                request.PromoCode = null;
+                if (NormalizePaymentMethod(request.PaymentMethod) is not ("Cash" or "Transfer"))
+                {
+                    return BadRequest(new ConfirmResponse { Ok = false, Message = "Phương thức thanh toán tại quầy không hợp lệ." });
+                }
+            }
+
             var computed = await BuildQuoteAsync(request);
             if (computed.Response is null || computed.Plan is null)
             {
@@ -380,12 +434,14 @@ namespace TEO_Airline_Project.Controllers
             var quote = computed.Response;
             var plan = computed.Plan;
 
-            var userId = GetSessionUserId();
+            var userId = isCounterBooking ? null : GetSessionUserId();
+            var paidAt = isCounterBooking ? DateTime.Now : (DateTime?)null;
             var booking = new Booking
             {
                 BookingPnr = await GeneratePnrAsync(),
-                Channel = "Online",
+                Channel = isCounterBooking ? "Counter" : "Online",
                 UserId = userId,
+                CreatedByStaffId = staffId,
                 TripType = quote.TripType,
                 ContactFullName = request.ContactFullName!.Trim(),
                 ContactEmail = request.ContactEmail!.Trim(),
@@ -395,7 +451,7 @@ namespace TEO_Airline_Project.Controllers
                 DiscountAmount = quote.Discount,
                 TotalAmount = quote.Total,
                 PaymentMethod = NormalizePaymentMethod(request.PaymentMethod),
-                Status = "PendingPayment",
+                Status = isCounterBooking ? "Confirmed" : "PendingPayment",
                 PromoId = plan.Promotion?.PromoId
             };
 
@@ -446,7 +502,7 @@ namespace TEO_Airline_Project.Controllers
                             Price = ticket.Base + ticket.SeatFee,
                             TaxAmount = ticket.Tax,
                             ServiceFee = ticket.Fee,
-                            Status = "PendingPayment"
+                            Status = isCounterBooking ? "Issued" : "PendingPayment"
                         });
                         ticketIndex++;
                     }
@@ -458,9 +514,12 @@ namespace TEO_Airline_Project.Controllers
                     PaymentType = "Payment",
                     Method = booking.PaymentMethod,
                     Amount = quote.Total,
-                    TransactionCode = $"PENDING-{booking.BookingPnr}",
-                    Status = "Pending",
-                    PaidAt = null
+                    TransactionCode = isCounterBooking
+                        ? $"COUNTER-{booking.BookingPnr}"
+                        : $"PENDING-{booking.BookingPnr}",
+                    Status = isCounterBooking ? "Success" : "Pending",
+                    ConfirmedByStaffId = staffId,
+                    PaidAt = paidAt
                 });
 
                 if (plan.Promotion is not null)
@@ -523,7 +582,7 @@ namespace TEO_Airline_Project.Controllers
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                HttpContext.Session.Remove(DraftSessionKey);
+                HttpContext.Session.Remove(draftKey);
 
                 return Ok(new ConfirmResponse
                 {
@@ -556,6 +615,23 @@ namespace TEO_Airline_Project.Controllers
                     Message = "Ghế bạn chọn vừa được người khác đặt. Vui lòng chọn ghế khác và thử lại."
                 });
             }
+        }
+
+        private async Task<int?> GetCurrentStaffIdAsync()
+        {
+            if (!string.Equals(
+                    HttpContext.Session.GetString("Role")?.Trim(),
+                    "Staff",
+                    StringComparison.OrdinalIgnoreCase) ||
+                !int.TryParse(HttpContext.Session.GetString("UserId"), out var userId))
+            {
+                return null;
+            }
+
+            return await _context.Users.AsNoTracking()
+                .Where(user => user.UserId == userId && user.Role == "Staff")
+                .Select(user => (int?)user.UserId)
+                .FirstOrDefaultAsync();
         }
 
         /* ---------- Đổi điểm lấy voucher ---------- */

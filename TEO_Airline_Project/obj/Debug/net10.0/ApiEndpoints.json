@@ -31,6 +31,32 @@
   },
   {
     "ContainingType": "TEO_Airline_Project.Controllers.BookingController",
+    "Method": "ConfirmAtCounter",
+    "RelativePath": "api/booking/counter/confirm",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TEO_Airline_Project.Controllers.BookingController",
+    "Method": "CounterQuote",
+    "RelativePath": "api/booking/counter/quote",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "TEO_Airline_Project.Models.BookingModels.QuoteRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TEO_Airline_Project.Controllers.BookingController",
     "Method": "Promotions",
     "RelativePath": "api/booking/promotions",
     "HttpMethod": "GET",

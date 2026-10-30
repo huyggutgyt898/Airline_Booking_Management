@@ -365,6 +365,7 @@
 }
 
 .counter-field input,
+.counter-field select,
 .counter-select-trigger {
   width: 100%;
   min-width: 0;
@@ -373,9 +374,12 @@
   border: 1px solid var(--border-strong);
   border-radius: 12px;
   background: var(--surface);
+  color: var(--ink);
+  font: inherit;
 }
 
 .counter-field input:focus,
+.counter-field select:focus,
 .counter-select-trigger[aria-expanded="true"] {
   border-color: var(--brand);
   outline: 3px solid var(--brand-ring-soft);
@@ -487,6 +491,11 @@
 
 .counter-button:hover {
   background: #f2f4f7;
+}
+
+.counter-button:disabled {
+  cursor: not-allowed;
+  opacity: .6;
 }
 
 .counter-button svg {
@@ -807,6 +816,40 @@
 
 .counter-demo-note {
   margin: 10px 0 0;
+}
+
+.counter-booking-feedback {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--ink);
+  font-size: 13px;
+}
+
+.counter-booking-feedback.is-error {
+  border-color: #fecdca;
+  background: #fef3f2;
+  color: #b42318;
+}
+
+.counter-booking-feedback.is-success {
+  border-color: #abefc6;
+  background: #ecfdf3;
+  color: #067647;
+}
+
+.counter-empty-cell {
+  padding: 24px !important;
+  color: var(--muted);
+  text-align: center;
+}
+
+.counter-empty-mobile {
+  margin: 0;
+  padding: 16px;
+  color: var(--muted);
+  font-size: 13px;
 }
 
 .counter-flight-list,
