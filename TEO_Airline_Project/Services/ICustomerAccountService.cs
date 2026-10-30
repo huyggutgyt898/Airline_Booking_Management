@@ -27,4 +27,8 @@ public interface ICustomerAccountService
     Task<CustomerAccountResult<CustomerAccountResponse>> LockAsync(
         int customerId,
         CancellationToken cancellationToken);
+
+    Task<CustomerAccountResult<CustomerAccountResponse>> UnlockAsync(
+        int customerId,
+        CancellationToken cancellationToken);
 }

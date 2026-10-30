@@ -42,3 +42,8 @@ RequestVerificationToken: {{antiforgeryToken}}
 PATCH {{baseUrl}}/api/counter/customers/{{customerId}}/lock
 Cookie: {{staffSessionCookie}}
 RequestVerificationToken: {{antiforgeryToken}}
+
+### Unlock a customer account
+PATCH {{baseUrl}}/api/counter/customers/{{customerId}}/unlock
+Cookie: {{staffSessionCookie}}
+RequestVerificationToken: {{antiforgeryToken}}

@@ -148,6 +148,32 @@ public sealed class CustomerAccountsController : ControllerBase
                 detail: result.Error);
     }
 
+    /// <summary>Unlocks a customer account, allowing the customer to sign in again.</summary>
+    [HttpPatch("{customerId:int}/unlock")]
+    [ValidateAntiForgeryToken]
+    [EndpointSummary("Mở khóa tài khoản khách hàng")]
+    [EndpointDescription("Đặt IsActive thành true để khách hàng có thể đăng nhập lại.")]
+    [ProducesResponseType<CustomerAccountResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Unlock(
+        int customerId,
+        CancellationToken cancellationToken)
+    {
+        if (!await IsStaffAsync(cancellationToken))
+        {
+            return UnauthorizedStaff();
+        }
+
+        var result = await _customerService.UnlockAsync(customerId, cancellationToken);
+        return result.Succeeded
+            ? Ok(result.Value)
+            : Problem(
+                statusCode: result.ErrorStatus,
+                title: "Không thể mở khóa tài khoản khách hàng",
+                detail: result.Error);
+    }
+
     private async Task<bool> IsStaffAsync(CancellationToken cancellationToken) =>
         TryGetStaffId(out var staffId) &&
         await _customerService.IsStaffAsync(staffId, cancellationToken);

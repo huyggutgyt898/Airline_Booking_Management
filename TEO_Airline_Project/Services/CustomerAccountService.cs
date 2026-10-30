@@ -261,6 +261,26 @@ public sealed class CustomerAccountService : ICustomerAccountService
         return await GetByIdAsync(customerId, cancellationToken);
     }
 
+    public async Task<CustomerAccountResult<CustomerAccountResponse>> UnlockAsync(
+        int customerId,
+        CancellationToken cancellationToken)
+    {
+        var user = await _context.Users.SingleOrDefaultAsync(
+            candidate => candidate.UserId == customerId && candidate.Role == "Customer",
+            cancellationToken);
+        if (user is null)
+        {
+            return CustomerAccountResult<CustomerAccountResponse>.Failure(
+                StatusCodes.Status404NotFound,
+                "Không tìm thấy tài khoản khách hàng.");
+        }
+
+        user.IsActive = true;
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return await GetByIdAsync(customerId, cancellationToken);
+    }
+
     private static CustomerAccountResponse ToResponse(
         int userId,
         string username,

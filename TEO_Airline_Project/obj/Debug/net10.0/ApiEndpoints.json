@@ -417,6 +417,52 @@
     "Summary": "\u0110\u1EB7t m\u1EADt kh\u1EA9u m\u1EDBi cho kh\u00E1ch h\u00E0ng"
   },
   {
+    "ContainingType": "TEO_Airline_Project.Controllers.CustomerAccountsController",
+    "Method": "Unlock",
+    "RelativePath": "api/counter/customers/{customerId}/unlock",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "customerId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "TEO_Airline_Project.Models.CustomerAccounts.CustomerAccountResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 401
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "Description": "\u0110\u1EB7t IsActive th\u00E0nh true \u0111\u1EC3 kh\u00E1ch h\u00E0ng c\u00F3 th\u1EC3 \u0111\u0103ng nh\u1EADp l\u1EA1i.",
+    "Summary": "M\u1EDF kh\u00F3a t\u00E0i kho\u1EA3n kh\u00E1ch h\u00E0ng"
+  },
+  {
     "ContainingType": "TEO_Airline_Project.Controllers.CounterTicketsController",
     "Method": "Cancel",
     "RelativePath": "api/counter/tickets/{ticketId}/cancel",

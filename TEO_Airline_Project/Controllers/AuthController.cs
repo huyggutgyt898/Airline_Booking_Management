@@ -49,8 +49,7 @@ namespace TEO_Airline_Project.Controllers
                 var user = await _context.Users.FirstOrDefaultAsync(
                     u => u.Email == identity || u.Phone == identity || u.Username == identity);
 
-                if (user is not null && user.IsActive != false &&
-                    !string.IsNullOrEmpty(user.PasswordHash))
+                if (user is not null && !string.IsNullOrEmpty(user.PasswordHash))
                 {
                     var hashBytes = new byte[192];
                     if (Convert.TryFromBase64String(user.PasswordHash, hashBytes, out var bytesWritten) &&
@@ -61,6 +60,12 @@ namespace TEO_Airline_Project.Controllers
 
                         if (result != PasswordVerificationResult.Failed)
                         {
+                            if (user.IsActive == false)
+                            {
+                                ViewData["ErrorMessage"] = "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ bộ phận hỗ trợ để được trợ giúp.";
+                                return View();
+                            }
+
                             var roleRedirect = GetRoleHomeRedirect(user.Role);
                             if (roleRedirect is null)
                             {

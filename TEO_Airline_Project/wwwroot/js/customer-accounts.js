@@ -198,10 +198,12 @@
     badge.className = `counter-badge ${customer.isActive ? "counter-badge-success" : "counter-badge-danger"}`;
     badge.textContent = customer.isActive ? "Hoạt động" : "Đã khóa";
     badge.hidden = false;
-    $("#customer-lock").disabled = !customer.isActive;
-    $("#customer-lock").innerHTML = customer.isActive
+    const accountAction = $("#customer-lock");
+    accountAction.disabled = false;
+    accountAction.classList.toggle("counter-button-danger", customer.isActive);
+    accountAction.innerHTML = customer.isActive
       ? '<i data-lucide="lock-keyhole" aria-hidden="true"></i>Khóa tài khoản'
-      : '<i data-lucide="lock-keyhole" aria-hidden="true"></i>Tài khoản đã khóa';
+      : '<i data-lucide="lock-open" aria-hidden="true"></i>Mở khóa tài khoản';
     if (window.lucide && typeof window.lucide.createIcons === "function") {
       window.lucide.createIcons();
     }
@@ -247,6 +249,9 @@
           <div class="counter-field"><label for="customer-confirm-password">Xác nhận mật khẩu</label><input id="customer-confirm-password" name="confirmPassword" type="password" required minlength="8" maxlength="128" autocomplete="new-password"></div>
         </div>`;
     }
+    if (type === "unlock") {
+      return `<p>Mở khóa tài khoản <strong>${escapeHtml(customer.fullName)}</strong>? Khách sẽ có thể đăng nhập lại.</p>`;
+    }
     return `<p>Khóa tài khoản <strong>${escapeHtml(customer.fullName)}</strong>? Khách sẽ không thể đăng nhập; dữ liệu đặt chỗ vẫn được giữ nguyên.</p>`;
   }
 
@@ -257,7 +262,8 @@
     const title = {
       edit: "Sửa thông tin khách hàng",
       password: "Đặt mật khẩu mới",
-      lock: "Khóa tài khoản khách hàng"
+      lock: "Khóa tài khoản khách hàng",
+      unlock: "Mở khóa tài khoản khách hàng"
     }[type];
     $("#customer-dialog-title").textContent = title;
     $("#customer-dialog-fields").innerHTML = renderDialogFields(type, customer);
@@ -266,10 +272,14 @@
     $("#customer-dialog-submit").textContent = {
       edit: "Lưu thay đổi",
       password: "Đặt mật khẩu",
-      lock: "Khóa tài khoản"
+      lock: "Khóa tài khoản",
+      unlock: "Mở khóa tài khoản"
     }[type];
     $("#customer-dialog-submit").classList.toggle("counter-button-danger", type === "lock");
-    $("#customer-dialog-submit").classList.toggle("counter-button-primary", type !== "lock");
+    $("#customer-dialog-submit").classList.toggle(
+      "counter-button-primary",
+      type === "edit" || type === "password"
+    );
     dialog.dataset.action = type;
     dialog.showModal();
   }
@@ -361,6 +371,9 @@
     } else if (action === "lock") {
       method = "PATCH";
       path += "/lock";
+    } else if (action === "unlock") {
+      method = "PATCH";
+      path += "/unlock";
     } else {
       return;
     }
@@ -379,7 +392,9 @@
       if (toast) {
         toast.textContent = action === "lock"
           ? "Đã khóa tài khoản khách hàng."
-          : action === "password"
+          : action === "unlock"
+            ? "Đã mở khóa tài khoản khách hàng."
+            : action === "password"
             ? "Đã đặt mật khẩu mới."
             : "Đã cập nhật thông tin khách hàng.";
         toast.hidden = false;
@@ -432,7 +447,9 @@
   });
   $("#customer-edit").addEventListener("click", () => openDialog("edit"));
   $("#customer-password").addEventListener("click", () => openDialog("password"));
-  $("#customer-lock").addEventListener("click", () => openDialog("lock"));
+  $("#customer-lock").addEventListener("click", () => {
+    if (state.customer) openDialog(state.customer.isActive ? "lock" : "unlock");
+  });
   $("#customer-action-form").addEventListener("submit", submitCustomerAction);
   $$("[data-customer-dialog-close]").forEach((button) => {
     button.addEventListener("click", () => $("#customer-dialog").close());
