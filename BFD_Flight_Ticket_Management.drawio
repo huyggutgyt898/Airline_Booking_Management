@@ -1,0 +1,625 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Page-1" id="Z-8Rf2VD70xwwQ4YR9wZ">
+    <mxGraphModel dx="5943" dy="3465" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontColor=#475467;fontSize=12;fontStyle=1;" value="SƠ ĐỒ PHÂN CẤP CHỨC NĂNG (BFD) — HỆ THỐNG ĐẶT VÀ QUẢN LÝ VÉ MÁY BAY TRỰC TUYẾN" vertex="1">
+          <mxGeometry height="26" width="1400" x="900" y="12" as="geometry" />
+        </mxCell>
+        <mxCell id="rootNode" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#082b59;strokeColor=#082b59;fontColor=#ffffff;fontSize=15;fontStyle=1;align=center;verticalAlign=middle;" value="Hệ thống đặt và quản lý vé máy bay trực tuyến" vertex="1">
+          <mxGeometry height="52" width="640" x="1280" y="48" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-pax" parent="1" style="rounded=1;arcSize=14;whiteSpace=wrap;html=1;fillColor=#0f766e;strokeColor=#0f766e;fontColor=#ffffff;fontSize=13;fontStyle=1;" value="HÀNH KHÁCH&lt;br&gt;&lt;font style=&quot;font-size:10px;font-weight:normal&quot;&gt;Khách vãng lai &amp; khách có tài khoản&lt;/font&gt;" vertex="1">
+          <mxGeometry height="54" width="260" x="410" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="e-root-pax" edge="1" parent="1" source="rootNode" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0.5;entryY=0;exitX=0.5;exitY=1;" target="actor-pax">
+          <Array as="points">
+            <mxPoint x="1600" y="132" />
+            <mxPoint x="540" y="132" />
+          </Array>
+        </mxCell>
+        <mxCell id="fn-pax-0" parent="1" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#0f766e;strokeWidth=1.6;fontColor=#1f2937;fontSize=12;fontStyle=1;" value="Tìm kiếm chuyến bay" vertex="1">
+          <mxGeometry height="46" width="240" x="560" y="288" as="geometry" />
+        </mxCell>
+        <mxCell id="e-pax-0" edge="1" parent="1" source="actor-pax" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=0.5;exitY=1;" target="fn-pax-0">
+          <Array as="points">
+            <mxPoint x="540" y="311" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-pax-0-0" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Nhập điểm đi, điểm đến" vertex="1">
+          <mxGeometry height="34" width="400" x="880" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="e-pax-0-0" edge="1" parent="1" source="fn-pax-0" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-pax-0-0">
+          <Array as="points">
+            <mxPoint x="840" y="311" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-pax-0-1" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Chọn ngày bay, hạng ghế, số khách" vertex="1">
+          <mxGeometry height="34" width="400" x="880" y="294" as="geometry" />
+        </mxCell>
+        <mxCell id="e-pax-0-1" edge="1" parent="1" source="fn-pax-0" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-pax-0-1">
+          <Array as="points">
+            <mxPoint x="840" y="311" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-pax-0-2" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Lọc và sắp xếp kết quả" vertex="1">
+          <mxGeometry height="34" width="400" x="880" y="338" as="geometry" />
+        </mxCell>
+        <mxCell id="e-pax-0-2" edge="1" parent="1" source="fn-pax-0" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-pax-0-2">
+          <Array as="points">
+            <mxPoint x="840" y="311" />
+          </Array>
+        </mxCell>
+        <mxCell id="fn-pax-1" parent="1" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#0f766e;strokeWidth=1.6;fontColor=#1f2937;fontSize=12;fontStyle=1;" value="Đặt vé trực tuyến" vertex="1">
+          <mxGeometry height="46" width="240" x="560" y="554" as="geometry" />
+        </mxCell>
+        <mxCell id="e-pax-1" edge="1" parent="1" source="actor-pax" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=0.5;exitY=1;" target="fn-pax-1">
+          <Array as="points">
+            <mxPoint x="540" y="577" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-pax-1-0" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Chọn một chiều / khứ hồi" vertex="1">
+          <mxGeometry height="34" width="400" x="880" y="406" as="geometry" />
+        </mxCell>
+        <mxCell id="e-pax-1-0" edge="1" parent="1" source="fn-pax-1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-pax-1-0">
+          <Array as="points">
+            <mxPoint x="840" y="577" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-pax-1-1" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Nhập thông tin người lớn, trẻ em, em bé" vertex="1">
+          <mxGeometry height="34" width="400" x="880" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="e-pax-1-1" edge="1" parent="1" source="fn-pax-1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-pax-1-1">
+          <Array as="points">
+            <mxPoint x="840" y="577" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-pax-1-2" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Chọn chỗ ngồi cho từng hành khách" vertex="1">
+          <mxGeometry height="34" width="400" x="880" y="494" as="geometry" />
+        </mxCell>
+        <mxCell id="e-pax-1-2" edge="1" parent="1" source="fn-pax-1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-pax-1-2">
+          <Array as="points">
+            <mxPoint x="840" y="577" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-pax-1-3" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Áp dụng mã khuyến mãi" vertex="1">
+          <mxGeometry height="34" width="400" x="880" y="538" as="geometry" />
+        </mxCell>
+        <mxCell id="e-pax-1-3" edge="1" parent="1" source="fn-pax-1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-pax-1-3">
+          <Array as="points">
+            <mxPoint x="840" y="577" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-pax-1-4" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Tính giá: hạng ghế, loại khách, thuế, phí" vertex="1">
+          <mxGeometry height="34" width="400" x="880" y="582" as="geometry" />
+        </mxCell>
+        <mxCell id="e-pax-1-4" edge="1" parent="1" source="fn-pax-1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-pax-1-4">
+          <Array as="points">
+            <mxPoint x="840" y="577" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-pax-1-5" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Thanh toán MoMo hoặc tại quầy" vertex="1">
+          <mxGeometry height="34" width="400" x="880" y="626" as="geometry" />
+        </mxCell>
+        <mxCell id="e-pax-1-5" edge="1" parent="1" source="fn-pax-1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-pax-1-5">
+          <Array as="points">
+            <mxPoint x="840" y="577" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-pax-1-6" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Giữ chỗ 10 phút (MoMo) / 1 giờ (quầy)" vertex="1">
+          <mxGeometry height="34" width="400" x="880" y="670" as="geometry" />
+        </mxCell>
+        <mxCell id="e-pax-1-6" edge="1" parent="1" source="fn-pax-1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-pax-1-6">
+          <Array as="points">
+            <mxPoint x="840" y="577" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-pax-1-7" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Gửi thông tin vé qua email và SMS" vertex="1">
+          <mxGeometry height="34" width="400" x="880" y="714" as="geometry" />
+        </mxCell>
+        <mxCell id="e-pax-1-7" edge="1" parent="1" source="fn-pax-1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-pax-1-7">
+          <Array as="points">
+            <mxPoint x="840" y="577" />
+          </Array>
+        </mxCell>
+        <mxCell id="fn-pax-2" parent="1" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#0f766e;strokeWidth=1.6;fontColor=#1f2937;fontSize=12;fontStyle=1;" value="Tra cứu đặt chỗ" vertex="1">
+          <mxGeometry height="46" width="240" x="560" y="820" as="geometry" />
+        </mxCell>
+        <mxCell id="e-pax-2" edge="1" parent="1" source="actor-pax" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=0.5;exitY=1;" target="fn-pax-2">
+          <Array as="points">
+            <mxPoint x="540" y="843" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-pax-2-0" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Xem danh sách đơn đã đặt" vertex="1">
+          <mxGeometry height="34" width="400" x="880" y="782" as="geometry" />
+        </mxCell>
+        <mxCell id="e-pax-2-0" edge="1" parent="1" source="fn-pax-2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-pax-2-0">
+          <Array as="points">
+            <mxPoint x="840" y="843" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-pax-2-1" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Tra cứu bằng mã đặt chỗ + email/SĐT" vertex="1">
+          <mxGeometry height="34" width="400" x="880" y="826" as="geometry" />
+        </mxCell>
+        <mxCell id="e-pax-2-1" edge="1" parent="1" source="fn-pax-2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-pax-2-1">
+          <Array as="points">
+            <mxPoint x="840" y="843" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-pax-2-2" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Xem chi tiết vé và trạng thái đơn" vertex="1">
+          <mxGeometry height="34" width="400" x="880" y="870" as="geometry" />
+        </mxCell>
+        <mxCell id="e-pax-2-2" edge="1" parent="1" source="fn-pax-2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-pax-2-2">
+          <Array as="points">
+            <mxPoint x="840" y="843" />
+          </Array>
+        </mxCell>
+        <mxCell id="fn-pax-3" parent="1" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#0f766e;strokeWidth=1.6;fontColor=#1f2937;fontSize=12;fontStyle=1;" value="Quản lý vé của tôi" vertex="1">
+          <mxGeometry height="46" width="240" x="560" y="976" as="geometry" />
+        </mxCell>
+        <mxCell id="e-pax-3" edge="1" parent="1" source="actor-pax" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=0.5;exitY=1;" target="fn-pax-3">
+          <Array as="points">
+            <mxPoint x="540" y="999" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-pax-3-0" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Gửi yêu cầu đổi ngày / chuyến bay" vertex="1">
+          <mxGeometry height="34" width="400" x="880" y="938" as="geometry" />
+        </mxCell>
+        <mxCell id="e-pax-3-0" edge="1" parent="1" source="fn-pax-3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-pax-3-0">
+          <Array as="points">
+            <mxPoint x="840" y="999" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-pax-3-1" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Gửi yêu cầu hủy vé" vertex="1">
+          <mxGeometry height="34" width="400" x="880" y="982" as="geometry" />
+        </mxCell>
+        <mxCell id="e-pax-3-1" edge="1" parent="1" source="fn-pax-3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-pax-3-1">
+          <Array as="points">
+            <mxPoint x="840" y="999" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-pax-3-2" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Làm thủ tục check-in trực tuyến" vertex="1">
+          <mxGeometry height="34" width="400" x="880" y="1026" as="geometry" />
+        </mxCell>
+        <mxCell id="e-pax-3-2" edge="1" parent="1" source="fn-pax-3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-pax-3-2">
+          <Array as="points">
+            <mxPoint x="840" y="999" />
+          </Array>
+        </mxCell>
+        <mxCell id="fn-pax-4" parent="1" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#0f766e;strokeWidth=1.6;fontColor=#1f2937;fontSize=12;fontStyle=1;" value="Tài khoản &amp; điểm thưởng" vertex="1">
+          <mxGeometry height="46" width="240" x="560" y="1176" as="geometry" />
+        </mxCell>
+        <mxCell id="e-pax-4" edge="1" parent="1" source="actor-pax" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=0.5;exitY=1;" target="fn-pax-4">
+          <Array as="points">
+            <mxPoint x="540" y="1199" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-pax-4-0" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Đăng ký / đăng nhập" vertex="1">
+          <mxGeometry height="34" width="400" x="880" y="1094" as="geometry" />
+        </mxCell>
+        <mxCell id="e-pax-4-0" edge="1" parent="1" source="fn-pax-4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-pax-4-0">
+          <Array as="points">
+            <mxPoint x="840" y="1199" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-pax-4-1" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Cập nhật thông tin cá nhân" vertex="1">
+          <mxGeometry height="34" width="400" x="880" y="1138" as="geometry" />
+        </mxCell>
+        <mxCell id="e-pax-4-1" edge="1" parent="1" source="fn-pax-4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-pax-4-1">
+          <Array as="points">
+            <mxPoint x="840" y="1199" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-pax-4-2" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Đổi mật khẩu" vertex="1">
+          <mxGeometry height="34" width="400" x="880" y="1182" as="geometry" />
+        </mxCell>
+        <mxCell id="e-pax-4-2" edge="1" parent="1" source="fn-pax-4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-pax-4-2">
+          <Array as="points">
+            <mxPoint x="840" y="1199" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-pax-4-3" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Tích điểm sau chuyến bay" vertex="1">
+          <mxGeometry height="34" width="400" x="880" y="1226" as="geometry" />
+        </mxCell>
+        <mxCell id="e-pax-4-3" edge="1" parent="1" source="fn-pax-4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-pax-4-3">
+          <Array as="points">
+            <mxPoint x="840" y="1199" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-pax-4-4" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Đổi điểm lấy mã giảm giá" vertex="1">
+          <mxGeometry height="34" width="400" x="880" y="1270" as="geometry" />
+        </mxCell>
+        <mxCell id="e-pax-4-4" edge="1" parent="1" source="fn-pax-4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-pax-4-4">
+          <Array as="points">
+            <mxPoint x="840" y="1199" />
+          </Array>
+        </mxCell>
+        <mxCell id="actor-staff" parent="1" style="rounded=1;arcSize=14;whiteSpace=wrap;html=1;fillColor=#b45309;strokeColor=#b45309;fontColor=#ffffff;fontSize=13;fontStyle=1;" value="NHÂN VIÊN QUẦY&lt;br&gt;&lt;font style=&quot;font-size:10px;font-weight:normal&quot;&gt;Bán vé và xử lý giao dịch tại quầy&lt;/font&gt;" vertex="1">
+          <mxGeometry height="54" width="260" x="1470" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="e-root-staff" edge="1" parent="1" source="rootNode" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0.5;entryY=0;exitX=0.5;exitY=1;" target="actor-staff" />
+        <mxCell id="fn-staff-0" parent="1" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b45309;strokeWidth=1.6;fontColor=#1f2937;fontSize=12;fontStyle=1;" value="Bán vé tại quầy" vertex="1">
+          <mxGeometry height="46" width="240" x="1620" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="e-staff-0" edge="1" parent="1" source="actor-staff" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=0.5;exitY=1;" target="fn-staff-0">
+          <Array as="points">
+            <mxPoint x="1600" y="333" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-staff-0-0" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Tìm chuyến bay cho khách" vertex="1">
+          <mxGeometry height="34" width="400" x="1940" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="e-staff-0-0" edge="1" parent="1" source="fn-staff-0" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-staff-0-0">
+          <Array as="points">
+            <mxPoint x="1900" y="333" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-staff-0-1" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Nhập hành khách và chọn ghế" vertex="1">
+          <mxGeometry height="34" width="400" x="1940" y="294" as="geometry" />
+        </mxCell>
+        <mxCell id="e-staff-0-1" edge="1" parent="1" source="fn-staff-0" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-staff-0-1">
+          <Array as="points">
+            <mxPoint x="1900" y="333" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-staff-0-2" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Thu tiền mặt / xác nhận chuyển khoản" vertex="1">
+          <mxGeometry height="34" width="400" x="1940" y="338" as="geometry" />
+        </mxCell>
+        <mxCell id="e-staff-0-2" edge="1" parent="1" source="fn-staff-0" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-staff-0-2">
+          <Array as="points">
+            <mxPoint x="1900" y="333" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-staff-0-3" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Phát hành vé cho khách" vertex="1">
+          <mxGeometry height="34" width="400" x="1940" y="382" as="geometry" />
+        </mxCell>
+        <mxCell id="e-staff-0-3" edge="1" parent="1" source="fn-staff-0" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-staff-0-3">
+          <Array as="points">
+            <mxPoint x="1900" y="333" />
+          </Array>
+        </mxCell>
+        <mxCell id="fn-staff-1" parent="1" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b45309;strokeWidth=1.6;fontColor=#1f2937;fontSize=12;fontStyle=1;" value="Xử lý đổi vé" vertex="1">
+          <mxGeometry height="46" width="240" x="1620" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="e-staff-1" edge="1" parent="1" source="actor-staff" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=0.5;exitY=1;" target="fn-staff-1">
+          <Array as="points">
+            <mxPoint x="1600" y="533" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-staff-1-0" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Tra cứu vé của khách" vertex="1">
+          <mxGeometry height="34" width="400" x="1940" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="e-staff-1-0" edge="1" parent="1" source="fn-staff-1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-staff-1-0">
+          <Array as="points">
+            <mxPoint x="1900" y="533" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-staff-1-1" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Kiểm tra điều kiện (trước ≥ 5 ngày)" vertex="1">
+          <mxGeometry height="34" width="400" x="1940" y="494" as="geometry" />
+        </mxCell>
+        <mxCell id="e-staff-1-1" edge="1" parent="1" source="fn-staff-1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-staff-1-1">
+          <Array as="points">
+            <mxPoint x="1900" y="533" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-staff-1-2" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Tính phụ phí 10% giá vé" vertex="1">
+          <mxGeometry height="34" width="400" x="1940" y="538" as="geometry" />
+        </mxCell>
+        <mxCell id="e-staff-1-2" edge="1" parent="1" source="fn-staff-1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-staff-1-2">
+          <Array as="points">
+            <mxPoint x="1900" y="533" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-staff-1-3" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Xác nhận đổi và ghi nhận thu phí" vertex="1">
+          <mxGeometry height="34" width="400" x="1940" y="582" as="geometry" />
+        </mxCell>
+        <mxCell id="e-staff-1-3" edge="1" parent="1" source="fn-staff-1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-staff-1-3">
+          <Array as="points">
+            <mxPoint x="1900" y="533" />
+          </Array>
+        </mxCell>
+        <mxCell id="fn-staff-2" parent="1" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b45309;strokeWidth=1.6;fontColor=#1f2937;fontSize=12;fontStyle=1;" value="Xử lý hủy vé" vertex="1">
+          <mxGeometry height="46" width="240" x="1620" y="710" as="geometry" />
+        </mxCell>
+        <mxCell id="e-staff-2" edge="1" parent="1" source="actor-staff" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=0.5;exitY=1;" target="fn-staff-2">
+          <Array as="points">
+            <mxPoint x="1600" y="733" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-staff-2-0" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Tra cứu vé của khách" vertex="1">
+          <mxGeometry height="34" width="400" x="1940" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="e-staff-2-0" edge="1" parent="1" source="fn-staff-2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-staff-2-0">
+          <Array as="points">
+            <mxPoint x="1900" y="733" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-staff-2-1" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Kiểm tra điều kiện (trước ≥ 12 giờ)" vertex="1">
+          <mxGeometry height="34" width="400" x="1940" y="694" as="geometry" />
+        </mxCell>
+        <mxCell id="e-staff-2-1" edge="1" parent="1" source="fn-staff-2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-staff-2-1">
+          <Array as="points">
+            <mxPoint x="1900" y="733" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-staff-2-2" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Tính mức hoàn (100% nếu trước &gt; 3 ngày)" vertex="1">
+          <mxGeometry height="34" width="400" x="1940" y="738" as="geometry" />
+        </mxCell>
+        <mxCell id="e-staff-2-2" edge="1" parent="1" source="fn-staff-2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-staff-2-2">
+          <Array as="points">
+            <mxPoint x="1900" y="733" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-staff-2-3" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Xác nhận hủy và ghi nhận hoàn tiền" vertex="1">
+          <mxGeometry height="34" width="400" x="1940" y="782" as="geometry" />
+        </mxCell>
+        <mxCell id="e-staff-2-3" edge="1" parent="1" source="fn-staff-2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-staff-2-3">
+          <Array as="points">
+            <mxPoint x="1900" y="733" />
+          </Array>
+        </mxCell>
+        <mxCell id="fn-staff-3" parent="1" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b45309;strokeWidth=1.6;fontColor=#1f2937;fontSize=12;fontStyle=1;" value="Quản lý tài khoản khách hàng" vertex="1">
+          <mxGeometry height="46" width="240" x="1620" y="866" as="geometry" />
+        </mxCell>
+        <mxCell id="e-staff-3" edge="1" parent="1" source="actor-staff" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=0.5;exitY=1;" target="fn-staff-3">
+          <Array as="points">
+            <mxPoint x="1600" y="889" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-staff-3-0" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Xem danh sách tài khoản" vertex="1">
+          <mxGeometry height="34" width="400" x="1940" y="850" as="geometry" />
+        </mxCell>
+        <mxCell id="e-staff-3-0" edge="1" parent="1" source="fn-staff-3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-staff-3-0">
+          <Array as="points">
+            <mxPoint x="1900" y="889" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-staff-3-1" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Khóa / mở khóa tài khoản khách" vertex="1">
+          <mxGeometry height="34" width="400" x="1940" y="894" as="geometry" />
+        </mxCell>
+        <mxCell id="e-staff-3-1" edge="1" parent="1" source="fn-staff-3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-staff-3-1">
+          <Array as="points">
+            <mxPoint x="1900" y="889" />
+          </Array>
+        </mxCell>
+        <mxCell id="fn-staff-4" parent="1" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b45309;strokeWidth=1.6;fontColor=#1f2937;fontSize=12;fontStyle=1;" value="Hồ sơ nhân viên" vertex="1">
+          <mxGeometry height="46" width="240" x="1620" y="978" as="geometry" />
+        </mxCell>
+        <mxCell id="e-staff-4" edge="1" parent="1" source="actor-staff" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=0.5;exitY=1;" target="fn-staff-4">
+          <Array as="points">
+            <mxPoint x="1600" y="1001" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-staff-4-0" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Cập nhật thông tin cá nhân" vertex="1">
+          <mxGeometry height="34" width="400" x="1940" y="962" as="geometry" />
+        </mxCell>
+        <mxCell id="e-staff-4-0" edge="1" parent="1" source="fn-staff-4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-staff-4-0">
+          <Array as="points">
+            <mxPoint x="1900" y="1001" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-staff-4-1" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Đổi mật khẩu" vertex="1">
+          <mxGeometry height="34" width="400" x="1940" y="1006" as="geometry" />
+        </mxCell>
+        <mxCell id="e-staff-4-1" edge="1" parent="1" source="fn-staff-4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-staff-4-1">
+          <Array as="points">
+            <mxPoint x="1900" y="1001" />
+          </Array>
+        </mxCell>
+        <mxCell id="actor-admin" parent="1" style="rounded=1;arcSize=14;whiteSpace=wrap;html=1;fillColor=#1d4ed8;strokeColor=#1d4ed8;fontColor=#ffffff;fontSize=13;fontStyle=1;" value="QUẢN TRỊ VIÊN&lt;br&gt;&lt;font style=&quot;font-size:10px;font-weight:normal&quot;&gt;Quản trị nghiệp vụ vé máy bay&lt;/font&gt;" vertex="1">
+          <mxGeometry height="54" width="260" x="2530" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="e-root-admin" edge="1" parent="1" source="rootNode" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0.5;entryY=0;exitX=0.5;exitY=1;" target="actor-admin">
+          <Array as="points">
+            <mxPoint x="1600" y="132" />
+            <mxPoint x="2660" y="132" />
+          </Array>
+        </mxCell>
+        <mxCell id="fn-admin-0" parent="1" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1d4ed8;strokeWidth=1.6;fontColor=#1f2937;fontSize=12;fontStyle=1;" value="Tổng quan &amp; báo cáo" vertex="1">
+          <mxGeometry height="46" width="240" x="2680" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="e-admin-0" edge="1" parent="1" source="actor-admin" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=0.5;exitY=1;" target="fn-admin-0">
+          <Array as="points">
+            <mxPoint x="2660" y="333" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-admin-0-0" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Doanh thu theo thời gian" vertex="1">
+          <mxGeometry height="34" width="400" x="3000" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="e-admin-0-0" edge="1" parent="1" source="fn-admin-0" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-admin-0-0">
+          <Array as="points">
+            <mxPoint x="2960" y="333" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-admin-0-1" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Tỷ lệ lấp đầy ghế" vertex="1">
+          <mxGeometry height="34" width="400" x="3000" y="294" as="geometry" />
+        </mxCell>
+        <mxCell id="e-admin-0-1" edge="1" parent="1" source="fn-admin-0" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-admin-0-1">
+          <Array as="points">
+            <mxPoint x="2960" y="333" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-admin-0-2" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Số vé bán / hủy / đổi" vertex="1">
+          <mxGeometry height="34" width="400" x="3000" y="338" as="geometry" />
+        </mxCell>
+        <mxCell id="e-admin-0-2" edge="1" parent="1" source="fn-admin-0" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-admin-0-2">
+          <Array as="points">
+            <mxPoint x="2960" y="333" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-admin-0-3" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Thống kê khuyến mãi" vertex="1">
+          <mxGeometry height="34" width="400" x="3000" y="382" as="geometry" />
+        </mxCell>
+        <mxCell id="e-admin-0-3" edge="1" parent="1" source="fn-admin-0" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-admin-0-3">
+          <Array as="points">
+            <mxPoint x="2960" y="333" />
+          </Array>
+        </mxCell>
+        <mxCell id="fn-admin-1" parent="1" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1d4ed8;strokeWidth=1.6;fontColor=#1f2937;fontSize=12;fontStyle=1;" value="Quản lý sân bay" vertex="1">
+          <mxGeometry height="46" width="240" x="2680" y="466" as="geometry" />
+        </mxCell>
+        <mxCell id="e-admin-1" edge="1" parent="1" source="actor-admin" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=0.5;exitY=1;" target="fn-admin-1">
+          <Array as="points">
+            <mxPoint x="2660" y="489" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-admin-1-0" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Thêm / sửa / xóa sân bay" vertex="1">
+          <mxGeometry height="34" width="400" x="3000" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="e-admin-1-0" edge="1" parent="1" source="fn-admin-1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-admin-1-0">
+          <Array as="points">
+            <mxPoint x="2960" y="489" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-admin-1-1" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Tìm kiếm sân bay" vertex="1">
+          <mxGeometry height="34" width="400" x="3000" y="494" as="geometry" />
+        </mxCell>
+        <mxCell id="e-admin-1-1" edge="1" parent="1" source="fn-admin-1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-admin-1-1">
+          <Array as="points">
+            <mxPoint x="2960" y="489" />
+          </Array>
+        </mxCell>
+        <mxCell id="fn-admin-2" parent="1" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1d4ed8;strokeWidth=1.6;fontColor=#1f2937;fontSize=12;fontStyle=1;" value="Quản lý tuyến bay" vertex="1">
+          <mxGeometry height="46" width="240" x="2680" y="578" as="geometry" />
+        </mxCell>
+        <mxCell id="e-admin-2" edge="1" parent="1" source="actor-admin" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=0.5;exitY=1;" target="fn-admin-2">
+          <Array as="points">
+            <mxPoint x="2660" y="601" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-admin-2-0" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Thêm / sửa / xóa tuyến bay" vertex="1">
+          <mxGeometry height="34" width="400" x="3000" y="562" as="geometry" />
+        </mxCell>
+        <mxCell id="e-admin-2-0" edge="1" parent="1" source="fn-admin-2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-admin-2-0">
+          <Array as="points">
+            <mxPoint x="2960" y="601" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-admin-2-1" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Gán sân bay đi – sân bay đến" vertex="1">
+          <mxGeometry height="34" width="400" x="3000" y="606" as="geometry" />
+        </mxCell>
+        <mxCell id="e-admin-2-1" edge="1" parent="1" source="fn-admin-2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-admin-2-1">
+          <Array as="points">
+            <mxPoint x="2960" y="601" />
+          </Array>
+        </mxCell>
+        <mxCell id="fn-admin-3" parent="1" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1d4ed8;strokeWidth=1.6;fontColor=#1f2937;fontSize=12;fontStyle=1;" value="Quản lý máy bay &amp; sơ đồ ghế" vertex="1">
+          <mxGeometry height="46" width="240" x="2680" y="690" as="geometry" />
+        </mxCell>
+        <mxCell id="e-admin-3" edge="1" parent="1" source="actor-admin" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=0.5;exitY=1;" target="fn-admin-3">
+          <Array as="points">
+            <mxPoint x="2660" y="713" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-admin-3-0" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Thêm / sửa máy bay" vertex="1">
+          <mxGeometry height="34" width="400" x="3000" y="674" as="geometry" />
+        </mxCell>
+        <mxCell id="e-admin-3-0" edge="1" parent="1" source="fn-admin-3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-admin-3-0">
+          <Array as="points">
+            <mxPoint x="2960" y="713" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-admin-3-1" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Thiết kế sơ đồ ghế" vertex="1">
+          <mxGeometry height="34" width="400" x="3000" y="718" as="geometry" />
+        </mxCell>
+        <mxCell id="e-admin-3-1" edge="1" parent="1" source="fn-admin-3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-admin-3-1">
+          <Array as="points">
+            <mxPoint x="2960" y="713" />
+          </Array>
+        </mxCell>
+        <mxCell id="fn-admin-4" parent="1" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1d4ed8;strokeWidth=1.6;fontColor=#1f2937;fontSize=12;fontStyle=1;" value="Quản lý chuyến bay" vertex="1">
+          <mxGeometry height="46" width="240" x="2680" y="802" as="geometry" />
+        </mxCell>
+        <mxCell id="e-admin-4" edge="1" parent="1" source="actor-admin" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=0.5;exitY=1;" target="fn-admin-4">
+          <Array as="points">
+            <mxPoint x="2660" y="825" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-admin-4-0" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Thêm / sửa / xóa chuyến bay" vertex="1">
+          <mxGeometry height="34" width="400" x="3000" y="786" as="geometry" />
+        </mxCell>
+        <mxCell id="e-admin-4-0" edge="1" parent="1" source="fn-admin-4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-admin-4-0">
+          <Array as="points">
+            <mxPoint x="2960" y="825" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-admin-4-1" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Gán tuyến, máy bay, giờ bay" vertex="1">
+          <mxGeometry height="34" width="400" x="3000" y="830" as="geometry" />
+        </mxCell>
+        <mxCell id="e-admin-4-1" edge="1" parent="1" source="fn-admin-4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-admin-4-1">
+          <Array as="points">
+            <mxPoint x="2960" y="825" />
+          </Array>
+        </mxCell>
+        <mxCell id="fn-admin-5" parent="1" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1d4ed8;strokeWidth=1.6;fontColor=#1f2937;fontSize=12;fontStyle=1;" value="Quản lý bảng giá" vertex="1">
+          <mxGeometry height="46" width="240" x="2680" y="936" as="geometry" />
+        </mxCell>
+        <mxCell id="e-admin-5" edge="1" parent="1" source="actor-admin" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=0.5;exitY=1;" target="fn-admin-5">
+          <Array as="points">
+            <mxPoint x="2660" y="959" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-admin-5-0" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Giá theo hạng ghế" vertex="1">
+          <mxGeometry height="34" width="400" x="3000" y="898" as="geometry" />
+        </mxCell>
+        <mxCell id="e-admin-5-0" edge="1" parent="1" source="fn-admin-5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-admin-5-0">
+          <Array as="points">
+            <mxPoint x="2960" y="959" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-admin-5-1" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Giá theo loại hành khách" vertex="1">
+          <mxGeometry height="34" width="400" x="3000" y="942" as="geometry" />
+        </mxCell>
+        <mxCell id="e-admin-5-1" edge="1" parent="1" source="fn-admin-5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-admin-5-1">
+          <Array as="points">
+            <mxPoint x="2960" y="959" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-admin-5-2" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Thuế và phí" vertex="1">
+          <mxGeometry height="34" width="400" x="3000" y="986" as="geometry" />
+        </mxCell>
+        <mxCell id="e-admin-5-2" edge="1" parent="1" source="fn-admin-5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-admin-5-2">
+          <Array as="points">
+            <mxPoint x="2960" y="959" />
+          </Array>
+        </mxCell>
+        <mxCell id="fn-admin-6" parent="1" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#1d4ed8;strokeWidth=1.6;fontColor=#1f2937;fontSize=12;fontStyle=1;" value="Quản lý khuyến mãi" vertex="1">
+          <mxGeometry height="46" width="240" x="2680" y="1092" as="geometry" />
+        </mxCell>
+        <mxCell id="e-admin-6" edge="1" parent="1" source="actor-admin" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=0.5;exitY=1;" target="fn-admin-6">
+          <Array as="points">
+            <mxPoint x="2660" y="1115" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-admin-6-0" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Thêm / sửa / xóa mã khuyến mãi" vertex="1">
+          <mxGeometry height="34" width="400" x="3000" y="1054" as="geometry" />
+        </mxCell>
+        <mxCell id="e-admin-6-0" edge="1" parent="1" source="fn-admin-6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-admin-6-0">
+          <Array as="points">
+            <mxPoint x="2960" y="1115" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-admin-6-1" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Thời gian và điều kiện áp dụng" vertex="1">
+          <mxGeometry height="34" width="400" x="3000" y="1098" as="geometry" />
+        </mxCell>
+        <mxCell id="e-admin-6-1" edge="1" parent="1" source="fn-admin-6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-admin-6-1">
+          <Array as="points">
+            <mxPoint x="2960" y="1115" />
+          </Array>
+        </mxCell>
+        <mxCell id="leaf-admin-6-2" parent="1" style="rounded=1;arcSize=18;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#cbd5e1;fontColor=#334155;fontSize=10.5;" value="Theo dõi lượt sử dụng" vertex="1">
+          <mxGeometry height="34" width="400" x="3000" y="1142" as="geometry" />
+        </mxCell>
+        <mxCell id="e-admin-6-2" edge="1" parent="1" source="fn-admin-6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#94a3b8;strokeWidth=1.2;entryX=0;entryY=0.5;exitX=1;exitY=0.5;" target="leaf-admin-6-2">
+          <Array as="points">
+            <mxPoint x="2960" y="1115" />
+          </Array>
+        </mxCell>
+        <mxCell id="note" parent="1" style="text;html=1;align=left;verticalAlign=top;fontColor=#667085;fontSize=10;" value="Ghi chú: BFD gồm 3 nhóm tác nhân. Chức năng in nghiêng nhạt là chức năng lá (cấp 3).&#xa;Quy tắc nghiệp vụ: đổi vé trước giờ khởi hành ≥ 5 ngày, phụ phí 10% giá vé; hủy vé trước ≥ 12 giờ, hoàn 100% khi trước &gt; 3 ngày, ngược lại hoàn một phần (phí 5%).&#xa;Đơn chờ thanh toán giữ chỗ 10 phút với MoMo và 1 giờ với tiền mặt/chuyển khoản tại quầy; quá hạn tự động hủy." vertex="1">
+          <mxGeometry height="60" width="1200" x="40" y="1330" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

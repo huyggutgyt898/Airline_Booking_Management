@@ -1,0 +1,4 @@
+Thông tin thiết kế yêu cầu:
+- Mật khẩu dành cho admin: Admin@123
+- MK chung cho nhân viên quay: Staff@123
+- MK chung cho khách hang: Customer@123
